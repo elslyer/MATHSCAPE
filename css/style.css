@@ -1380,3 +1380,93 @@ svg.sandbox-svg { width: 100%; height: 480px; cursor: crosshair; touch-action: n
 
   display: block;
 }
+/* =========================================
+   LIGHT BACKGROUND OVERRIDE
+========================================= */
+
+html,
+body {
+  background: #ffffff !important;
+  color: #1a1a1a;
+}
+
+/* Main application background */
+.app-shell,
+.app,
+main {
+  background: #ffffff;
+}
+
+/* Grid background */
+body {
+  background-color: #ffffff !important;
+}
+
+/* Cards */
+.card,
+.intro-card,
+.mission-section,
+.learning-section {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Text */
+h1,
+h2,
+h3,
+h4,
+p,
+span,
+li {
+  color: inherit;
+}
+
+/* Paragraph text */
+p {
+  color: #4b5563;
+}
+
+/* Grid pattern – dibuat lebih halus */
+.app-shell,
+main {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Video section */
+.learning-video {
+  background: transparent;
+}
+
+.video-wrapper {
+  background: #f8fafc;
+  border-color: rgba(20, 160, 150, 0.5);
+}
+
+/* QR section */
+.learn-anywhere {
+  background: #f8fafc;
+  color: #1a1a1a;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.qr-content h3 {
+  color: #111827;
+}
+
+.qr-content p {
+  color: #4b5563;
+}
+
+/* Buttons tetap menggunakan warna Mathscape */
+button,
+.btn,
+.begin-btn,
+.start-btn {
+  background: #54d6ca;
+  color: #06201e;
+}
