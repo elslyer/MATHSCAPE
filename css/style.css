@@ -1552,3 +1552,251 @@ button,
 
   image-rendering: pixelated;
 }
+/* ==========================================================================
+   FUTURISTIC UPGRADE LAYER
+   Tempel file ini SETELAH stylesheet utama (baik via <link> kedua, atau
+   copy-paste ke paling bawah file CSS lama). Semua selector class-nya sama
+   persis dengan yang sudah dipakai HTML/JS kamu — jadi tidak ada elemen baru
+   yang perlu ditambahkan, ini murni "skin" baru.
+   ========================================================================== */
+
+:root {
+  /* Token warna tambahan — palet "hologram" di atas teal yang sudah ada */
+  --accent-violet: #7c6bff;
+  --accent-violet-soft: rgba(124, 107, 255, 0.14);
+  --accent-pink: #ff5fa8;
+
+  --gradient-signature: linear-gradient(120deg, #20bfb2 0%, #4f86e8 45%, #7c6bff 100%);
+  --gradient-signature-soft: linear-gradient(120deg, rgba(32,191,178,0.16), rgba(79,134,232,0.14), rgba(124,107,255,0.16));
+
+  --glow-teal: 0 0 22px rgba(32, 191, 178, 0.45);
+  --glow-violet: 0 0 22px rgba(124, 107, 255, 0.4);
+
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(23, 33, 43, 0.08);
+}
+
+/* Reduced-motion: matikan animasi dekoratif untuk yang butuh */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+}
+
+/* ---------------- Ambient background: grid perlahan bergerak + orb cahaya ---------------- */
+@keyframes gridDrift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 48px 48px, 48px 48px; }
+}
+.app-shell, main {
+  animation: gridDrift 22s linear infinite;
+}
+
+body::after {
+  /* orb cahaya tambahan yang perlahan "bernapas", di atas radial gradient lama */
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(560px 380px at 82% 78%, rgba(124,107,255,0.10), transparent 65%),
+    radial-gradient(480px 320px at 6% 92%, rgba(32,191,178,0.10), transparent 65%);
+  animation: orbBreathe 9s ease-in-out infinite;
+}
+@keyframes orbBreathe {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ---------------- Topbar: garis scan tipis yang bergerak ---------------- */
+.topbar {
+  position: sticky;
+  overflow: hidden;
+}
+.topbar::after {
+  content: "";
+  position: absolute;
+  left: -30%;
+  bottom: -1px;
+  width: 30%;
+  height: 2px;
+  background: var(--gradient-signature);
+  filter: drop-shadow(0 0 6px rgba(46,230,200,0.7));
+  animation: scanLine 5.5s ease-in-out infinite;
+}
+@keyframes scanLine {
+  0%   { left: -30%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+/* Brand & judul hero: teks gradien hidup, bukan warna solid statis */
+.brand-name,
+.intro-title,
+.landing-hero h1 {
+  background: var(--gradient-signature);
+  background-size: 220% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: holoSweep 7s ease-in-out infinite;
+}
+@keyframes holoSweep {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.landing-hero h1::before {
+  /* "//" prefix tetap solid teal, tidak ikut transparan */
+  -webkit-text-fill-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------------- Kartu kaca (glassmorphism) + cincin gradien tipis ---------------- */
+.card, .level-card, .results-panel, .scenario-card, .intro-stage,
+.accordion-item, .cs-item, .live-result-item, .live-rel-item {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border-color: var(--glass-border);
+}
+
+/* cincin gradien halus di sekeliling kartu utama, menggantikan sudut HUD polos */
+.card, .level-card, .results-panel, .intro-stage {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+.card::after, .level-card::after, .results-panel::after, .intro-stage::after {
+  /* override sudut HUD lama jadi cincin gradien penuh, tetap pakai pseudo yang sama */
+  content: none;
+}
+.card, .level-card, .results-panel, .intro-stage {
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.4) inset,
+    0 18px 40px rgba(23, 33, 43, 0.08);
+}
+.card { border-radius: var(--radius); }
+.card::before, .level-card::before, .results-panel::before, .intro-stage::before {
+  /* sudut HUD lama dipertipis & diberi glow, bukan dihapus — masih terasa "teknis" */
+  width: 16px; height: 16px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 4px rgba(46,230,200,0.6));
+}
+
+/* ---------------- Level cards: efek sapuan cahaya saat hover ---------------- */
+.level-card { overflow: hidden; }
+.level-card::marker { content: none; }
+.level-card {
+  isolation: isolate;
+}
+.level-card > * { position: relative; z-index: 1; }
+.level-card:not(.locked)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(32,191,178,0.16) 48%, rgba(124,107,255,0.16) 54%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+.level-card:not(.locked):hover::after { transform: translateX(120%); }
+.level-card:hover:not(.locked) {
+  box-shadow: var(--glow-teal), 0 18px 40px rgba(23,33,43,0.12);
+}
+
+/* ---------------- Tombol: gradien hidup + glow yang lebih tegas ---------------- */
+.btn-primary {
+  background: var(--gradient-signature);
+  background-size: 200% 200%;
+  border: none;
+  color: #052018;
+  animation: holoSweep 6s ease-in-out infinite;
+  box-shadow: var(--glow-teal);
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--glow-teal), var(--glow-violet);
+  filter: brightness(1.05);
+}
+.btn-secondary:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled) {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* Stat chip di topbar: sedikit kaca + glow tipis */
+.stat {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: inset 0 0 0 1px rgba(46,230,200,0.08);
+}
+
+/* ---------------- Badge & tag: kilau pop-in lebih hidup ---------------- */
+.badge-chip {
+  background: var(--gradient-signature-soft);
+  border-color: var(--accent);
+}
+
+/* ---------------- Graph nodes: node hub & highlight lebih "energik" ---------------- */
+.g-node.highlight circle {
+  fill: var(--accent);
+  stroke: var(--accent-violet);
+  filter: drop-shadow(0 0 10px rgba(124,107,255,0.65)) drop-shadow(0 0 6px rgba(46,230,200,0.8));
+}
+.g-node.hub circle {
+  stroke: var(--accent-pink);
+}
+.g-edge.highlight line, .g-edge.highlight path {
+  stroke: var(--accent-violet);
+}
+
+/* ---------------- Progress rail: node aktif berdenyut ---------------- */
+.rail-node.active {
+  animation: railPulse 1.8s ease-in-out infinite;
+}
+@keyframes railPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(32,191,178,0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(32,191,178,0); }
+}
+
+/* ---------------- Results panel: cincin gradien + skor bercahaya lebih kuat ---------------- */
+.results-panel { border-color: transparent; }
+.results-panel {
+  box-shadow:
+    0 0 0 1.5px var(--accent),
+    var(--glow-teal),
+    0 20px 50px rgba(23,33,43,0.12);
+}
+.results-score {
+  background: var(--gradient-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 16px rgba(46,230,200,0.35));
+}
+
+/* ---------------- Hero points: aksen kiri gradien, bukan solid ---------------- */
+.hero-points li {
+  border-left: 2px solid transparent;
+  background:
+    linear-gradient(var(--bg-1), var(--bg-1)) padding-box,
+    var(--gradient-signature) 0 0 / 100% 100% no-repeat;
+  background-origin: border-box;
+  border-image: var(--gradient-signature) 1;
+}
+
+/* ---------------- Stage illustration: bingkai halus bercahaya ---------------- */
+.stage-illustration-image {
+  filter: drop-shadow(0 6px 22px rgba(32,191,178,0.25));
+}
+
+/* ---------------- Video wrapper: sudut HUD lebih tajam + glow border hidup ---------------- */
+.video-wrapper {
+  border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(84,224,210,0.55), var(--glow-teal);
+}
+
+@media (max-width: 640px) {
+  .topbar::after { display: none; } /* garis scan disembunyikan di layar sempit agar tak mengganggu wrap topbar */
+}
