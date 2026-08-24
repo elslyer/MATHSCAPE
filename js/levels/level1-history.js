@@ -66,21 +66,17 @@ export function mount(container, api) {
 
         <!-- Illustration placeholder -->
 
-        <div class="stage-illustration">
+ <!-- Pattern Forest Illustration -->
 
-          <div class="floating-number n1">3</div>
-          <div class="floating-number n2">6</div>
-          <div class="floating-number n3">9</div>
-          <div class="floating-number n4">12</div>
+<div class="stage-illustration">
 
-          <div class="illustration-placeholder">
+  <img
+    src="assets/svg/Bunga%20Angka.svg"
+    alt="Bunga Angka - Mathematical Pattern"
+    class="stage-illustration-image"
+  >
 
-            <span>🌲</span>
-
-            <p>
-              THE PATTERN FOREST
-            </p>
-
+</div>
           </div>
 
         </div>
