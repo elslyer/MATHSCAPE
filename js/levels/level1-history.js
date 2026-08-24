@@ -287,7 +287,6 @@ export function mount(container, api) {
           <p class="mission-story">
             A newly built stadium follows a mysterious seating pattern.<br><br>
             The first row contains <strong>12 seats</strong>.
-            Each new row contains <strong>4 more seats</strong> than the previous row.
             Your task is to uncover the hidden rule.
           </p>
         </div>
