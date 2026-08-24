@@ -117,72 +117,91 @@ export function mount(container, api) {
 
   </div>
 
-  <p>
-    Every mathematical sequence follows a rule.
-    Some grow by adding the same value, while others
-    grow by multiplying by the same factor.
-  </p>
+<p>
+  Every mathematical sequence follows a rule.
+  Some grow by adding the same value, while others
+  grow by multiplying by the same factor.
+</p>
 
-  <div class="learning-video">
 
-    <div class="video-wrapper">
+<!-- =====================================
+     LEARNING VIDEO
+====================================== -->
 
-      <iframe
-        src="https://www.youtube.com/embed/Tj89FA-d0f8"
-        title="Mathematical Sequences Learning Video"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen>
-      </iframe>
+<div class="learning-video">
 
-    </div>
+  <div class="video-wrapper">
+
+    <iframe
+      src="https://www.youtube.com/embed/Tj89FA-d0f8"
+      title="Mathematical Sequences Learning Video"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen>
+    </iframe>
 
   </div>
 
-  <div class="qr-learning">
+</div>
 
-    <div class="qr-placeholder">
 
-      QR
+<!-- =====================================
+     QR LEARNING ACCESS
+====================================== -->
 
 <div class="learn-anywhere">
+
   <div class="qr-content">
-    <span class="section-label">QR</span>
+
+    <span class="section-label">QR ACCESS</span>
+
     <h3>Learn Anywhere</h3>
 
     <p>
       Scan the QR code to access the learning video
       on another device.
     </p>
+
   </div>
 
+
   <div class="qr-code">
-    <img 
+
+    <img
       src="assets/level1-qr-video.png"
-      alt="QR Code for Learning Video"
+      alt="QR Code for Level 1 Learning Video"
     >
+
   </div>
+
 </div>
-    START MISSION 1 →
-  </button>
+
+
+<!-- =====================================
+     START MISSION
+====================================== -->
+
+<button
+  class="btn btn-primary"
+  id="start-mission-1"
+>
+  START MISSION 1 →
+</button>
 
 </section>
 
-      </section>
 
+<!-- =====================================
+     MISSION 1
+====================================== -->
 
-      <!-- =====================================
-           MISSION 1
-      ====================================== -->
+<section
+  class="mission-section"
+  id="mission-1"
+  hidden
+>
 
-      <section
-        class="mission-section"
-        id="mission-1"
-        hidden
-      >
-
-        <div class="mission-header">
-
+  <div class="mission-header">
           <span class="mission-number">
             MISSION 01
           </span>
