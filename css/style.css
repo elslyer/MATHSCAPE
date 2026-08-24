@@ -1531,3 +1531,29 @@ button,
 .brand {
   color: #2ee6c8;
 }
+/* =========================================
+   STAGE 1 ILLUSTRATION
+========================================= */
+
+.stage-illustration {
+  width: 100%;
+  max-width: 850px;
+  margin: 30px auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stage-illustration-image {
+  width: 70%;
+  max-width: 520px;
+  height: auto;
+
+  display: block;
+  margin: 0 auto;
+
+  object-fit: contain;
+
+  image-rendering: pixelated;
+}
