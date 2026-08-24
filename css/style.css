@@ -1319,3 +1319,64 @@ svg.sandbox-svg { width: 100%; height: 480px; cursor: crosshair; touch-action: n
   .export-modal { padding: 22px 18px; }
   .challenge-hud { gap: 10px; }
 }
+/* =========================================
+   LEARNING VIDEO
+========================================= */
+
+.learning-video {
+  margin: 32px 0;
+  width: 100%;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+
+  margin: 0 auto;
+
+  border: 1px solid rgba(80, 220, 210, 0.45);
+
+  background: #050b10;
+
+  box-shadow:
+    0 0 30px rgba(60, 220, 210, 0.08);
+
+  overflow: hidden;
+}
+
+.video-wrapper::before,
+.video-wrapper::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.video-wrapper::before {
+  top: 0;
+  left: 0;
+
+  border-top: 2px solid #54e0d2;
+  border-left: 2px solid #54e0d2;
+}
+
+.video-wrapper::after {
+  right: 0;
+  bottom: 0;
+
+  border-right: 2px solid #54e0d2;
+  border-bottom: 2px solid #54e0d2;
+}
+
+.video-wrapper iframe {
+  width: 100%;
+  height: 100%;
+
+  border: none;
+
+  display: block;
+}
