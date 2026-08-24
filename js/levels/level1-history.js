@@ -95,88 +95,81 @@ export function mount(container, api) {
       </section>
 
 
-      <!-- =====================================
-           LEARNING VIDEO
-      ====================================== -->
+     <!-- =====================================
+     LEARNING VIDEO
+====================================== -->
 
-      <section
-        class="mission-section"
-        id="learning-section"
-        hidden
-      >
+<section
+  class="mission-section"
+  id="learning-section"
+  hidden
+>
 
-        <div class="mission-header">
+  <div class="mission-header">
 
-          <span class="mission-number">
-            DISCOVER
-          </span>
+    <span class="mission-number">
+      DISCOVER
+    </span>
 
-          <h2>
-            Before the Investigation
-          </h2>
+    <h2>
+      Before the Investigation
+    </h2>
 
-        </div>
+  </div>
 
-        <p>
-          Every mathematical sequence follows a rule.
-          Some grow by adding the same value, while others
-          grow by multiplying by the same factor.
-        </p>
+  <p>
+    Every mathematical sequence follows a rule.
+    Some grow by adding the same value, while others
+    grow by multiplying by the same factor.
+  </p>
 
-        <div class="learning-video">
+  <div class="learning-video">
 
-          <div class="video-placeholder">
+    <div class="video-wrapper">
 
-            <span class="video-icon">
-              ▶
-            </span>
+      <iframe
+        src="https://www.youtube.com/embed/Tj89FA-d0f8"
+        title="Mathematical Sequences Learning Video"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
 
-            <div>
+    </div>
 
-              <strong>
-                WATCH THE LEARNING VIDEO
-              </strong>
+  </div>
 
-              <p>
-                Discover the hidden rules behind
-                mathematical sequences.
-              </p>
+  <div class="qr-learning">
 
-            </div>
+    <div class="qr-placeholder">
 
-          </div>
+      QR
 
-        </div>
+    </div>
 
-        <div class="qr-learning">
+    <div>
 
-          <div class="qr-placeholder">
+      <strong>
+        Learn Anywhere
+      </strong>
 
-            QR
+      <p>
+        Scan the QR code to access the learning
+        material on another device.
+      </p>
 
-          </div>
+    </div>
 
-          <div>
+  </div>
 
-            <strong>
-              Learn Anywhere
-            </strong>
+  <button
+    class="btn btn-primary"
+    id="start-mission-1"
+  >
+    START MISSION 1 →
+  </button>
 
-            <p>
-              Scan the QR code to access the learning
-              material on another device.
-            </p>
-
-          </div>
-
-        </div>
-
-        <button
-          class="btn btn-primary"
-          id="start-mission-1"
-        >
-          START MISSION 1 →
-        </button>
+</section>
 
       </section>
 
