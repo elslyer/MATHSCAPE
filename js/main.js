@@ -1,380 +1,973 @@
-// main.js — app shell: navigation, level map rendering, progress display, level mounting.
+// ==========================================
+// MATHSCAPE — MAIN APPLICATION CONTROLLER
+// Navigation, World Map, Progress & Stages
+// ==========================================
+
 import * as progress from './progress.js';
-import { animateCount, animateCountTargets } from './ui-utils.js';
-import { openIntro, initIntro } from './intro.js';
-import { sfx, isMuted, toggleMuted } from './sound.js';
-import { burstConfetti } from './confetti.js';
-import { init as initBgConstellation, start as startBgConstellation, stop as stopBgConstellation } from './bg-constellation.js';
-import { downloadShareCard } from './share-card.js';
-import { openCertificateModal, coreLevelsComplete } from './certificate.js';
+
+
+// ==========================================
+// CONFIGURATION
+// ==========================================
 
 const TOTAL_LEVELS = 5;
 
+
+// ==========================================
+// STAGE INFORMATION
+// ==========================================
+
 const levelMeta = [
-  { num: 1, id: 'level-1', title: 'The History of Ontologies', desc: 'From Aristotle to GraphRAG — a timeline of ideas.' },
-  { num: 2, id: 'level-2', title: 'Core Concepts', desc: 'Classes, triples, taxonomies, and why they matter.' },
-  { num: 3, id: 'level-3', title: 'Tools & Standards', desc: 'RDF, OWL, SPARQL, Neo4j, Wikidata & more.' },
-  { num: 4, id: 'level-4', title: 'Multi-Hop Reasoning', desc: 'How graphs are queried, traversed & reasoned over.' },
-  { num: 5, id: 'level-5', title: 'Build Your Own Ontology', desc: 'Design a knowledge graph in a sandbox.' },
-  { num: 6, id: 'level-6', title: 'Live Knowledge Graph Explorer', desc: 'Query real live data from Wikidata\'s public ontology.', bonus: true },
-  { num: 7, id: 'level-7', title: 'Algorithms Visualized', desc: 'Watch BFS, DFS, embedding search & GraphRAG animated step-by-step.', bonus: true },
-  { num: 8, id: 'level-8', title: 'Enterprise Case Studies', desc: 'How Google, Amazon, LinkedIn, healthcare, Microsoft & Palantir use knowledge graphs at scale.', bonus: true },
-  { num: 9, id: 'level-9', title: 'Semantic Models vs Ontologies', desc: 'Where taxonomies, BI-style semantic models, and formal ontologies actually differ.', bonus: true },
-  { num: 10, id: 'level-10', title: 'Best Practices & Anti-Patterns', desc: 'The modeling wisdom that separates a valid ontology from a well-designed one.', bonus: true }
+
+  {
+    num: 1,
+    id: 'level-1',
+    title: 'Pattern Finder',
+    desc: 'Explore number patterns and discover arithmetic and geometric sequences.',
+    icon: '🌲'
+  },
+
+  {
+    num: 2,
+    id: 'level-2',
+    title: 'Formula Finder',
+    desc: 'Unlock the mathematical rules and discover the formula for the nth term.',
+    icon: '🏰'
+  },
+
+  {
+    num: 3,
+    id: 'level-3',
+    title: 'Series Master',
+    desc: 'Master arithmetic and geometric series and uncover the power of summation.',
+    icon: '🌊'
+  },
+
+  {
+    num: 4,
+    id: 'level-4',
+    title: 'Case Solver',
+    desc: 'Apply sequences and series to solve real-world mathematical challenges.',
+    icon: '🏔️'
+  },
+
+  {
+    num: 5,
+    id: 'level-5',
+    title: 'The Mathscape Trial',
+    desc: 'Face the final challenge and prove your mastery of sequences and series.',
+    icon: '👑',
+    final: true
+  }
+
 ];
 
-// Lazily import level modules only when needed to keep initial load light.
+
+// ==========================================
+// LEVEL LOADERS
+//
+// Untuk sementara kita masih memakai file
+// level bawaan agar website tetap berjalan.
+//
+// NANTI kita akan mengganti isi masing-masing
+// level menjadi materi LKPD MATHSCAPE.
+// ==========================================
+
 const levelLoaders = {
+
   1: () => import('./levels/level1-history.js'),
+
   2: () => import('./levels/level2-concepts.js'),
+
   3: () => import('./levels/level3-solutions.js'),
+
   4: () => import('./levels/level4-technical.js'),
-  5: () => import('./levels/level5-sandbox.js'),
-  6: () => import('./levels/level6-live.js'),
-  7: () => import('./levels/level7-algorithms.js'),
-  8: () => import('./levels/level8-enterprise.js'),
-  9: () => import('./levels/level9-semantic.js'),
-  10: () => import('./levels/level10-bestpractices.js')
+
+  5: () => import('./levels/level5-sandbox.js')
+
 };
+
+
+// ==========================================
+// SCREEN REGISTRATION
+// ==========================================
 
 const screens = {
+
   landing: document.getElementById('screen-landing'),
+
   map: document.getElementById('screen-map')
+
 };
-for (let i = 1; i <= 10; i++) {
-  screens[`level-${i}`] = document.getElementById(`screen-level-${i}`);
+
+
+for (let i = 1; i <= TOTAL_LEVELS; i++) {
+
+  screens[`level-${i}`] =
+    document.getElementById(`screen-level-${i}`);
+
 }
+
+
+// ==========================================
+// NAVIGATION
+// ==========================================
 
 function showScreen(name) {
-  Object.values(screens).forEach(s => s && s.classList.remove('active'));
-  if (screens[name]) screens[name].classList.add('active');
-  document.getElementById('topbar-stats').hidden = name === 'landing';
-  // The ambient constellation animation only ever needs to run behind the landing hero.
-  if (name === 'landing') startBgConstellation(); else stopBgConstellation();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  Object.values(screens).forEach(screen => {
+
+    if (screen) {
+
+      screen.classList.remove('active');
+
+    }
+
+  });
+
+
+  if (screens[name]) {
+
+    screens[name].classList.add('active');
+
+  }
+
+
+  const topbarStats =
+    document.getElementById('topbar-stats');
+
+
+  if (topbarStats) {
+
+    topbarStats.hidden = name === 'landing';
+
+  }
+
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: 'smooth'
+
+  });
+
 }
+
 
 function navTo(name) {
-  if (name === 'map') renderMap();
-  showScreen(name);
-}
 
-document.querySelectorAll('[data-nav]').forEach(el => {
-  el.addEventListener('click', () => navTo(el.dataset.nav));
-});
-document.getElementById('btn-start').addEventListener('click', () => navTo('map'));
-document.getElementById('btn-map').addEventListener('click', () => navTo('map'));
-document.getElementById('btn-intro').addEventListener('click', () => openIntro());
-document.getElementById('btn-reset').addEventListener('click', () => {
-  if (confirm('Reset all progress, scores, and badges? This cannot be undone.')) {
-    progress.resetProgress();
-    updateTopbar();
+  if (name === 'map') {
+
     renderMap();
-    showToast('Progress reset.');
+
   }
-});
 
-// --- sound mute toggle (always visible in the topbar, independent of level progress) ---
-const muteBtn = document.getElementById('btn-mute');
-function updateMuteBtn() {
-  muteBtn.textContent = isMuted() ? 'Sound: Off' : 'Sound: On';
-  muteBtn.setAttribute('aria-pressed', String(isMuted()));
-  muteBtn.title = isMuted() ? 'Unmute sound effects' : 'Mute sound effects';
+
+  showScreen(name);
+
 }
-muteBtn.addEventListener('click', () => { toggleMuted(); updateMuteBtn(); });
-updateMuteBtn();
 
-let lastKnownScore = 0;
+
+// Navigation elements
+
+document
+  .querySelectorAll('[data-nav]')
+  .forEach(element => {
+
+    element.addEventListener('click', () => {
+
+      navTo(element.dataset.nav);
+
+    });
+
+  });
+
+
+// Start Journey button
+
+const startButton =
+  document.getElementById('btn-start');
+
+
+if (startButton) {
+
+  startButton.addEventListener('click', () => {
+
+    navTo('map');
+
+  });
+
+}
+
+
+// World Map button
+
+const mapButton =
+  document.getElementById('btn-map');
+
+
+if (mapButton) {
+
+  mapButton.addEventListener('click', () => {
+
+    navTo('map');
+
+  });
+
+}
+
+
+// Reset button
+
+const resetButton =
+  document.getElementById('btn-reset');
+
+
+if (resetButton) {
+
+  resetButton.addEventListener('click', () => {
+
+    const confirmReset = confirm(
+
+      'Reset all Mathscape progress? This cannot be undone.'
+
+    );
+
+
+    if (confirmReset) {
+
+      progress.resetProgress();
+
+      updateTopbar();
+
+      renderMap();
+
+      showToast(
+        'Your Mathscape journey has been reset.'
+      );
+
+    }
+
+  });
+
+}
+
+
+// ==========================================
+// TOPBAR PROGRESS
+// ==========================================
+
 function updateTopbar() {
-  const scoreEl = document.getElementById('stat-score');
-  const newScore = progress.totalScore();
-  if (newScore !== lastKnownScore) {
-    animateCount(scoreEl, newScore, { from: lastKnownScore, duration: 700 });
-    lastKnownScore = newScore;
-  } else {
-    scoreEl.textContent = newScore;
+
+  const scoreElement =
+    document.getElementById('stat-score');
+
+
+  const badgeElement =
+    document.getElementById('stat-badges');
+
+
+  if (scoreElement) {
+
+    scoreElement.textContent =
+      progress.totalScore();
+
   }
-  document.getElementById('stat-badges').textContent = progress.getBadges().length;
+
+
+  if (badgeElement) {
+
+    badgeElement.textContent =
+      progress.getBadges().length;
+
+  }
+
 }
+
+
+// ==========================================
+// WORLD MAP
+// ==========================================
 
 function renderMap() {
-  const grid = document.getElementById('level-grid');
+
+  const grid =
+    document.getElementById('level-grid');
+
+
+  if (!grid) return;
+
+
   grid.innerHTML = '';
-  levelMeta.forEach((meta, i) => {
-    const unlocked = meta.bonus ? true : progress.isUnlocked(meta.num);
-    const completed = progress.isCompleted(meta.num);
-    const score = progress.getScore(meta.num);
-    const card = document.createElement('div');
-    card.className = 'level-card' + (unlocked ? '' : ' locked') + (meta.bonus ? ' bonus-card' : '');
-    card.style.animationDelay = `${i * 70}ms`;
+
+
+  levelMeta.forEach((meta, index) => {
+
+    const unlocked =
+      progress.isUnlocked(meta.num);
+
+
+    const completed =
+      progress.isCompleted(meta.num);
+
+
+    const score =
+      progress.getScore(meta.num);
+
+
+    const card =
+      document.createElement('div');
+
+
+    card.className =
+      'level-card' +
+      (unlocked ? '' : ' locked') +
+      (meta.final ? ' final-stage' : '');
+
+
+    card.style.animationDelay =
+      `${index * 100}ms`;
+
+
     card.innerHTML = `
-      ${meta.bonus ? '<span class="lv-num bonus-tag">Bonus</span>' : `<span class="lv-num">Level ${meta.num}</span>`}
-      <h3>${meta.title}</h3>
-      <p>${meta.desc}</p>
-      <div class="lv-status">
-        <span>${meta.bonus ? (completed ? 'Explored' : 'Explore anytime') : (completed ? 'Completed' : (unlocked ? 'Ready to play' : 'Locked'))}</span>
-        ${completed && !meta.bonus ? `<span class="lv-score">${score}%</span>` : ''}
+
+      <div class="stage-icon">
+
+        ${meta.icon}
+
       </div>
+
+
+      <span class="lv-num">
+
+        ${meta.final
+          ? 'FINAL CHALLENGE'
+          : `STAGE ${meta.num}`
+        }
+
+      </span>
+
+
+      <h3>
+
+        ${meta.title}
+
+      </h3>
+
+
+      <p>
+
+        ${meta.desc}
+
+      </p>
+
+
+      <div class="lv-status">
+
+        <span>
+
+          ${
+            completed
+
+              ? '✓ Completed'
+
+              : unlocked
+
+                ? 'Ready to explore'
+
+                : '🔒 Locked'
+          }
+
+        </span>
+
+
+        ${
+          completed
+
+            ? `<span class="lv-score">
+                ${Math.round(score)}%
+              </span>`
+
+            : ''
+        }
+
+      </div>
+
     `;
+
+
     if (unlocked) {
-      card.addEventListener('click', () => openLevel(meta.num));
+
+      card.addEventListener('click', () => {
+
+        openLevel(meta.num);
+
+      });
+
     }
+
+
     grid.appendChild(card);
+
   });
 
-  const badgeShelf = document.getElementById('badge-shelf');
-  const badges = progress.getBadges();
-  badgeShelf.innerHTML = badges.length
-    ? badges.map((b, i) => `<span class="badge-chip badge-pop" style="animation-delay:${i * 60}ms">${b.name}</span>`).join('')
-    : '<span style="color:var(--text-2)">No badges yet — complete levels perfectly to earn them!</span>';
 
-  renderProgressRail();
-  renderAchievementsRow();
+  renderBadges();
+
   updateTopbar();
+
 }
 
-/** A connected "graph" of nodes/edges showing the core 1→5 progression at a glance. */
-function renderProgressRail() {
-  const rail = document.getElementById('progress-rail');
-  if (!rail) return;
-  const core = levelMeta.filter(m => !m.bonus);
-  rail.innerHTML = core.map((m, i) => {
-    const completed = progress.isCompleted(m.num);
-    const unlocked = progress.isUnlocked(m.num);
-    const state = completed ? 'done' : (unlocked ? 'active' : 'locked');
-    const seg = i > 0 ? `<span class="rail-seg ${progress.isCompleted(core[i - 1].num) ? 'seg-filled' : ''}"></span>` : '';
-    return `${seg}<span class="rail-node ${state}" title="${m.title}">${completed ? '✓' : m.num}</span>`;
-  }).join('');
+
+// ==========================================
+// BADGES
+// ==========================================
+
+function renderBadges() {
+
+  const badgeShelf =
+    document.getElementById('badge-shelf');
+
+
+  if (!badgeShelf) return;
+
+
+  const badges =
+    progress.getBadges();
+
+
+  if (badges.length === 0) {
+
+    badgeShelf.innerHTML = `
+
+      <div class="badge-empty">
+
+        🏆 Your achievements will appear here.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  badgeShelf.innerHTML =
+    badges.map(badge => `
+
+      <span class="badge-chip">
+
+        ${badge.icon || '🏅'}
+
+        ${badge.name}
+
+      </span>
+
+    `).join('');
+
 }
 
-/** Share Score Card is always available; the Certificate unlocks once all 5 core levels are done. */
-function renderAchievementsRow() {
-  const row = document.getElementById('achievements-row');
-  if (!row) return;
-  const unlocked = coreLevelsComplete();
-  row.innerHTML = `
-    <button class="btn btn-ghost" id="btn-share-card">Share Score Card</button>
-    <button class="btn ${unlocked ? 'btn-primary' : 'btn-ghost'}" id="btn-certificate" ${unlocked ? '' : 'disabled'} title="${unlocked ? 'Download your certificate' : 'Complete all 5 core levels to unlock'}">${unlocked ? 'Get Your Certificate' : 'Certificate (locked)'}</button>
-  `;
-  row.querySelector('#btn-share-card').addEventListener('click', () => downloadShareCard());
-  if (unlocked) row.querySelector('#btn-certificate').addEventListener('click', () => openCertificateModal());
-}
+
+// ==========================================
+// LEVEL MANAGEMENT
+// ==========================================
 
 const mountedLevels = new Set();
-const mountedModules = {}; // num -> imported level module (used by Replay to re-mount without re-importing)
 
-// In-memory (not persisted) per-attempt tracking used only to award meta-badges below.
-// Reset whenever a level is freshly mounted or replayed; never reset on a plain re-visit.
-const levelStartTimes = {};
-const levelHintsUsed = {};
-const ALL_LEVEL_NUMS = levelMeta.map(m => m.num);
-const CORE_LEVEL_NUMS = levelMeta.filter(m => !m.bonus).map(m => m.num);
+const mountedModules = {};
 
-function resetAttempt(num) {
-  levelStartTimes[num] = Date.now();
-  levelHintsUsed[num] = 0;
-}
 
-/**
- * Attaches ONE delegated click listener directly to a level's persistent body container
- * (guarded so it's only ever attached once, even across replays that clear body.innerHTML).
- * Because this listener runs in the bubble phase, by the time it fires, any click handler
- * on the actual clicked element (e.g. a level's own quiz-option handler that toggles the
- * .correct/.wrong class) has already run — so it can safely read the resulting classList to
- * play the right sound, without any level module needing to know sound/hints exist at all.
- */
-function attachLevelDelegation(body, num) {
-  if (body.dataset.delegated === '1') return;
-  body.dataset.delegated = '1';
-  body.addEventListener('click', (e) => {
-    const quizOpt = e.target.closest('.quiz-opt');
-    if (quizOpt) {
-      if (quizOpt.classList.contains('correct')) sfx.correct();
-      else if (quizOpt.classList.contains('wrong')) sfx.wrong();
-      return;
-    }
-    const hintBtn = e.target.closest('.hint-btn');
-    if (hintBtn) {
-      levelHintsUsed[num] = (levelHintsUsed[num] || 0) + 1;
-      sfx.hint();
-      return;
-    }
-    const gNode = e.target.closest('.g-node');
-    if (gNode && gNode.style.cursor === 'pointer') sfx.hop();
-  });
-}
+// ==========================================
+// BUILD LEVEL API
+// ==========================================
 
-/** Awards cross-level "meta" badges based on this completion + overall progress state. */
-function computeMetaBadges({ score, elapsedMs, hintsUsed }) {
-  const earned = [];
-  const tryAward = (id, name, icon) => { if (progress.addBadge(id, name, icon)) earned.push({ name, icon }); };
-  if (hintsUsed === 0 && score >= 90) tryAward('sharp-mind', 'Sharp Mind', '');
-  if (elapsedMs !== null && elapsedMs < 60000 && score >= 70) tryAward('speedrunner', 'Speedrunner', '');
-  if (CORE_LEVEL_NUMS.every(n => progress.getScore(n) === 100)) tryAward('perfectionist', 'Perfectionist', '');
-  if (ALL_LEVEL_NUMS.every(n => progress.isCompleted(n))) tryAward('completionist', 'Completionist', '');
-  return earned;
-}
-
-/** Builds the { complete, badge } API object handed to each level module's mount(). */
 function buildApi(num) {
+
   return {
-    complete: (score, meta) => {
-      const elapsedMs = levelStartTimes[num] ? Date.now() - levelStartTimes[num] : null;
-      const hintsUsed = levelHintsUsed[num] || 0;
-      progress.completeLevel(num, score, TOTAL_LEVELS);
-      sfx.levelComplete();
-      burstConfetti({ gold: score >= 90 });
-      const metaBadges = computeMetaBadges({ score, elapsedMs, hintsUsed });
-      metaBadges.forEach(b => showToast(`Badge earned: ${b.name}`));
+
+    complete: (score, meta = {}) => {
+
+      progress.completeLevel(
+
+        num,
+
+        score,
+
+        TOTAL_LEVELS
+
+      );
+
+
       updateTopbar();
-      showToast(`Level ${num} complete! Score: ${Math.round(score)}/100`);
-      showResults(num, score, meta || {}, metaBadges);
+
+
+      showToast(
+
+        `Stage ${num} completed! Score: ${Math.round(score)}/100`
+
+      );
+
+
+      showResults(
+
+        num,
+
+        score,
+
+        meta
+
+      );
+
     },
-    badge: (id, name, icon) => {
-      const added = progress.addBadge(id, name, icon);
-      if (added) { showToast(`Badge earned: ${name}`); sfx.badge(); }
+
+
+    badge: (
+
+      id,
+
+      name,
+
+      icon = '🏅'
+
+    ) => {
+
+      const added =
+        progress.addBadge(
+
+          id,
+
+          name,
+
+          icon
+
+        );
+
+
+      if (added) {
+
+        showToast(
+
+          `Achievement unlocked: ${name}`
+
+        );
+
+      }
+
+
       updateTopbar();
+
+
       return added;
+
     }
+
   };
+
 }
+
+
+// ==========================================
+// OPEN STAGE
+// ==========================================
 
 async function openLevel(num) {
-  const body = document.getElementById(`level-${num}-body`);
-  const bar = document.getElementById(`level-${num}-next`);
+
+  const body =
+    document.getElementById(
+      `level-${num}-body`
+    );
+
+
+  if (!body) return;
+
+
   showScreen(`level-${num}`);
+
+
   if (!mountedLevels.has(num)) {
-    body.hidden = false;
-    bar.hidden = true;
-    bar.innerHTML = '';
-    body.innerHTML = '<p style="color:var(--text-2)">Loading…</p>';
+
+    body.innerHTML = `
+
+      <div class="loading-stage">
+
+        ✦ Entering Mathscape...
+
+      </div>
+
+    `;
+
+
     try {
-      const mod = await levelLoaders[num]();
+
+      const module =
+        await levelLoaders[num]();
+
+
       body.innerHTML = '';
-      resetAttempt(num);
-      attachLevelDelegation(body, num);
-      mod.mount(body, buildApi(num));
+
+
+      module.mount(
+
+        body,
+
+        buildApi(num)
+
+      );
+
+
       mountedLevels.add(num);
-      mountedModules[num] = mod;
-    } catch (err) {
-      console.error('Failed to load level', num, err);
-      body.innerHTML = `<p style="color:var(--danger)">Failed to load this level. Please refresh and try again.</p>`;
+
+
+      mountedModules[num] =
+        module;
+
     }
-  }
-  // If already mounted this session, leave body/bar state untouched — this naturally
-  // re-shows either the in-progress body (not yet completed) or the last results panel
-  // (already completed), whichever was left showing.
-}
 
-/** Re-mounts a level's module fresh into its body, for the results panel's "Replay" button. */
-function replay(num) {
-  const body = document.getElementById(`level-${num}-body`);
-  const bar = document.getElementById(`level-${num}-next`);
-  const mod = mountedModules[num];
-  if (!mod) return;
-  bar.hidden = true;
-  bar.innerHTML = '';
-  body.hidden = false;
-  body.innerHTML = '';
-  resetAttempt(num);
-  attachLevelDelegation(body, num);
-  mod.mount(body, buildApi(num));
-}
 
-/**
- * Renders the unified results panel after a level is completed: hides the interactive
- * level body and shows only a score readout + optional badge/recap/checklist + actions
- * (Replay, Start Next Level, Level Map) — per the "just show results" flow.
- */
-function showResults(num, score, meta, extraBadges) {
-  const body = document.getElementById(`level-${num}-body`);
-  const bar = document.getElementById(`level-${num}-next`);
-  if (!bar) return;
-  body.hidden = true;
+    catch (error) {
 
-  const isLastGraded = num >= TOTAL_LEVELS;
-  const nextMeta = levelMeta.find(m => m.num === num + 1 && !m.bonus);
-  const heading = meta.heading || 'Level complete';
-  const detail = meta.detail || '';
+      console.error(
 
-  const allBadges = [...(meta.badge ? [meta.badge] : []), ...(extraBadges || [])];
-  const badgeHtml = allBadges.length
-    ? `<div class="results-badge-row">${allBadges.map(b => `<span class="badge-chip badge-pop">${b.name} earned!</span>`).join('')}</div>`
-    : '';
+        'Failed to load stage:',
 
-  const recapHtml = (meta.recap && meta.recap.length)
-    ? `<div class="results-recap">${meta.recap.map(r => `<div class="rc-item"><h4>${r.title}</h4><p>${r.body}</p></div>`).join('')}</div>`
-    : '';
+        num,
 
-  const checklistHtml = (meta.checklist && meta.checklist.length)
-    ? `<ul class="results-checklist">${meta.checklist.map(c => `<li class="${c.pass ? 'pass' : 'fail'}"><span>${c.label}</span></li>`).join('')}</ul>`
-    : '';
+        error
 
-  // Next-step button(s): a core level offers the next core level; finishing the
-  // last graded level (5) offers both bonus levels as optional side quests;
-  // finishing a bonus level itself offers no forced next step.
-  let nextButtonsHtml = '';
-  if (!isLastGraded && nextMeta) {
-    nextButtonsHtml = `<button class="btn btn-primary" id="btn-goto-next">Start: ${nextMeta.title} →</button>`;
-  } else if (num === TOTAL_LEVELS) {
-    nextButtonsHtml = levelMeta
-      .filter(m => m.bonus)
-      .map(b => `<button class="btn btn-primary" data-bonus-num="${b.num}">Try: ${b.title} →</button>`)
-      .join('');
-  }
+      );
 
-  bar.hidden = false;
-  bar.classList.remove('pop-in');
-  bar.innerHTML = `
-    <div class="results-panel">
-      <span class="tag-label">// Level ${num} — Results</span>
-      <div class="results-score-row">
-        <div>
-          <h3>${heading}</h3>
-          <p class="results-detail">${detail}</p>
+
+      body.innerHTML = `
+
+        <div class="error-stage">
+
+          <h3>⚠️ Unable to load this stage</h3>
+
+          <p>
+            Please refresh the page and try again.
+          </p>
+
         </div>
-        <div class="results-score"><span class="count-target" data-target="${Math.max(0, Math.min(100, Math.round(score)))}">0</span><span class="results-score-max">/100</span></div>
-      </div>
-      ${badgeHtml}
-      ${recapHtml}
-      ${checklistHtml}
-      <div class="results-actions">
-        <button class="btn btn-ghost" id="btn-replay">↺ Replay Level</button>
-        ${nextButtonsHtml}
-        <button class="btn btn-ghost" id="btn-goto-map">Level Map</button>
-      </div>
-    </div>
-  `;
-  animateCountTargets(bar);
-  // Force reflow so the pop-in animation class re-triggers even if the bar was already shown before.
-  void bar.offsetWidth;
-  bar.classList.add('pop-in');
 
-  const nextBtn = bar.querySelector('#btn-goto-next');
-  if (nextBtn) nextBtn.addEventListener('click', () => openLevel(num + 1));
-  const bonusBtns = bar.querySelectorAll('[data-bonus-num]');
-  bonusBtns.forEach(btn => btn.addEventListener('click', () => openLevel(Number(btn.dataset.bonusNum))));
-  bar.querySelector('#btn-replay').addEventListener('click', () => replay(num));
-  bar.querySelector('#btn-goto-map').addEventListener('click', () => navTo('map'));
-  bar.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      `;
+
+    }
+
+  }
+
 }
+
+
+// ==========================================
+// REPLAY STAGE
+// ==========================================
+
+function replay(num) {
+
+  const body =
+    document.getElementById(
+      `level-${num}-body`
+    );
+
+
+  const module =
+    mountedModules[num];
+
+
+  if (!body || !module) return;
+
+
+  body.innerHTML = '';
+
+
+  module.mount(
+
+    body,
+
+    buildApi(num)
+
+  );
+
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: 'smooth'
+
+  });
+
+}
+
+
+// ==========================================
+// STAGE RESULTS
+// ==========================================
+
+function showResults(
+
+  num,
+
+  score,
+
+  meta
+
+) {
+
+  const body =
+    document.getElementById(
+      `level-${num}-body`
+    );
+
+
+  if (!body) return;
+
+
+  const isFinal =
+    num === TOTAL_LEVELS;
+
+
+  const nextStage =
+    levelMeta.find(
+
+      stage =>
+
+        stage.num === num + 1
+
+    );
+
+
+  body.innerHTML = `
+
+    <div class="results-panel">
+
+
+      <div class="results-header">
+
+        <div class="results-icon">
+
+          ${
+            score >= 90
+
+              ? '🏆'
+
+              : score >= 70
+
+                ? '⭐'
+
+                : '📘'
+          }
+
+        </div>
+
+
+        <div>
+
+          <span class="tag-label">
+
+            ${
+              isFinal
+
+                ? 'FINAL CHALLENGE COMPLETE'
+
+                : `STAGE ${num} COMPLETE`
+            }
+
+          </span>
+
+
+          <h3>
+
+            ${
+              meta.heading ||
+
+              (
+                isFinal
+
+                  ? 'You Restored Mathscape!'
+                  : 'Mission Complete!'
+              )
+            }
+
+          </h3>
+
+
+          <p>
+
+            ${
+              meta.detail ||
+
+              'You have completed this mathematical challenge.'
+            }
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="results-score">
+
+        ${Math.round(score)}
+
+        <span>/100</span>
+
+      </div>
+
+
+      <div class="results-actions">
+
+
+        <button
+          class="btn btn-ghost"
+          id="btn-replay"
+        >
+
+          ↺ Replay Stage
+
+        </button>
+
+
+        ${
+          !isFinal && nextStage
+
+            ? `
+
+              <button
+                class="btn btn-primary"
+                id="btn-next-stage"
+              >
+
+                Continue to
+                ${nextStage.title}
+                →
+
+              </button>
+
+            `
+
+            : `
+
+              <button
+                class="btn btn-primary"
+                id="btn-finish-journey"
+              >
+
+                🏆 Finish Journey
+
+              </button>
+
+            `
+        }
+
+
+        <button
+          class="btn btn-ghost"
+          id="btn-goto-map"
+        >
+
+          🗺️ World Map
+
+        </button>
+
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById('btn-replay')
+    ?.addEventListener('click', () => {
+
+      replay(num);
+
+    });
+
+
+  document
+    .getElementById('btn-next-stage')
+    ?.addEventListener('click', () => {
+
+      openLevel(num + 1);
+
+    });
+
+
+  document
+    .getElementById('btn-finish-journey')
+    ?.addEventListener('click', () => {
+
+      navTo('map');
+
+      showToast(
+        'Congratulations! You have completed MATHSCAPE! 🎉'
+      );
+
+    });
+
+
+  document
+    .getElementById('btn-goto-map')
+    ?.addEventListener('click', () => {
+
+      navTo('map');
+
+    });
+
+}
+
+
+// ==========================================
+// TOAST NOTIFICATION
+// ==========================================
 
 let toastTimer = null;
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
+
+
+function showToast(message) {
+
+  const toast =
+    document.getElementById('toast');
+
+
+  if (!toast) return;
+
+
+  toast.textContent = message;
+
+
   toast.classList.remove('show');
+
+
   void toast.offsetWidth;
+
+
   toast.classList.add('show');
+
+
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+
+
+  toastTimer =
+    setTimeout(() => {
+
+      toast.classList.remove('show');
+
+    }, 3200);
+
 }
 
-// Initial boot.
-lastKnownScore = progress.totalScore();
-updateTopbar();
-initIntro({ onFinish: () => navTo('map') });
 
-// Ambient background animation lives behind the landing hero.
-initBgConstellation(document.getElementById('landing-bg-canvas'));
-if (screens.landing && screens.landing.classList.contains('active')) startBgConstellation();
+// ==========================================
+// INITIALIZE APPLICATION
+// ==========================================
+
+updateTopbar();
+
+renderMap();
