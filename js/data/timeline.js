@@ -1,61 +1,159 @@
-// timeline.js — historically-grounded content for Level 1 (History of Ontologies).
+// timeline.js
+// ============================================
+// MATHSCAPE — LEVEL 1 DATA
+// The Lost Pattern
+// Introduction to Mathematical Sequences
+// ============================================
 
 export const timelineEvents = [
   {
-    id: 'aristotle',
-    year: '~350 BCE',
-    title: "Aristotle's Categories",
-    text: `Long before computers, the philosopher Aristotle proposed a system of "categories" — substance, quantity, quality, relation, place, time, and more — as the fundamental ways to classify anything that exists. This was arguably the first formal attempt at an "ontology": a structured account of what kinds of things exist and how they relate. His hierarchical classification of living things (genus and species) is a direct ancestor of the class hierarchies used in modern ontologies.`
+    id: "arrival",
+    year: "01",
+    title: "The Silent Valley",
+    text: `
+      You have entered the first region of Mathscape: 
+      <strong>The Silent Valley</strong>.
+      <br><br>
+      Once, everything in this land followed a perfect mathematical order.
+      Trees grew in patterns. Bridges were built using numerical rules.
+      Even the stars above the valley moved according to hidden sequences.
+      <br><br>
+      But something has changed.
+      <br><br>
+      The patterns are beginning to disappear.
+    `
   },
+
   {
-    id: 'ai-expert-systems',
-    year: '1970s–1980s',
-    title: 'Knowledge Representation & Expert Systems',
-    text: `As Artificial Intelligence matured, researchers needed formal ways to encode human expert knowledge into computer systems. Expert systems like MYCIN (medical diagnosis) and semantic networks / frames (Minsky) represented facts as structured relationships between concepts. The AI community borrowed the philosophical term "ontology" to describe an explicit specification of the concepts, categories, and relationships within a domain — a shared vocabulary machines could reason over.`
+    id: "signal",
+    year: "02",
+    title: "A Strange Signal",
+    text: `
+      As you explore deeper into the valley, you discover mysterious symbols:
+      <br><br>
+      <strong>2, 4, 6, 8, ...</strong>
+      <br><br>
+      At first, they seem like ordinary numbers.
+      But every number follows a rule.
+      <br><br>
+      The difference between each term is always <strong>2</strong>.
+      <br><br>
+      You have discovered your first mathematical sequence.
+    `
   },
+
   {
-    id: 'semantic-web',
-    year: '2001',
-    title: 'The Semantic Web (Tim Berners-Lee)',
-    text: `In a landmark Scientific American article, Tim Berners-Lee (inventor of the Web), James Hendler, and Ora Lassila proposed the "Semantic Web" — a web where data itself is machine-readable and linked with explicit meaning, not just human-readable pages. This vision required standardized ways to describe data: RDF (Resource Description Framework) for representing facts as subject–predicate–object triples, and OWL (Web Ontology Language) for defining rich, logic-based ontologies that support automated reasoning and inference.`
+    id: "pattern",
+    year: "03",
+    title: "The Hidden Rule",
+    text: `
+      A sequence is not simply a collection of random numbers.
+      <br><br>
+      Every sequence follows a specific pattern or rule.
+      <br><br>
+      For example:
+      <br><br>
+      <strong>3, 6, 9, 12, 15, ...</strong>
+      <br><br>
+      Each term increases by <strong>3</strong>.
+      <br><br>
+      The rule is the key to predicting what comes next.
+    `
   },
+
   {
-    id: 'knowledge-graph',
-    year: '2012',
-    title: 'Google Knowledge Graph',
-    text: `Google launched its "Knowledge Graph," publicly popularizing the term. It connected hundreds of millions of real-world entities (people, places, things) and the relationships between them, powering the "Knowledge Panels" you see beside search results. This showed the industry that large-scale, entity-relationship graphs — grounded in ontological schemas — could dramatically improve search, disambiguation, and reasoning at web scale. Wikidata, schema.org, and countless enterprise knowledge graphs followed.`
+    id: "challenge",
+    year: "04",
+    title: "The Broken Path",
+    text: `
+      Suddenly, the path ahead begins to collapse.
+      Strange symbols appear on the ground:
+      <br><br>
+      <strong>5, 10, 15, ?, 25</strong>
+      <br><br>
+      One number is missing.
+      <br><br>
+      To restore the path, you must identify the hidden pattern.
+      <br><br>
+      Look carefully.
+      Each term increases by <strong>5</strong>.
+      <br><br>
+      The missing number is <strong>20</strong>.
+    `
   },
+
   {
-    id: 'llm-graphrag',
-    year: '2020s',
-    title: 'LLMs + Knowledge Graphs: GraphRAG',
-    text: `Large Language Models (LLMs) are fluent but can "hallucinate" facts and struggle with precise multi-step reasoning. Today, hybrid systems combine LLMs with knowledge graphs: Retrieval-Augmented Generation (RAG) fetches relevant facts before the model answers, and "GraphRAG" specifically traverses graph relationships (multi-hop) to gather connected context that plain document search would miss. Ontologies now serve as the structured backbone that keeps AI answers grounded, explainable, and interoperable across enterprise data.`
+    id: "discovery",
+    year: "05",
+    title: "The First Pattern Restored",
+    text: `
+      The moment you solve the pattern, the valley begins to change.
+      <br><br>
+      The broken path is restored.
+      Light returns to the surrounding landscape.
+      <br><br>
+      You now understand an important principle:
+      <br><br>
+      <strong>Mathematics is full of patterns.</strong>
+      <br><br>
+      A sequence allows us to describe, predict, and understand those patterns.
+      <br><br>
+      But this is only the beginning of your journey.
+    `
   }
 ];
 
+
+// ============================================
+// LEVEL 1 — QUICK CHECK
+// ============================================
+
 export const historyQuiz = [
   {
-    q: 'Who is credited with an early philosophical precursor to ontologies through his system of categories?',
-    options: ['Isaac Newton', 'Aristotle', 'Alan Turing', 'Charles Darwin'],
+    q: "Which number completes the sequence 2, 4, 6, 8, ... ?",
+    options: [
+      "9",
+      "10",
+      "12",
+      "16"
+    ],
     answer: 1,
-    hint: 'Think ancient Greece, ~350 BCE — the philosopher who classified living things by genus and species.'
+    hint: "Look at the difference between consecutive terms."
   },
+
   {
-    q: 'Which language, introduced alongside the Semantic Web vision, enables rich logic-based ontologies with automated reasoning?',
-    options: ['HTML', 'OWL (Web Ontology Language)', 'CSS', 'JSON'],
+    q: "What is the common difference in the sequence 3, 6, 9, 12, ... ?",
+    options: [
+      "2",
+      "3",
+      "4",
+      "6"
+    ],
     answer: 1,
-    hint: 'It stands for "Web Ontology Language" — a somewhat playful acronym that doesn\'t match its initials.'
+    hint: "Subtract one term from the next: 6 − 3."
   },
+
   {
-    q: 'What foundational data model represents facts as subject–predicate–object statements?',
-    options: ['RDF triples', 'SQL tables', 'CSV rows', 'YAML documents'],
-    answer: 0,
-    hint: 'This is the same 3-part structure you used in Level 2\'s triple builder, e.g. "Cat —isA→ Animal".'
+    q: "Which statement best describes a mathematical sequence?",
+    options: [
+      "A random collection of numbers",
+      "A list of numbers arranged according to a specific rule",
+      "A collection of equations",
+      "A graph with no numerical pattern"
+    ],
+    answer: 1,
+    hint: "Think about the hidden rule connecting the terms."
   },
+
   {
-    q: 'What technique lets modern LLM systems traverse a knowledge graph to gather connected, multi-hop context before answering?',
-    options: ['GraphRAG', 'CSS Grid', 'OAuth', 'WebSockets'],
-    answer: 0,
-    hint: 'It combines "Retrieval-Augmented Generation" with graph traversal — the clue is in the name.'
+    q: "What number is missing in the sequence 5, 10, 15, ?, 25?",
+    options: [
+      "18",
+      "20",
+      "22",
+      "30"
+    ],
+    answer: 1,
+    hint: "Each term increases by the same amount."
   }
 ];
