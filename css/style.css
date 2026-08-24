@@ -1470,3 +1470,27 @@ button,
   background: #54d6ca;
   color: #06201e;
 }
+/* =========================================
+   HERO TITLE – LIGHT MODE FIX
+========================================= */
+
+.hero h1,
+.hero-title,
+.welcome-title {
+  color: #172033 !important;
+  opacity: 1 !important;
+  text-shadow: none;
+}
+
+/* Jika WELCOME dan TO MATHSCAPE punya elemen terpisah */
+.hero h1 span,
+.hero-title span,
+.welcome-title span {
+  color: #172033 !important;
+  opacity: 1 !important;
+}
+
+/* Garis // tetap menjadi identitas Mathscape */
+.hero-title::first-letter {
+  color: #35bdb4;
+}
