@@ -71,7 +71,7 @@ export function mount(container, api) {
 <div class="stage-illustration">
 
   <img
-    src="assets/svg/Bunga%20Angka.svg"
+    src="./assets/Bunga%20Angka"
     alt="Bunga Angka - Mathematical Pattern"
     class="stage-illustration-image"
   >
