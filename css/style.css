@@ -181,7 +181,8 @@ body::after {
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-0);
+  color: #ffffff;
+  font-weight: 700;
 }
 .brand-name::after {
   content: "";
@@ -1526,4 +1527,7 @@ button,
 
   text-shadow:
     0 2px 8px rgba(32, 191, 178, 0.08);
+}
+.brand {
+  color: #2ee6c8;
 }
