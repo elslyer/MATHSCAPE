@@ -31,10 +31,6 @@ export function mount(container, api) {
 
       <section class="stage-hero">
 
-        <div class="stage-label">
-          STAGE 01
-        </div>
-
         <h1>
           PATTERN FINDER
         </h1>
