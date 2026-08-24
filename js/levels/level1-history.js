@@ -184,78 +184,51 @@ export function mount(container, api) {
         </p>
 
 
-        <!-- Stadium illustration -->
+      <!-- Stadium illustration -->
 
-        <div class="stadium-pattern">
+<div class="stadium-pattern">
 
-          <div class="stadium-row">
+  <div class="stadium-row">
+    <span>ROW 1</span>
 
-            <span>
-              ROW 1
-            </span>
+    <div class="seat-bar">
+      <div style="width: 48%">
+        12 SEATS
+      </div>
+    </div>
+  </div>
 
-            <div class="seat-bar">
+  <div class="stadium-row">
+    <span>ROW 2</span>
 
-              <div style="width: 48%">
-                12 SEATS
-              </div>
+    <div class="seat-bar">
+      <div style="width: 64%">
+        16 SEATS
+      </div>
+    </div>
+  </div>
 
-            </div>
+  <div class="stadium-row">
+    <span>ROW 3</span>
 
-          </div>
+    <div class="seat-bar">
+      <div style="width: 80%">
+        20 SEATS
+      </div>
+    </div>
+  </div>
 
+  <div class="stadium-row">
+    <span>ROW 4</span>
 
-          <div class="stadium-row">
+    <div class="seat-bar">
+      <div style="width: 96%">
+        24 SEATS
+      </div>
+    </div>
+  </div>
 
-            <span>
-              ROW 2
-            </span>
-
-            <div class="seat-bar">
-
-              <div style="width: 64%">
-                16 SEATS
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="stadium-row">
-
-            <span>
-              ROW 3
-            </span>
-
-            <div class="seat-bar">
-
-              <div style="width: 80%">
-                20 SEATS
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="stadium-row">
-
-            <span>
-              ROW 4
-            </span>
-
-            <div class="seat-bar">
-
-              <div style="width: 96%">
-                24 SEATS
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
+</div>
 
 
         <!-- Question 1 -->
@@ -322,7 +295,7 @@ export function mount(container, api) {
         >
 
           <h3>
-            🧩 COMPLETE THE PATTERN
+            OMPLETE THE PATTERN
           </h3>
 
           <p>
@@ -575,7 +548,7 @@ export function mount(container, api) {
         <div class="flora-story">
 
           <div class="flora-icon">
-            🌱
+      
           </div>
 
           <div>
@@ -623,7 +596,7 @@ export function mount(container, api) {
         <div class="challenge-card">
 
           <h3>
-            🌿 ANALYZE THE GROWTH
+           ANALYZE THE GROWTH
           </h3>
 
           <p>
