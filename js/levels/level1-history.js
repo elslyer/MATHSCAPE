@@ -148,11 +148,9 @@ export function mount(container, api) {
 <!-- =====================================
      QR LEARNING ACCESS
 ====================================== -->
-
 <div class="learn-anywhere">
 
   <div class="qr-content">
-
     <span class="section-label">QR ACCESS</span>
 
     <h3>Learn Anywhere</h3>
@@ -161,21 +159,16 @@ export function mount(container, api) {
       Scan the QR code to access the learning video
       on another device.
     </p>
-
   </div>
 
-
   <div class="qr-code">
-
-    <img
-      src="assets/level1-qr-video.png"
+    <img 
+      src="assets/LEVEL%201%20QR%20(VIDEO).png"
       alt="QR Code for Level 1 Learning Video"
     >
-
   </div>
 
 </div>
-
 
 <!-- =====================================
      START MISSION
