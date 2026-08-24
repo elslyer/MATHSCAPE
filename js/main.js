@@ -194,6 +194,24 @@ if (startButton) {
 
   startButton.addEventListener('click', () => {
 
+    // Play background music
+    const backgroundMusic =
+      document.getElementById('background-music');
+
+    if (backgroundMusic) {
+
+      backgroundMusic.volume = 0.3;
+
+      backgroundMusic.play()
+        .catch(error => {
+          console.log(
+            'Background music could not start:',
+            error
+          );
+        });
+
+    }
+
     navTo('map');
 
   });
