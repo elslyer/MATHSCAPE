@@ -1,141 +1,169 @@
 // level2-concepts.js
-// Core concepts accordion + formula builder mini-game.
-
-import {
-  conceptSections,
-  firstTerms,
-  commonDifferences,
-  positions,
-  acceptedFormulas
-} from '../data/concepts.js';
-
+// Level 2 — Understanding Arithmetic Sequences
 
 export function mount(container, api) {
 
-  let sectionsOpened = new Set();
-
-  const formulas = [];
+  const sectionsOpened = new Set();
+  let sequenceBuilt = false;
 
   container.innerHTML = `
 
-    <!-- ==============================
-         CORE CONCEPTS
-    =============================== -->
-
     <div class="card">
 
-      <h3>
-        Understanding the Formula
-      </h3>
+      <h3>Understanding the Pattern</h3>
 
       <p>
-        Expand each concept to understand how a sequence
-        can be transformed into a mathematical formula.
+        Before repairing the Pattern Core, you need to understand
+        how arithmetic sequences work.
       </p>
 
-      <div id="accordion"></div>
+      <div id="accordion">
+
+        <div class="accordion-item">
+
+          <div class="accordion-head">
+            <span>What Is an Arithmetic Sequence?</span>
+            <span class="chev">▾</span>
+          </div>
+
+          <div class="accordion-body">
+            <p>
+              An arithmetic sequence is a sequence of numbers in which
+              the difference between consecutive terms is always the same.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="accordion-item">
+
+          <div class="accordion-head">
+            <span>The First Term</span>
+            <span class="chev">▾</span>
+          </div>
+
+          <div class="accordion-body">
+            <p>
+              The first term is the starting number of a sequence.
+              It is usually represented by a₁.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="accordion-item">
+
+          <div class="accordion-head">
+            <span>The Common Difference</span>
+            <span class="chev">▾</span>
+          </div>
+
+          <div class="accordion-body">
+            <p>
+              The common difference is the constant number added
+              or subtracted to move from one term to the next.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="accordion-item">
+
+          <div class="accordion-head">
+            <span>Finding the n-th Term</span>
+            <span class="chev">▾</span>
+          </div>
+
+          <div class="accordion-body">
+            <p>
+              The general formula of an arithmetic sequence is:
+            </p>
+
+            <p>
+              <strong>aₙ = a₁ + (n − 1)d</strong>
+            </p>
+
+            <p>
+              This formula allows us to find any term without
+              calculating every previous term.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
 
 
-    <!-- ==============================
-         FORMULA BUILDER
-    =============================== -->
 
     <div class="card">
 
-      <h3>
-        Formula Builder
-      </h3>
+      <h3>Pattern Explorer</h3>
 
       <p>
-        Use the information from a sequence to construct
-        its general formula. Identify the first term,
-        the common difference, and the position of the term.
+        Choose a starting number and a common difference.
+        Then generate the sequence.
       </p>
 
 
-      <div class="formula-builder">
+      <div class="sequence-builder">
 
-        <div class="formula-input-group">
+        <div class="builder-group">
 
-          <label>
-            First Term
+          <label for="sel-first-term">
+            First Term (a₁)
           </label>
 
-          <select id="sel-first-term"></select>
+          <select id="sel-first-term">
+
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+
+          </select>
 
         </div>
 
 
-        <div class="formula-input-group">
+        <div class="builder-group">
 
-          <label>
-            Common Difference
+          <label for="sel-difference">
+            Common Difference (d)
           </label>
 
-          <select id="sel-difference"></select>
+          <select id="sel-difference">
+
+            <option value="1">+1</option>
+            <option value="2">+2</option>
+            <option value="3">+3</option>
+            <option value="4">+4</option>
+            <option value="5">+5</option>
+            <option value="-2">-2</option>
+
+          </select>
 
         </div>
 
-
-        <div class="formula-input-group">
-
-          <label>
-            Term Position
-          </label>
-
-          <select id="sel-position"></select>
-
-        </div>
-
-
-        <button
-          class="btn btn-secondary"
-          id="btn-build-formula"
-        >
-          BUILD FORMULA
-        </button>
-
-      </div>
-
-
-      <div
-        class="formula-list"
-        id="formula-list"
-      ></div>
-
-
-      <div
-        style="
-          margin-top:16px;
-          display:flex;
-          gap:10px;
-          align-items:center;
-        "
-      >
 
         <button
           class="btn btn-primary"
-          id="btn-validate-formulas"
+          id="btn-build-sequence"
         >
-          VALIDATE MY FORMULA
+          BUILD PATTERN
         </button>
-
-        <span
-          id="builder-hint"
-          style="
-            color:var(--text-2);
-            font-size:0.85rem;
-          "
-        ></span>
 
       </div>
 
 
       <div
-        id="builder-result"
-        style="margin-top:14px;"
+        id="sequence-preview"
+        class="sequence-preview"
       ></div>
 
     </div>
@@ -143,496 +171,152 @@ export function mount(container, api) {
   `;
 
 
-  // ==========================================================
+  // =====================================
   // ACCORDION
-  // ==========================================================
+  // =====================================
 
-  const accordion =
-    container.querySelector('#accordion');
-
-
-  conceptSections.forEach(sec => {
-
-    const item =
-      document.createElement('div');
+  const accordionItems =
+    container.querySelectorAll('.accordion-item');
 
 
-    item.className =
-      'accordion-item';
+  accordionItems.forEach((item, index) => {
+
+    const head =
+      item.querySelector('.accordion-head');
 
 
-    item.innerHTML = `
+    head.addEventListener('click', () => {
 
-      <div class="accordion-head">
+      item.classList.toggle('open');
 
-        <span>
-          ${sec.title}
-        </span>
+      sectionsOpened.add(index);
 
-        <span class="chev">
-          ▾
-        </span>
-
-      </div>
-
-
-      <div class="accordion-body">
-
-        <p>
-          ${sec.body}
-        </p>
-
-      </div>
-
-    `;
-
-
-    item
-      .querySelector('.accordion-head')
-      .addEventListener('click', () => {
-
-        item.classList.toggle('open');
-
-        sectionsOpened.add(sec.id);
-
-        updateHint();
-
-      });
-
-
-    accordion.appendChild(item);
+    });
 
   });
 
 
+  // =====================================
+  // SEQUENCE BUILDER
+  // =====================================
 
-  // ==========================================================
-  // FORMULA BUILDER
-  // ==========================================================
-
-  const selFirstTerm =
+  const firstTerm =
     container.querySelector('#sel-first-term');
 
-
-  const selDifference =
+  const difference =
     container.querySelector('#sel-difference');
 
+  const preview =
+    container.querySelector('#sequence-preview');
 
-  const selPosition =
-    container.querySelector('#sel-position');
-
-
-  // First term options
-
-  firstTerms.forEach(value => {
-
-    const opt =
-      document.createElement('option');
-
-    opt.value = value;
-
-    opt.textContent = value;
-
-    selFirstTerm.appendChild(opt);
-
-  });
-
-
-  // Common difference options
-
-  commonDifferences.forEach(value => {
-
-    const opt =
-      document.createElement('option');
-
-    opt.value = value;
-
-    opt.textContent = value;
-
-    selDifference.appendChild(opt);
-
-  });
-
-
-  // Position options
-
-  positions.forEach(value => {
-
-    const opt =
-      document.createElement('option');
-
-    opt.value = value;
-
-    opt.textContent = value;
-
-    selPosition.appendChild(opt);
-
-  });
-
-
-
-  const formulaListEl =
-    container.querySelector('#formula-list');
-
-
-  const hintEl =
-    container.querySelector('#builder-hint');
-
-
-  const resultEl =
-    container.querySelector('#builder-result');
-
-
-  const validateBtn =
-    container.querySelector(
-      '#btn-validate-formulas'
-    );
-
-
-
-  // ==========================================================
-  // BUILD FORMULA
-  // ==========================================================
 
   container
-    .querySelector('#btn-build-formula')
+    .querySelector('#btn-build-sequence')
     .addEventListener('click', () => {
 
+      const a =
+        Number(firstTerm.value);
 
-      const firstTerm =
-        Number(selFirstTerm.value);
+      const d =
+        Number(difference.value);
 
 
-      const difference =
-        Number(selDifference.value);
+      const sequence = [];
 
 
-      const position =
-        Number(selPosition.value);
+      for (let i = 0; i < 6; i++) {
 
-
-      const formula = {
-
-        firstTerm,
-
-        difference,
-
-        position,
-
-        expression:
-          difference === 0
-            ? `Uₙ = ${firstTerm}`
-            : `Uₙ = ${firstTerm} + (${position} - 1)(${difference})`
-
-      };
-
-
-      formulas.push(formula);
-
-
-      renderFormulas();
-
-      updateHint();
-
-    });
-
-
-
-
-  // ==========================================================
-  // RENDER FORMULAS
-  // ==========================================================
-
-  function renderFormulas() {
-
-    formulaListEl.innerHTML = '';
-
-
-    formulas.forEach((formula, i) => {
-
-      const chip =
-        document.createElement('div');
-
-
-      chip.className =
-        'formula-chip';
-
-
-      chip.innerHTML = `
-
-        <div class="formula-expression">
-
-          ${formula.expression}
-
-        </div>
-
-
-        <div class="formula-detail">
-
-          First term: ${formula.firstTerm}
-
-          &nbsp; |
-
-          Common difference: ${formula.difference}
-
-          &nbsp; |
-
-          Position: ${formula.position}
-
-        </div>
-
-
-        <button
-          class="remove-btn"
-          title="Remove"
-        >
-          ✕
-        </button>
-
-      `;
-
-
-      chip
-        .querySelector('.remove-btn')
-        .addEventListener('click', () => {
-
-          formulas.splice(i, 1);
-
-          renderFormulas();
-
-          updateHint();
-
-        });
-
-
-      formulaListEl.appendChild(chip);
-
-    });
-
-  }
-
-
-
-
-  // ==========================================================
-  // UPDATE HINT
-  // ==========================================================
-
-  function updateHint() {
-
-    hintEl.textContent =
-      `${sectionsOpened.size}/${conceptSections.length} concepts explored · ${formulas.length} formula(s) built.`;
-
-  }
-
-
-
-
-  // ==========================================================
-  // FLASH MESSAGE
-  // ==========================================================
-
-  function flashHint(msg) {
-
-    hintEl.textContent = msg;
-
-    hintEl.style.color =
-      'var(--danger)';
-
-
-    setTimeout(() => {
-
-      hintEl.style.color =
-        'var(--text-2)';
-
-      updateHint();
-
-    }, 1800);
-
-  }
-
-
-
-
-  // ==========================================================
-  // VALIDATE FORMULA
-  // ==========================================================
-
-  validateBtn.addEventListener('click', () => {
-
-
-    if (sectionsOpened.size < conceptSections.length) {
-
-      resultEl.innerHTML = `
-
-        <p style="color:var(--danger)">
-
-          Explore all core concepts before validating
-          your formula.
-
-        </p>
-
-      `;
-
-      return;
-
-    }
-
-
-
-    if (formulas.length < 1) {
-
-      resultEl.innerHTML = `
-
-        <p style="color:var(--danger)">
-
-          Build at least one formula before validating.
-
-        </p>
-
-      `;
-
-      return;
-
-    }
-
-
-
-    let correctCount = 0;
-
-
-    formulas.forEach(formula => {
-
-      const key =
-        `${formula.firstTerm}|${formula.difference}`;
-
-
-      formula.valid =
-        acceptedFormulas.has(key);
-
-
-      if (formula.valid) {
-
-        correctCount++;
+        sequence.push(
+          a + i * d
+        );
 
       }
 
+
+      preview.innerHTML = `
+
+        <div class="sequence-result">
+
+          ${sequence.map((number, index) => `
+
+            <div class="sequence-term">
+
+              <span>
+                a${index + 1}
+              </span>
+
+              <strong>
+                ${number}
+              </strong>
+
+            </div>
+
+          `).join('')}
+
+        </div>
+
+
+        <div class="sequence-formula">
+
+          aₙ = ${a} + (${d})(n − 1)
+
+        </div>
+
+      `;
+
+
+      sequenceBuilt = true;
+
+
+      checkComplete();
+
     });
 
 
+  // =====================================
+  // LEVEL COMPLETION
+  // =====================================
 
-    renderFormulasWithValidity();
-
-
-
-    // ========================================================
-    // SCORING
-    // ========================================================
-
-    const conceptsScore =
-      Math.min(
-        50,
-        sectionsOpened.size *
-        (50 / conceptSections.length)
-      );
-
-
-    const formulaScore =
-      Math.min(
-        50,
-        correctCount * 25
-      );
-
-
-    const score =
-      Math.round(
-        conceptsScore +
-        formulaScore
-      );
-
-
-
-    let badge = null;
-
+  function checkComplete() {
 
     if (
-      correctCount > 0 &&
-      sectionsOpened.size === conceptSections.length
+      sectionsOpened.size === 4 &&
+      sequenceBuilt
     ) {
 
       const added =
         api.badge(
-          'formula-finder',
-          'Formula Finder',
+          'pattern-explorer',
+          'Pattern Explorer',
           ''
         );
+
+
+      let badge = null;
 
 
       if (added) {
 
         badge = {
-
-          name:
-            'Formula Finder',
-
-          icon:
-            ''
-
+          name: 'Pattern Explorer',
+          icon: ''
         };
 
       }
 
+
+      api.complete(100, {
+
+        heading: 'Pattern Restored',
+
+        detail:
+          'You explored every concept and successfully generated an arithmetic sequence.',
+
+        badge
+
+      });
+
     }
-
-
-
-    api.complete(score, {
-
-      heading:
-
-        correctCount > 0
-          ? 'Formula discovered'
-          : 'Formula needs revision',
-
-
-      detail:
-
-        `Concepts explored ${sectionsOpened.size}/${conceptSections.length} · ` +
-        `Valid formulas ${correctCount}/${formulas.length}. ` +
-        `You are learning how patterns can be transformed into general formulas.`,
-
-      badge
-
-    });
-
-  });
-
-
-
-
-  // ==========================================================
-  // VALIDITY DISPLAY
-  // ==========================================================
-
-  function renderFormulasWithValidity() {
-
-    [
-      ...formulaListEl.children
-    ]
-    .forEach((chip, i) => {
-
-      chip.classList.toggle(
-        'valid',
-        formulas[i].valid
-      );
-
-
-      chip.classList.toggle(
-        'invalid',
-        !formulas[i].valid
-      );
-
-    });
 
   }
 
