@@ -1,163 +1,639 @@
-// level2-concepts.js — Core concepts accordion + drag/connect triple-builder mini-game.
-import { conceptSections, builderNodes, builderPredicates, acceptedTriples, knownWrongTriples } from '../data/concepts.js';
+// level2-concepts.js
+// Core concepts accordion + formula builder mini-game.
+
+import {
+  conceptSections,
+  firstTerms,
+  commonDifferences,
+  positions,
+  acceptedFormulas
+} from '../data/concepts.js';
+
 
 export function mount(container, api) {
+
   let sectionsOpened = new Set();
-  const triples = []; // { subj, pred, obj, valid }
-  let validated = false;
+
+  const formulas = [];
 
   container.innerHTML = `
+
+    <!-- ==============================
+         CORE CONCEPTS
+    =============================== -->
+
     <div class="card">
-      <h3>Core Concepts</h3>
-      <p>Expand each concept to learn it. Then try the triple-builder challenge below.</p>
+
+      <h3>
+        Understanding the Formula
+      </h3>
+
+      <p>
+        Expand each concept to understand how a sequence
+        can be transformed into a mathematical formula.
+      </p>
+
       <div id="accordion"></div>
+
     </div>
+
+
+    <!-- ==============================
+         FORMULA BUILDER
+    =============================== -->
+
     <div class="card">
-      <h3>Mini Builder: Create Semantic Triples</h3>
-      <p>Pick a <strong>subject</strong>, a <strong>predicate</strong> (relationship), and an <strong>object</strong> to form a triple — just like <code>(Cat, isA, Animal)</code>. Build at least 3 triples, including one hierarchy relationship (isA / subClassOf), then click <em>Validate</em>.</p>
-      <div class="triple-builder">
-        <select id="sel-subj"></select>
-        <span>—</span>
-        <select id="sel-pred"></select>
-        <span>→</span>
-        <select id="sel-obj"></select>
-        <button class="btn btn-secondary" id="btn-add-triple">+ Add Triple</button>
+
+      <h3>
+        Formula Builder
+      </h3>
+
+      <p>
+        Use the information from a sequence to construct
+        its general formula. Identify the first term,
+        the common difference, and the position of the term.
+      </p>
+
+
+      <div class="formula-builder">
+
+        <div class="formula-input-group">
+
+          <label>
+            First Term
+          </label>
+
+          <select id="sel-first-term"></select>
+
+        </div>
+
+
+        <div class="formula-input-group">
+
+          <label>
+            Common Difference
+          </label>
+
+          <select id="sel-difference"></select>
+
+        </div>
+
+
+        <div class="formula-input-group">
+
+          <label>
+            Term Position
+          </label>
+
+          <select id="sel-position"></select>
+
+        </div>
+
+
+        <button
+          class="btn btn-secondary"
+          id="btn-build-formula"
+        >
+          BUILD FORMULA
+        </button>
+
       </div>
-      <div class="triple-list" id="triple-list"></div>
-      <div style="margin-top:16px; display:flex; gap:10px; align-items:center;">
-        <button class="btn btn-primary" id="btn-validate-triples">Validate My Ontology</button>
-        <span id="builder-hint" style="color:var(--text-2); font-size:0.85rem;"></span>
+
+
+      <div
+        class="formula-list"
+        id="formula-list"
+      ></div>
+
+
+      <div
+        style="
+          margin-top:16px;
+          display:flex;
+          gap:10px;
+          align-items:center;
+        "
+      >
+
+        <button
+          class="btn btn-primary"
+          id="btn-validate-formulas"
+        >
+          VALIDATE MY FORMULA
+        </button>
+
+        <span
+          id="builder-hint"
+          style="
+            color:var(--text-2);
+            font-size:0.85rem;
+          "
+        ></span>
+
       </div>
-      <div id="builder-result" style="margin-top:14px;"></div>
+
+
+      <div
+        id="builder-result"
+        style="margin-top:14px;"
+      ></div>
+
     </div>
+
   `;
 
-  // --- Accordion ---
-  const accordion = container.querySelector('#accordion');
+
+  // ==========================================================
+  // ACCORDION
+  // ==========================================================
+
+  const accordion =
+    container.querySelector('#accordion');
+
+
   conceptSections.forEach(sec => {
-    const item = document.createElement('div');
-    item.className = 'accordion-item';
+
+    const item =
+      document.createElement('div');
+
+
+    item.className =
+      'accordion-item';
+
+
     item.innerHTML = `
+
       <div class="accordion-head">
-        <span>${sec.title}</span>
-        <span class="chev">▾</span>
+
+        <span>
+          ${sec.title}
+        </span>
+
+        <span class="chev">
+          ▾
+        </span>
+
       </div>
-      <div class="accordion-body"><p>${sec.body}</p></div>
+
+
+      <div class="accordion-body">
+
+        <p>
+          ${sec.body}
+        </p>
+
+      </div>
+
     `;
-    item.querySelector('.accordion-head').addEventListener('click', () => {
-      item.classList.toggle('open');
-      sectionsOpened.add(sec.id);
-      updateHint();
-    });
-    accordion.appendChild(item);
-  });
 
-  // --- Triple builder selects ---
-  const selSubj = container.querySelector('#sel-subj');
-  const selPred = container.querySelector('#sel-pred');
-  const selObj = container.querySelector('#sel-obj');
-  [selSubj, selObj].forEach(sel => {
-    builderNodes.forEach(n => {
-      const opt = document.createElement('option');
-      opt.value = n; opt.textContent = n;
-      sel.appendChild(opt);
-    });
-  });
-  builderPredicates.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p; opt.textContent = p;
-    selPred.appendChild(opt);
-  });
-  selObj.selectedIndex = 2; // default to "Animal" so first example is meaningful
 
-  const tripleListEl = container.querySelector('#triple-list');
-  const hintEl = container.querySelector('#builder-hint');
-  const resultEl = container.querySelector('#builder-result');
-  const validateBtn = container.querySelector('#btn-validate-triples');
+    item
+      .querySelector('.accordion-head')
+      .addEventListener('click', () => {
 
-  container.querySelector('#btn-add-triple').addEventListener('click', () => {
-    const subj = selSubj.value, pred = selPred.value, obj = selObj.value;
-    if (subj === obj) {
-      flashHint('A subject and object should usually be different things.');
-      return;
-    }
-    triples.push({ subj, pred, obj });
-    renderTriples();
-    updateHint();
-  });
+        item.classList.toggle('open');
 
-  function renderTriples() {
-    tripleListEl.innerHTML = '';
-    triples.forEach((t, i) => {
-      const chip = document.createElement('div');
-      chip.className = 'triple-chip';
-      chip.innerHTML = `
-        <span class="subj">${t.subj}</span>
-        <span class="pred">${t.pred}</span>
-        <span class="obj">${t.obj}</span>
-        <button class="remove-btn" title="Remove">✕</button>
-      `;
-      chip.querySelector('.remove-btn').addEventListener('click', () => {
-        triples.splice(i, 1);
-        renderTriples();
+        sectionsOpened.add(sec.id);
+
         updateHint();
+
       });
-      tripleListEl.appendChild(chip);
+
+
+    accordion.appendChild(item);
+
+  });
+
+
+
+  // ==========================================================
+  // FORMULA BUILDER
+  // ==========================================================
+
+  const selFirstTerm =
+    container.querySelector('#sel-first-term');
+
+
+  const selDifference =
+    container.querySelector('#sel-difference');
+
+
+  const selPosition =
+    container.querySelector('#sel-position');
+
+
+  // First term options
+
+  firstTerms.forEach(value => {
+
+    const opt =
+      document.createElement('option');
+
+    opt.value = value;
+
+    opt.textContent = value;
+
+    selFirstTerm.appendChild(opt);
+
+  });
+
+
+  // Common difference options
+
+  commonDifferences.forEach(value => {
+
+    const opt =
+      document.createElement('option');
+
+    opt.value = value;
+
+    opt.textContent = value;
+
+    selDifference.appendChild(opt);
+
+  });
+
+
+  // Position options
+
+  positions.forEach(value => {
+
+    const opt =
+      document.createElement('option');
+
+    opt.value = value;
+
+    opt.textContent = value;
+
+    selPosition.appendChild(opt);
+
+  });
+
+
+
+  const formulaListEl =
+    container.querySelector('#formula-list');
+
+
+  const hintEl =
+    container.querySelector('#builder-hint');
+
+
+  const resultEl =
+    container.querySelector('#builder-result');
+
+
+  const validateBtn =
+    container.querySelector(
+      '#btn-validate-formulas'
+    );
+
+
+
+  // ==========================================================
+  // BUILD FORMULA
+  // ==========================================================
+
+  container
+    .querySelector('#btn-build-formula')
+    .addEventListener('click', () => {
+
+
+      const firstTerm =
+        Number(selFirstTerm.value);
+
+
+      const difference =
+        Number(selDifference.value);
+
+
+      const position =
+        Number(selPosition.value);
+
+
+      const formula = {
+
+        firstTerm,
+
+        difference,
+
+        position,
+
+        expression:
+          difference === 0
+            ? `Uₙ = ${firstTerm}`
+            : `Uₙ = ${firstTerm} + (${position} - 1)(${difference})`
+
+      };
+
+
+      formulas.push(formula);
+
+
+      renderFormulas();
+
+      updateHint();
+
     });
+
+
+
+
+  // ==========================================================
+  // RENDER FORMULAS
+  // ==========================================================
+
+  function renderFormulas() {
+
+    formulaListEl.innerHTML = '';
+
+
+    formulas.forEach((formula, i) => {
+
+      const chip =
+        document.createElement('div');
+
+
+      chip.className =
+        'formula-chip';
+
+
+      chip.innerHTML = `
+
+        <div class="formula-expression">
+
+          ${formula.expression}
+
+        </div>
+
+
+        <div class="formula-detail">
+
+          First term: ${formula.firstTerm}
+
+          &nbsp; |
+
+          Common difference: ${formula.difference}
+
+          &nbsp; |
+
+          Position: ${formula.position}
+
+        </div>
+
+
+        <button
+          class="remove-btn"
+          title="Remove"
+        >
+          ✕
+        </button>
+
+      `;
+
+
+      chip
+        .querySelector('.remove-btn')
+        .addEventListener('click', () => {
+
+          formulas.splice(i, 1);
+
+          renderFormulas();
+
+          updateHint();
+
+        });
+
+
+      formulaListEl.appendChild(chip);
+
+    });
+
   }
+
+
+
+
+  // ==========================================================
+  // UPDATE HINT
+  // ==========================================================
 
   function updateHint() {
-    hintEl.textContent = `${triples.length} triple(s) added.`;
+
+    hintEl.textContent =
+      `${sectionsOpened.size}/${conceptSections.length} concepts explored · ${formulas.length} formula(s) built.`;
+
   }
+
+
+
+
+  // ==========================================================
+  // FLASH MESSAGE
+  // ==========================================================
 
   function flashHint(msg) {
+
     hintEl.textContent = msg;
-    hintEl.style.color = 'var(--danger)';
-    setTimeout(() => { hintEl.style.color = 'var(--text-2)'; updateHint(); }, 1800);
+
+    hintEl.style.color =
+      'var(--danger)';
+
+
+    setTimeout(() => {
+
+      hintEl.style.color =
+        'var(--text-2)';
+
+      updateHint();
+
+    }, 1800);
+
   }
+
+
+
+
+  // ==========================================================
+  // VALIDATE FORMULA
+  // ==========================================================
 
   validateBtn.addEventListener('click', () => {
-    if (triples.length < 3) {
-      resultEl.innerHTML = `<p style="color:var(--danger)">Add at least 3 triples before validating.</p>`;
-      return;
-    }
-    resultEl.innerHTML = '';
-    let correctCount = 0;
-    let hasHierarchy = false;
-    triples.forEach(t => {
-      const key = `${t.subj}|${t.pred}|${t.obj}`;
-      const isKnownGood = acceptedTriples.has(key);
-      const isKnownBad = knownWrongTriples.has(key);
-      // Any triple not explicitly known-bad and structurally sound (subj !== obj) counts as plausible;
-      // known-good triples are guaranteed correct, known-bad are guaranteed wrong.
-      t.valid = isKnownBad ? false : true;
-      if (isKnownGood) correctCount++;
-      if ((t.pred === 'isA' || t.pred === 'subClassOf') && !isKnownBad) hasHierarchy = true;
-    });
-    renderTriplesWithValidity();
 
-    const conceptsScore = Math.min(60, sectionsOpened.size * (60 / conceptSections.length));
-    const hierarchyBonus = hasHierarchy ? 20 : 0;
-    const tripleScore = Math.min(20, triples.filter(t => t.valid).length * 5);
-    const score = Math.round(conceptsScore + hierarchyBonus + tripleScore);
+
+    if (sectionsOpened.size < conceptSections.length) {
+
+      resultEl.innerHTML = `
+
+        <p style="color:var(--danger)">
+
+          Explore all core concepts before validating
+          your formula.
+
+        </p>
+
+      `;
+
+      return;
+
+    }
+
+
+
+    if (formulas.length < 1) {
+
+      resultEl.innerHTML = `
+
+        <p style="color:var(--danger)">
+
+          Build at least one formula before validating.
+
+        </p>
+
+      `;
+
+      return;
+
+    }
+
+
+
+    let correctCount = 0;
+
+
+    formulas.forEach(formula => {
+
+      const key =
+        `${formula.firstTerm}|${formula.difference}`;
+
+
+      formula.valid =
+        acceptedFormulas.has(key);
+
+
+      if (formula.valid) {
+
+        correctCount++;
+
+      }
+
+    });
+
+
+
+    renderFormulasWithValidity();
+
+
+
+    // ========================================================
+    // SCORING
+    // ========================================================
+
+    const conceptsScore =
+      Math.min(
+        50,
+        sectionsOpened.size *
+        (50 / conceptSections.length)
+      );
+
+
+    const formulaScore =
+      Math.min(
+        50,
+        correctCount * 25
+      );
+
+
+    const score =
+      Math.round(
+        conceptsScore +
+        formulaScore
+      );
+
+
 
     let badge = null;
-    if (hasHierarchy && sectionsOpened.size === conceptSections.length) {
-      const added = api.badge('triple-builder', 'Triple Builder', '');
-      if (added) badge = { name: 'Triple Builder', icon: '' };
+
+
+    if (
+      correctCount > 0 &&
+      sectionsOpened.size === conceptSections.length
+    ) {
+
+      const added =
+        api.badge(
+          'formula-finder',
+          'Formula Finder',
+          ''
+        );
+
+
+      if (added) {
+
+        badge = {
+
+          name:
+            'Formula Finder',
+
+          icon:
+            ''
+
+        };
+
+      }
+
     }
-    validated = true;
+
+
+
     api.complete(score, {
-      heading: hasHierarchy ? 'Ontology validated' : 'Needs a hierarchy',
-      detail: `Concepts explored ${sectionsOpened.size}/${conceptSections.length} · Valid-looking triples ${triples.filter(t => t.valid).length}/${triples.length}${hasHierarchy ? ' · includes an isA/subClassOf hierarchy' : ' — tip: add an isA/subClassOf triple next time'}.`,
+
+      heading:
+
+        correctCount > 0
+          ? 'Formula discovered'
+          : 'Formula needs revision',
+
+
+      detail:
+
+        `Concepts explored ${sectionsOpened.size}/${conceptSections.length} · ` +
+        `Valid formulas ${correctCount}/${formulas.length}. ` +
+        `You are learning how patterns can be transformed into general formulas.`,
+
       badge
+
     });
+
   });
 
-  function renderTriplesWithValidity() {
-    [...tripleListEl.children].forEach((chip, i) => {
-      chip.classList.toggle('valid', triples[i].valid);
-      chip.classList.toggle('invalid', !triples[i].valid);
+
+
+
+  // ==========================================================
+  // VALIDITY DISPLAY
+  // ==========================================================
+
+  function renderFormulasWithValidity() {
+
+    [
+      ...formulaListEl.children
+    ]
+    .forEach((chip, i) => {
+
+      chip.classList.toggle(
+        'valid',
+        formulas[i].valid
+      );
+
+
+      chip.classList.toggle(
+        'invalid',
+        !formulas[i].valid
+      );
+
     });
+
   }
+
 }
