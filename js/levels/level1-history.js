@@ -65,13 +65,11 @@ export function mount(container, api) {
  <!-- Pattern Forest Illustration -->
 
 <div class="stage-illustration">
-
   <img
-    src="./assets/Bunga%20Angka"
+    src="./assets/Bunga-Angka.png"
     alt="Bunga Angka - Mathematical Pattern"
     class="stage-illustration-image"
   >
-
 </div>
           </div>
 
