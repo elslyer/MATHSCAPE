@@ -1567,3 +1567,24 @@ export function mount(container, api) {
     });
 
 }
+/* =========================================
+   STADIUM / SOFA ILLUSTRATION
+========================================= */
+
+.stadium-pattern {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 32px 0;
+}
+
+.stadium-pattern-image {
+  width: 100%;
+  max-width: 850px;
+  height: auto;
+
+  display: block;
+  object-fit: contain;
+}
