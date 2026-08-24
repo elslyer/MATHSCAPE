@@ -1553,3 +1553,25 @@ button,
   image-rendering: pixelated;
 }
 
+/* =========================================
+   STADIUM IMAGE
+========================================= */
+
+.stadium-pattern {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 32px 0;
+}
+
+.stadium-pattern-image {
+  width: 100%;
+  max-width: 750px;
+  height: auto;
+
+  display: block;
+
+  object-fit: contain;
+}
