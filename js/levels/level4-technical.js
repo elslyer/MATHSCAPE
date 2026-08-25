@@ -280,36 +280,42 @@ export function mount(container, api) {
           </ul>
         </div>
 
-        <div class="investigation-panel">
-          <h3>Step 1: Formulate a Strategy</h3>
-          <div class="logic-box">
-            <strong>💡 INVESTIGATOR'S LOG</strong>
-<p>
-  To find out if <strong>1,350 people</strong> is enough, we first need to determine the
-  <em>maximum capacity</em> of the building.
-</p>
+<div class="investigator-log">
 
-<p>
-  We are not simply looking for the number of seats in the
-  <strong>25<sup>th</sup> row</strong>,
-  represented by
-  <strong>U<sub>25</sub></strong>.
-</p>
+  <div class="log-title">
+    INVESTIGATOR'S LOG
+  </div>
 
-<p>
-  Instead, we need to calculate the <strong>total number of seats across all 25 rows</strong>,
-  represented by:
-</p>
+  <p>
+    To find out if <strong>1,350 people</strong> is enough,
+    we first need to determine the <em>maximum capacity</em>
+    of the building.
+  </p>
 
-<div class="formula-highlight">
-  S<sub>25</sub> = U<sub>1</sub> + U<sub>2</sub> + U<sub>3</sub> + ... + U<sub>25</sub>
-</div>
+  <p>
+    We are not simply looking for the number of seats in the
+    <strong>25<sup>th</sup> row</strong>, represented by
+    <strong>U<sub>25</sub></strong>.
+  </p>
 
-<p>
-  In other words, the challenge requires us to find
-  <strong>the total sum of seats across all 25 rows</strong>,
-  or <strong>S<sub>25</sub></strong>.
-</p>
+  <p>
+    Instead, we need to calculate the
+    <strong>total number of seats across all 25 rows</strong>,
+    represented by:
+  </p>
+
+  <div class="formula-highlight">
+    S<sub>25</sub> =
+    U<sub>1</sub> + U<sub>2</sub> + U<sub>3</sub>
+    + ... + U<sub>25</sub>
+  </div>
+
+  <p>
+    In other words, the challenge requires us to find
+    <strong>the total sum of seats across all 25 rows</strong>,
+    or <strong>S<sub>25</sub></strong>.
+  </p>
+
 </div>
           <p>What mathematical formula is required to calculate the total capacity?</p>
           <div class="choice-grid">
