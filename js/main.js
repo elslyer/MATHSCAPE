@@ -478,7 +478,10 @@ function renderBadges() {
   }
 
 
-  // Sembunyikan badge Formula Finder
+  // ==========================================
+  // SEMBUNYIKAN BADGE FORMULA FINDER
+  // ==========================================
+
   const visibleBadges =
     badges.filter(
       badge =>
@@ -486,7 +489,10 @@ function renderBadges() {
     );
 
 
-  // Tampilkan badge lainnya
+  // ==========================================
+  // BUAT HTML BADGE
+  // ==========================================
+
   const badgesHTML =
     visibleBadges.map(badge => `
 
@@ -501,7 +507,10 @@ function renderBadges() {
     `).join('');
 
 
-  // Tombol Download Certificate
+  // ==========================================
+  // TOMBOL DOWNLOAD CERTIFICATE
+  // ==========================================
+
   const certificateHTML = `
 
     <button
@@ -516,31 +525,37 @@ function renderBadges() {
   `;
 
 
-// Gabungkan badge + tombol sertifikat
-badgeShelf.innerHTML =
-  badgesHTML + certificateHTML;
-}
+  // ==========================================
+  // TAMPILKAN BADGE + CERTIFICATE BUTTON
+  // ==========================================
 
-// ==========================================
-// DOWNLOAD CERTIFICATE EVENT
-// ==========================================
-
-const certificateButton =
-  document.getElementById(
-    'btn-download-certificate'
-  );
+  badgeShelf.innerHTML =
+    badgesHTML +
+    certificateHTML;
 
 
-if (certificateButton) {
+  // ==========================================
+  // EVENT DOWNLOAD CERTIFICATE
+  // ==========================================
 
-  certificateButton.addEventListener(
-    'click',
-    () => {
+  const certificateButton =
+    document.getElementById(
+      'btn-download-certificate'
+    );
 
-      downloadCertificate();
 
-    }
-  );
+  if (certificateButton) {
+
+    certificateButton.addEventListener(
+      'click',
+      () => {
+
+        downloadCertificate();
+
+      }
+    );
+
+  }
 
 }
 // ==========================================
