@@ -185,15 +185,53 @@ document
   });
 
 
-// Start Journey button
+// ==========================================
+// START JOURNEY
+// ==========================================
 
 const startButton =
   document.getElementById('btn-start');
 
 
+const playerNameInput =
+  document.getElementById('player-name');
+
+
 if (startButton) {
 
   startButton.addEventListener('click', () => {
+
+    const playerName =
+      playerNameInput.value.trim();
+
+
+    // Jangan lanjut jika nama kosong
+    if (!playerName) {
+
+      alert(
+        'Please enter your name before starting your journey.'
+      );
+
+      playerNameInput.focus();
+
+      return;
+
+    }
+
+
+    // Simpan nama pemain
+    localStorage.setItem(
+      'mathscape-player-name',
+      playerName
+    );
+
+
+    // Masuk ke World Map
+    navTo('map');
+
+  });
+
+}
 
     // Play background music
     const backgroundMusic =
