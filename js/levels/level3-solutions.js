@@ -1,424 +1,452 @@
 // ==========================================================
-// LEVEL 3 — SERIES MASTER
-// Arithmetic & Geometric Series
+// MATHSCAPE — STAGE 1: PATTERN FINDER
+// Interactive learning journey for mathematical sequences
 // ==========================================================
 
 export function mount(container, api) {
   let currentMission = 0;
+  
+  // Sistem Dynamic Scoring
+  let finalScore = 100;
+  function deductScore(points) {
+    finalScore = Math.max(0, finalScore - points);
+  }
 
   const state = {
     mission1Done: false,
     mission2Done: false,
     mission3Done: false,
-    mission4Done: false,
-    mission5Done: false,
-    score: 0
+    mission4Done: false
   };
 
   // ==========================================================
-  // MAIN STAGE & CSS
+  // MAIN STAGE LAYOUT & CSS STYLES
   // ==========================================================
 
   container.innerHTML = `
     <style>
-      /* --- SERIES MASTER SPECIFIC STYLES --- */
-      
-      .insight-box {
-        background: rgba(32, 191, 178, 0.08);
-        border-left: 4px solid var(--accent);
-        padding: 16px 20px;
-        border-radius: 0 var(--radius) var(--radius) 0;
-        margin: 20px 0;
-        font-size: 0.95rem;
-      }
-      .insight-box strong {
-        color: var(--accent);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-family: var(--font-mono);
-        margin-bottom: 8px;
-        letter-spacing: 0.05em;
-      }
-
-      /* Concept Visualization */
-      .series-concept {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: var(--bg-1);
-        border: 1px dashed var(--border-bright);
-        border-radius: var(--radius);
-        padding: 24px;
-        margin: 24px 0;
-      }
-      .concept-sequence {
-        font-family: var(--font-mono);
-        font-size: 1.6rem;
-        font-weight: bold;
-        color: var(--text-0);
-        letter-spacing: 0.1em;
-      }
-      .concept-arrow {
-        font-size: 1.5rem;
-        color: var(--accent);
-        margin: 12px 0;
-        animation: floatSymbol 2s infinite ease-in-out;
-      }
-      .concept-result {
-        background: var(--accent);
-        color: #05201b;
-        font-family: var(--font-mono);
-        font-weight: bold;
-        padding: 8px 24px;
-        border-radius: 20px;
-        letter-spacing: 0.1em;
-        box-shadow: 0 4px 15px rgba(32, 191, 178, 0.4);
-      }
-
-      /* Formula Panel */
-      .formula-panel {
-        background: #0f172a;
-        border-radius: var(--radius);
-        padding: 24px;
-        margin: 24px 0;
-        color: #f8fafc;
-        text-align: center;
-        box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        border: 1px solid var(--accent-3);
-      }
-      .formula-panel h3 { color: var(--accent); font-family: var(--font-mono); margin-bottom: 16px; font-size: 1rem; letter-spacing: 0.05em; }
-      .formula-panel .formula-display {
-        font-family: var(--font-mono);
-        font-size: 2rem;
-        font-weight: bold;
-        margin: 16px 0;
-        color: #fff;
-        text-shadow: 0 0 15px rgba(255,255,255,0.4);
-      }
-      .formula-panel p { color: #cbd5e1; font-size: 0.85rem; margin-top: 12px; }
-
-      /* Stadium Pattern */
-      .stadium-pattern {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin: 24px 0;
-      }
-      .stadium-row {
-        display: flex;
-        justify-content: space-between;
-        background: var(--bg-1);
-        padding: 12px 20px;
-        border-radius: var(--radius-sm);
-        border-left: 4px solid var(--accent-3);
-        font-family: var(--font-mono);
-      }
-      .stadium-row span { color: var(--text-2); font-weight: bold; }
-      .stadium-row strong { color: var(--text-0); font-size: 1.2rem; }
-
-      /* Input Challenges */
-      .series-challenges {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 16px;
-        margin: 24px 0;
-      }
-      .series-question {
-        background: var(--bg-1);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
+      /* --- GLOBAL STYLES --- */
+      .mathscape-stage {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: #334155;
+        max-width: 800px;
+        margin: 0 auto;
         padding: 20px;
-        text-align: center;
-        transition: all 0.3s;
+        line-height: 1.6;
       }
-      .series-question:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-      .series-question h4 { font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-0); margin: 0 0 8px 0; }
-      .series-question p { font-size: 0.9rem; color: var(--accent-2); font-weight: bold; margin-bottom: 16px; }
-      .series-question input {
+
+      h1, h2, h3 { color: #0f172a; margin-top: 0; }
+      
+      /* --- BUTTONS --- */
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+      }
+      .btn-primary {
+        background-color: #4f46e5;
+        color: white;
+        box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+      }
+      .btn-primary:hover:not(:disabled) { background-color: #4338ca; transform: translateY(-2px); }
+      .btn-large { font-size: 1.2rem; padding: 16px 32px; width: 100%; margin-top: 20px; }
+      .btn:disabled, .quiz-opt:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* --- CARDS & SECTIONS --- */
+      .story-card, .challenge-card, .lab-question {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        animation: fadeIn 0.4s ease;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .mission-section {
+        margin-top: 60px;
+        padding-top: 40px;
+        border-top: 2px dashed #cbd5e1;
+      }
+      .mission-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .mission-number {
+        display: inline-block;
+        background: #e0e7ff;
+        color: #4f46e5;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        margin-bottom: 12px;
+        letter-spacing: 1px;
+      }
+
+      /* --- HERO & ILLUSTRATIONS --- */
+      .stage-hero { text-align: center; }
+      .stage-subtitle { font-size: 1.2rem; color: #64748b; margin-bottom: 30px; }
+      .stage-illustration { margin: 30px 0; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; }
+      .stage-illustration-image { max-width: 80%; height: auto; display: block; border-radius: 12px; }
+
+      /* --- VIDEO WRAPPER (Responsive) --- */
+      .learning-video { margin: 30px 0; }
+      .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        height: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      }
+      .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* --- QUIZ OPTIONS (Buttons) --- */
+      .answer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .quiz-opt {
+        padding: 16px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        background: #f8fafc;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        color: #334155;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .quiz-opt:hover:not(:disabled) { border-color: #4f46e5; background: #e0e7ff; color: #4f46e5; }
+      .quiz-opt.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; opacity: 1; }
+      .quiz-opt.wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important; }
+
+      /* --- FEEDBACK MESSAGES --- */
+      .mission-feedback {
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        animation: fadeIn 0.3s ease;
+      }
+      .mission-feedback.success { background-color: #dcfce7; color: #15803d; border-left: 4px solid #22c55e; }
+      .mission-feedback.error { background-color: #fee2e2; color: #b91c1c; border-left: 4px solid #ef4444; }
+      .mission-feedback strong { display: block; font-size: 1.1rem; margin-bottom: 4px; }
+      .mission-feedback p { margin: 0; }
+
+      /* --- STADIUM PATTERN (Visual Bars) --- */
+      .stadium-pattern {
+        background: #f8fafc;
+        padding: 24px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      .stadium-pattern-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+
+      /* --- INPUT FIELDS & AUTOFILL --- */
+      .answer-input {
         width: 100%;
         padding: 12px;
         font-size: 1.1rem;
+        font-weight: bold;
         text-align: center;
-        border: 2px solid var(--border-bright);
-        border-radius: var(--radius-sm);
-        outline: none;
-        font-family: var(--font-mono);
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
         transition: all 0.3s;
       }
-      .series-question input.is-correct { border-color: var(--success); background: #dcfce7; color: var(--success); }
-      .series-question input.is-wrong { border-color: var(--danger); background: #fee2e2; color: var(--danger); }
+      .answer-input:focus { border-color: #4f46e5; outline: none; box-shadow: 0 0 0 3px #e0e7ff; }
+      .answer-input:disabled { opacity: 0.9; cursor: not-allowed; }
+      .answer-input.correct-autofill { border-color: #22c55e; background: #dcfce7; color: #15803d; }
+      .answer-input.wrong-autofill { border-color: #ef4444; background: #fee2e2; color: #b91c1c; }
 
-      /* Summary Grid */
-      .summary-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin: 24px 0;
-      }
-      .summary-card {
-        background: var(--bg-1);
-        padding: 20px;
-        border-radius: var(--radius);
-        border: 1px solid var(--border);
+      .sequence-display {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #4f46e5;
         text-align: center;
+        margin: 20px 0;
+        background: #e0e7ff;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px dashed #a5b4fc;
       }
-      .summary-card h3 { font-size: 1.1rem; margin-bottom: 12px; }
-      .summary-card strong {
-        display: block;
-        margin-top: 16px;
-        font-family: var(--font-mono);
-        color: var(--accent);
-        font-size: 1.2rem;
-      }
-      @media (max-width: 640px) { .summary-grid { grid-template-columns: 1fr; } }
 
-      /* Feedback Classes */
-      .feedback-success { background: #dcfce7; color: #15803d; padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid #22c55e; margin-top: 16px; animation: fadeIn 0.3s; }
-      .feedback-error { background: #fee2e2; color: #b91c1c; padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid #ef4444; margin-top: 16px; animation: fadeIn 0.3s; }
-      
-      .fade-in { animation: fadeIn 0.5s ease forwards; }
+      /* --- FLORA DATA --- */
+      .flora-data {
+        display: flex;
+        justify-content: space-between;
+        background: #f0fdf4;
+        border: 2px solid #bbf7d0;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+      }
+      .flora-data div { text-align: center; }
+      .flora-data span { display: block; font-size: 0.8rem; color: #166534; font-weight: bold; }
+      .flora-data strong { display: block; font-size: 1.2rem; color: #15803d; }
     </style>
 
-    <div class="mathscape-stage series-stage">
+    <div class="mathscape-stage">
 
       <!-- =====================================
-           STORY / HERO
+           STAGE HERO
       ====================================== -->
-      <section class="card stage-hero" id="series-hero">
-        <div class="mission-number">STAGE 03</div>
-        <h1 class="hero-title">SERIES MASTER</h1>
-        <p class="stage-subtitle">The patterns have been restored. But Mathscape still cannot calculate what they become together.</p>
+      <section class="stage-hero">
+        <h1>PATTERN FINDER</h1>
+        <p class="stage-subtitle">The patterns of Mathscape are beginning to disappear.</p>
 
         <div class="story-card" style="text-align: left;">
-          <p>You have already discovered hidden patterns and uncovered the formulas that control them.</p>
-          <p>Across Mathscape, individual numbers are no longer enough. Stadiums cannot calculate their total seats. Savings records have become incomplete. Forests have lost track of the trees planted across every row.</p>
-          <p>The Pattern Core has revealed its next secret: numbers become more powerful when they are combined.</p>
-          <p>To restore this part of Mathscape, you must master the concept of a <strong>series</strong> — the total sum of the terms in a sequence.</p>
+          <p>Deep within Mathscape, numbers once followed perfect and predictable rules.</p>
+          <p>But something has disturbed the Pattern Core. Sequences are breaking apart, and mathematical order is slowly fading away.</p>
+          <p>Your mission is to explore the hidden patterns, uncover their rules, and restore the first piece of mathematical order.</p>
         </div>
 
-        <div class="series-concept">
-          <div class="concept-sequence">3 + 6 + 9 + 12 + ...</div>
-          <div class="concept-arrow">↓</div>
-          <div class="concept-result">A SERIES</div>
+        <div class="stage-illustration">
+          <img src="./assets/Bunga-Angka.png" alt="Mathematical Pattern" class="stage-illustration-image">
         </div>
 
-        <button class="btn btn-primary btn-large" id="begin-series">
-          ENTER THE ENDLESS VALLEY →
+        <button class="btn btn-primary btn-large" id="begin-stage">
+          BEGIN THE QUEST →
         </button>
+      </section>
+
+      <!-- =====================================
+           LEARNING SECTION
+      ====================================== -->
+      <section class="mission-section" id="learning-section" hidden>
+        <div class="mission-header">
+          <span class="mission-number">DISCOVER</span>
+          <h2>Before the Investigation</h2>
+        </div>
+
+        <p style="text-align: center;">
+          Every mathematical sequence follows a rule.<br>
+          Some grow by adding the same value, while others grow by multiplying by the same factor.
+        </p>
+
+        <div class="learning-video">
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/Tj89FA-d0f8" title="Mathematical Sequences Learning Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button class="btn btn-primary btn-large" id="start-mission-1">
+            START MISSION 01 →
+          </button>
+        </div>
       </section>
 
       <!-- =====================================
            MISSION 1
       ====================================== -->
-      <section class="card mission-section fade-in" id="mission-1" hidden>
+      <section class="mission-section" id="mission-1" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 01</span>
-          <h2>THE STADIUM SUM</h2>
+          <h2>The Stadium Mystery</h2>
         </div>
 
         <div class="story-card">
-          <p>You arrive at the abandoned Mathscape Stadium. The seats are arranged in a pattern, but the stadium system can no longer calculate the total.</p>
-          <p>The first row contains 12 seats. Each following row adds 4 more seats.</p>
+          <p class="mission-story">
+            A newly built stadium follows a mysterious seating pattern.<br><br>
+            The first row contains <strong>12 seats</strong>.
+            Your task is to uncover the hidden rule.
+          </p>
         </div>
 
         <div class="stadium-pattern">
-          <div class="stadium-row"><span>ROW 1</span><strong>12</strong></div>
-          <div class="stadium-row"><span>ROW 2</span><strong>16</strong></div>
-          <div class="stadium-row"><span>ROW 3</span><strong>20</strong></div>
-          <div class="stadium-row"><span>ROW 4</span><strong>?</strong></div>
+          <img src="assets/Sofa-Angka.png" alt="Arithmetic Sequence Stadium" class="stadium-pattern-image">
         </div>
 
-        <div class="mission-card" style="text-align:center;">
-          <h3>How many seats are in the fourth row?</h3>
-          <div class="answer-grid">
-            <button class="quiz-opt answer-btn" data-answer="20">20</button>
-            <button class="quiz-opt answer-btn" data-answer="24">24</button>
-            <button class="quiz-opt answer-btn" data-answer="28">28</button>
+        <!-- Question 1 -->
+        <div class="challenge-card">
+          <h3>🔍 FIND THE RULE</h3>
+          <p>What changes from one row to the next?</p>
+          <div class="answer-grid" id="stadium-rule-options">
+            <button class="quiz-opt" data-answer="2">+2</button>
+            <button class="quiz-opt" data-answer="4">+4</button>
+            <button class="quiz-opt" data-answer="multiply2">×2</button>
+            <button class="quiz-opt" data-answer="multiply4">×4</button>
           </div>
+          <div class="mission-feedback" id="stadium-feedback" style="display:none;"></div>
         </div>
-        <div id="mission-1-feedback"></div>
+
+        <!-- Question 2 -->
+        <div class="challenge-card" id="stadium-question-2" hidden>
+          <h3>🎯 COMPLETE THE PATTERN</h3>
+          <div class="sequence-display">12 → 16 → 20 → 24 → ?</div>
+          <p style="text-align:center;">What is the next number in this arithmetic sequence?</p>
+          <div class="answer-grid" id="stadium-next-options">
+            <button class="quiz-opt" data-answer="26">26</button>
+            <button class="quiz-opt" data-answer="28">28</button>
+            <button class="quiz-opt" data-answer="32">32</button>
+          </div>
+          <div class="mission-feedback" id="stadium-next-feedback" style="display:none;"></div>
+        </div>
+
+        <button class="btn btn-primary btn-large" id="continue-mission-2" hidden>
+          CONTINUE TO MISSION 02 →
+        </button>
       </section>
+
 
       <!-- =====================================
            MISSION 2
       ====================================== -->
-      <section class="card mission-section fade-in" id="mission-2" hidden>
+      <section class="mission-section" id="mission-2" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 02</span>
-          <h2>THE ARITHMETIC ARCHIVE</h2>
+          <h2>Sequence Scanner</h2>
         </div>
 
-        <p>Inside the Arithmetic Archive, several records have been damaged. Each sequence follows a constant difference. Restore the missing totals.</p>
-
-        <div class="formula-panel">
-          <h3>ARITHMETIC SERIES FORMULA</h3>
-          <div class="formula-display">Sₙ = <span style="color:var(--accent-2);">n/2</span> [ 2a + (n − 1)d ]</div>
-          <p>Where <strong>a</strong> is the first term, <strong>d</strong> is the common difference, and <strong>n</strong> is the number of terms.</p>
+        <div class="story-card">
+          <p>
+            The Pattern Scanner can identify different mathematical sequences.<br>
+            Analyze each sequence and determine its type.
+          </p>
         </div>
 
-        <div class="insight-box">
-          <strong>💡 SYSTEM INSIGHT: The Gauss Trick</strong>
-          <p>A series (Sₙ) is just adding up the sequence (U₁, U₂, U₃...). Carl Friedrich Gauss discovered that if you pair the first and last number, the second and second-to-last number, they all sum to the same amount! That's why we multiply the pair's sum by half the total numbers (<strong>n/2</strong>).</p>
-        </div>
+        <div id="sequence-scanner"></div>
 
-        <div class="series-challenges">
-          <div class="series-question">
-            <h4>3, 6, 9, 12, ...</h4>
-            <p>Find S₅</p>
-            <input type="number" id="arith-1" placeholder="?">
-          </div>
-          <div class="series-question">
-            <h4>8, 12, 16, ...</h4>
-            <p>Find S₁₀</p>
-            <input type="number" id="arith-2" placeholder="?">
-          </div>
-          <div class="series-question">
-            <h4>15, 20, 25, ...</h4>
-            <p>Find S₈</p>
-            <input type="number" id="arith-3" placeholder="?">
-          </div>
-          <div class="series-question">
-            <h4>2, 4, 6, ...</h4>
-            <p>Find S₂₀</p>
-            <input type="number" id="arith-4" placeholder="?">
-          </div>
-        </div>
-
-        <button class="btn btn-primary btn-large" id="check-arithmetic">RESTORE THE ARCHIVE ✦</button>
-        <div id="arith-feedback"></div>
+        <button class="btn btn-primary btn-large" id="continue-mission-3" hidden>
+          CONTINUE TO MISSION 03 →
+        </button>
       </section>
+
 
       <!-- =====================================
            MISSION 3
       ====================================== -->
-      <section class="card mission-section fade-in" id="mission-3" hidden>
+      <section class="mission-section" id="mission-3" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 03</span>
-          <h2>THE GEOMETRIC PORTAL</h2>
+          <h2>Pattern Laboratory</h2>
         </div>
 
-        <p>Beyond the Arithmetic Archive stands a portal powered by multiplication. These numbers grow extremely fast by a constant ratio.</p>
-
-        <div class="formula-panel" style="border-color:var(--accent-2);">
-          <h3 style="color:var(--accent-2);">GEOMETRIC SERIES FORMULA</h3>
-          <div class="formula-display">Sₙ = <span style="color:var(--accent);">a(rⁿ − 1)</span> / (r − 1)</div>
-          <p>Where <strong>a</strong> is the first term and <strong>r</strong> is the common ratio (for r > 1).</p>
+        <div class="story-card">
+          <p>
+            Enter the Pattern Laboratory.<br>
+            Your task is to identify the hidden mathematical rule behind each sequence.
+          </p>
         </div>
 
-        <div class="series-challenges">
-          <div class="series-question">
-            <h4>2, 4, 8, 16, ...</h4>
-            <p>Find S₆</p>
-            <input type="number" id="geo-1" placeholder="?">
+        <div class="pattern-lab">
+          <div class="lab-question challenge-card">
+            <h3>🔬 EXPERIMENT A</h3>
+            <div class="sequence-display">5 → 10 → 15 → 20 → ?</div>
+            <p style="text-align:center;">What is the common difference?</p>
+            <input type="number" id="lab-answer-1" class="answer-input" placeholder="Enter your answer (e.g., 5)" />
+            <button class="btn btn-primary" style="width:100%;" id="check-lab-1">CHECK ANSWER</button>
+            <div class="mission-feedback" id="lab-feedback-1" style="display:none;"></div>
           </div>
-          <div class="series-question">
-            <h4>3, 6, 12, ...</h4>
-            <p>Find S₅</p>
-            <input type="number" id="geo-2" placeholder="?">
-          </div>
-          <div class="series-question">
-            <h4>5, 10, 20, ...</h4>
-            <p>Find S₇</p>
-            <input type="number" id="geo-3" placeholder="?">
+
+          <div class="lab-question challenge-card" id="lab-question-2" hidden>
+            <h3>🔬 EXPERIMENT B</h3>
+            <div class="sequence-display">2 → 6 → 18 → 54 → ?</div>
+            <p style="text-align:center;">What is the common ratio?</p>
+            <input type="number" id="lab-answer-2" class="answer-input" placeholder="Enter your answer" />
+            <button class="btn btn-primary" style="width:100%;" id="check-lab-2">CHECK ANSWER</button>
+            <div class="mission-feedback" id="lab-feedback-2" style="display:none;"></div>
           </div>
         </div>
 
-        <button class="btn btn-primary btn-large" id="check-geometric">ACTIVATE THE PORTAL ✦</button>
-        <div id="geo-feedback"></div>
+        <button class="btn btn-primary btn-large" id="continue-mission-4" hidden>
+          CONTINUE TO MISSION 04 →
+        </button>
       </section>
+
 
       <!-- =====================================
            MISSION 4
       ====================================== -->
-      <section class="card mission-section fade-in" id="mission-4" hidden>
+      <section class="mission-section" id="mission-4" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 04</span>
-          <h2>THE SAVINGS VAULT</h2>
+          <h2>Flora's Growth</h2>
         </div>
 
-        <div class="story-card">
-          <p>The Mathscape Treasury has lost its savings record.</p>
-          <p>Rina saved <strong>100,000</strong> during the first month. Every following month, she increased her savings by <strong>50,000</strong>.</p>
+        <div class="story-card flora-story">
+          <p>
+            🌱 Rara has been observing her plant, Flora.<br>
+            Each week, she records the number of new leaves.
+          </p>
         </div>
 
-        <div class="insight-box" style="border-color: var(--accent-3);">
-          <strong style="color:var(--accent-3);">💡 SYSTEM INSIGHT: Real World Application</strong>
-          <p>Because Rina adds a fixed amount (+50,000) every month, her savings represent an <strong>Arithmetic Series</strong>. The total money she has is the <em>Sum</em> of all those months combined!</p>
-        </div>
-
-        <div class="series-challenges">
-          <div class="series-question">
-            <h3 style="font-size:1.1rem; margin-bottom:10px;">Total savings after 12 months?</h3>
-            <p>Calculate S₁₂</p>
-            <input type="number" id="saving-12" placeholder="Enter number only">
+        <div class="flora-data">
+          <div>
+            <span>WEEK 1</span>
+            <strong>3 LEAVES</strong>
           </div>
-          <div class="series-question">
-            <h3 style="font-size:1.1rem; margin-bottom:10px;">Total savings after 24 months?</h3>
-            <p>Calculate S₂₄</p>
-            <input type="number" id="saving-24" placeholder="Enter number only">
+          <div>
+            <span>WEEK 2</span>
+            <strong>7 LEAVES</strong>
           </div>
-        </div>
-
-        <button class="btn btn-primary btn-large" id="check-savings">UNLOCK THE VAULT ✦</button>
-        <div id="saving-feedback"></div>
-      </section>
-
-      <!-- =====================================
-           MISSION 5
-      ====================================== -->
-      <section class="card mission-section fade-in" id="mission-5" hidden>
-        <div class="mission-header">
-          <span class="mission-number">FINAL MISSION</span>
-          <h2>THE FOREST RESTORATION</h2>
-        </div>
-
-        <div class="story-card">
-          <p>A farmer is restoring the Mathscape Forest. The first row contains <strong>15 trees</strong>, and every new row contains <strong>5 more trees</strong> than the previous one.</p>
-          <p>There are <strong>20 rows</strong> in total.</p>
-        </div>
-
-        <div class="stadium-pattern" style="align-items:center; background:var(--bg-1); padding:20px; border:1px dashed var(--border-bright); border-radius:var(--radius);">
-          <div style="font-family:var(--font-mono); font-size:1.4rem; color:var(--success); font-weight:bold;">
-            15 &nbsp;→&nbsp; 20 &nbsp;→&nbsp; 25 &nbsp;→&nbsp; 30 &nbsp;→&nbsp; ...
+          <div>
+            <span>WEEK 3</span>
+            <strong>11 LEAVES</strong>
+          </div>
+          <div>
+            <span>WEEK 4</span>
+            <strong>15 LEAVES</strong>
           </div>
         </div>
 
-        <div class="series-question" style="max-width:400px; margin: 0 auto 24px;">
-          <h3>What is the total number of trees planted?</h3>
-          <p>Find S₂₀</p>
-          <input type="number" id="forest-answer" placeholder="Enter total trees">
-        </div>
-
-        <div style="text-align:center;">
-          <button class="btn btn-primary btn-large" id="restore-forest">RESTORE MATHSCAPE 🌲</button>
-        </div>
-        <div id="forest-feedback"></div>
-      </section>
-
-      <!-- =====================================
-           FINAL SUMMARY
-      ====================================== -->
-      <section class="card mission-section fade-in" id="series-complete" style="text-align:center;" hidden>
-        <div class="mission-number">STAGE COMPLETE</div>
-        <h2 style="margin-top:10px;">SERIES MASTER</h2>
-        <p>You have restored the ability of Mathscape to calculate not only individual patterns, but the total created by every term combined.</p>
-
-        <div class="summary-grid">
-          <div class="summary-card" style="border-color:var(--accent);">
-            <h3>Arithmetic Series</h3>
-            <p>A series formed from a sequence with a constant difference.</p>
-            <strong>Sₙ = n/2 [2a + (n − 1)d]</strong>
+        <div class="challenge-card">
+          <h3>🌿 ANALYZE THE GROWTH</h3>
+          <p>What type of sequence does Flora's growth follow?</p>
+          <div class="answer-grid" id="flora-type-options">
+            <button class="quiz-opt" data-answer="arithmetic">ARITHMETIC</button>
+            <button class="quiz-opt" data-answer="geometric">GEOMETRIC</button>
+            <button class="quiz-opt" data-answer="neither">NEITHER</button>
           </div>
-          <div class="summary-card" style="border-color:var(--accent-2);">
-            <h3>Geometric Series</h3>
-            <p>A series formed from a sequence with a constant ratio.</p>
-            <strong style="color:var(--accent-2);">Sₙ = a(rⁿ − 1)/(r − 1)</strong>
-          </div>
+          <div class="mission-feedback" id="flora-feedback" style="display:none;"></div>
         </div>
 
-        <button class="btn btn-primary btn-large" id="finish-level">
-          CLAIM YOUR REWARD 🏆
+        <div class="challenge-card" id="flora-question-2" hidden>
+          <h3>🔍 FIND THE DIFFERENCE</h3>
+          <p>What is the common difference in Flora's leaves?</p>
+          <div class="answer-grid" id="flora-difference-options">
+            <button class="quiz-opt" data-answer="2">+2</button>
+            <button class="quiz-opt" data-answer="4">+4</button>
+            <button class="quiz-opt" data-answer="8">+8</button>
+          </div>
+          <div class="mission-feedback" id="flora-difference-feedback" style="display:none;"></div>
+        </div>
+
+        <!-- Score Display -->
+        <div id="final-score-display" style="text-align:center; margin: 40px 0; display:none;"></div>
+
+        <button class="btn btn-primary btn-large" id="complete-stage" hidden>
+          RESTORE THE PATTERN CORE 🏆
         </button>
       </section>
 
@@ -426,230 +454,317 @@ export function mount(container, api) {
   `;
 
   // ==========================================================
-  // START LEVEL
+  // ELEMENTS
   // ==========================================================
-  container.querySelector('#begin-series').addEventListener('click', () => {
-    container.querySelector('#series-hero').hidden = true;
-    showMission(1);
+  const beginStage = container.querySelector('#begin-stage');
+  const learningSection = container.querySelector('#learning-section');
+  const mission1 = container.querySelector('#mission-1');
+  const mission2 = container.querySelector('#mission-2');
+  const mission3 = container.querySelector('#mission-3');
+  const mission4 = container.querySelector('#mission-4');
+
+  // ==========================================================
+  // START STAGE
+  // ==========================================================
+  beginStage.addEventListener('click', () => {
+    learningSection.hidden = false;
+    learningSection.scrollIntoView({ behavior: 'smooth' });
   });
 
-  function showMission(number) {
-    currentMission = number;
-    const missions = container.querySelectorAll('.mission-section');
-    missions.forEach(m => m.hidden = true);
-
-    const mission = container.querySelector(`#mission-${number}`);
-    if (mission) {
-      mission.hidden = false;
-      mission.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
+  // ==========================================================
+  // START MISSION 1
+  // ==========================================================
+  container.querySelector('#start-mission-1').addEventListener('click', () => {
+    mission1.hidden = false;
+    mission1.scrollIntoView({ behavior: 'smooth' });
+  });
 
   // ==========================================================
-  // MISSION 1: STADIUM SUM
+  // MISSION 1 — STADIUM RULE
   // ==========================================================
-  const m1Btns = container.querySelectorAll('#mission-1 .answer-btn');
-  m1Btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const feedback = container.querySelector('#mission-1-feedback');
-      m1Btns.forEach(b => b.disabled = true);
+  const stadiumRuleButtons = container.querySelectorAll('#stadium-rule-options .quiz-opt');
 
-      if (btn.dataset.answer === '24') {
-        btn.classList.add('correct');
-        state.mission1Done = true;
-        feedback.innerHTML = `
-          <div class="feedback-success">
-            <strong>✅ Pattern Restored</strong>
-            <p>Correct. The 4th row has 24 seats (12, 16, 20, 24). <br><br>But what if the system needs to know the <strong>TOTAL</strong> seats in the entire stadium? We can't just find one row, we need to add them all up. This is what we call a <strong>Series</strong>!</p>
-            <button class="btn btn-primary next-mission" data-next="2" style="margin-top:12px;">ENTER ARITHMETIC ARCHIVE →</button>
-          </div>
-        `;
-        bindNextMission();
+  stadiumRuleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const feedback = container.querySelector('#stadium-feedback');
+      stadiumRuleButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
+
+      if (button.dataset.answer === '4') {
+        button.classList.add('correct');
+        feedback.className = 'mission-feedback success';
+        feedback.innerHTML = `<strong>🎉 CLUE DISCOVERED!</strong><p>Each row increases consistently by 4 seats.</p>`;
       } else {
-        btn.classList.add('wrong');
-        container.querySelector('[data-answer="24"]').classList.add('correct');
-        feedback.innerHTML = `
-          <div class="feedback-error">
-            <strong>❌ Pattern Unstable</strong>
-            <p>Look at the difference. Every row adds 4 seats. 20 + 4 = 24.</p>
-            <button class="btn btn-primary next-mission" data-next="2" style="margin-top:12px;">PROCEED ANYWAY →</button>
-          </div>
-        `;
-        bindNextMission();
+        deductScore(10);
+        button.classList.add('wrong');
+        container.querySelector('[data-answer="4"]').classList.add('correct');
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Compare two consecutive rows (e.g., 16 − 12 = 4). The rule is +4.</p>`;
       }
+      container.querySelector('#stadium-question-2').hidden = false;
     });
   });
 
   // ==========================================================
-  // HELPER: MULTI-INPUT VALIDATOR
+  // MISSION 1 — NEXT TERM
   // ==========================================================
-  function validateInputs(inputs, correctAnswers) {
-    let allCorrect = true;
-    inputs.forEach((input, index) => {
-      const val = Number(input.value);
-      if (val === correctAnswers[index]) {
-        input.classList.remove('is-wrong');
-        input.classList.add('is-correct');
-        input.disabled = true;
+  const stadiumNextButtons = container.querySelectorAll('#stadium-next-options .quiz-opt');
+
+  stadiumNextButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const feedback = container.querySelector('#stadium-next-feedback');
+      stadiumNextButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
+
+      if (button.dataset.answer === '28') {
+        button.classList.add('correct');
+        feedback.className = 'mission-feedback success';
+        feedback.innerHTML = `<strong>✅ PATTERN RESTORED!</strong><p>The sequence continues: 12, 16, 20, 24, 28.</p>`;
       } else {
-        input.classList.remove('is-correct');
-        input.classList.add('is-wrong');
-        allCorrect = false;
+        deductScore(10);
+        button.classList.add('wrong');
+        container.querySelector('#stadium-next-options [data-answer="28"]').classList.add('correct');
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ KEEP INVESTIGATING (-10 pts).</strong><p>The rule is +4, so 24 + 4 = 28.</p>`;
       }
+
+      state.mission1Done = true;
+      container.querySelector('#continue-mission-2').hidden = false;
     });
-    return allCorrect;
+  });
+
+  // ==========================================================
+  // START MISSION 2
+  // ==========================================================
+  container.querySelector('#continue-mission-2').addEventListener('click', () => {
+    mission2.hidden = false;
+    mission2.scrollIntoView({ behavior: 'smooth' });
+    renderSequenceScanner();
+  });
+
+  // ==========================================================
+  // MISSION 2 — SEQUENCE SCANNER
+  // ==========================================================
+  function renderSequenceScanner() {
+    const scanner = container.querySelector('#sequence-scanner');
+    if(scanner.innerHTML !== "") return; 
+
+    const questions = [
+      { sequence: '3, 6, 9, 12, ...', answer: 'arithmetic' },
+      { sequence: '2, 4, 8, 16, ...', answer: 'geometric' },
+      { sequence: '5, 10, 15, 20, ...', answer: 'arithmetic' }
+    ];
+
+    let answered = 0;
+
+    questions.forEach((question, index) => {
+      const card = document.createElement('div');
+      card.className = 'challenge-card';
+
+      card.innerHTML = `
+        <div class="sequence-display" style="background:#f8fafc; color:#0f172a;">
+          ${question.sequence}
+        </div>
+        <p style="text-align:center;">Identify the sequence type.</p>
+        <div class="answer-grid">
+          <button class="quiz-opt q${index}" data-answer="arithmetic">ARITHMETIC</button>
+          <button class="quiz-opt q${index}" data-answer="geometric">GEOMETRIC</button>
+          <button class="quiz-opt q${index}" data-answer="neither">NEITHER</button>
+        </div>
+        <div class="mission-feedback" style="display:none;"></div>
+      `;
+
+      const buttons = card.querySelectorAll(`.q${index}`);
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          buttons.forEach(btn => { btn.disabled = true; });
+          const feedback = card.querySelector('.mission-feedback');
+          feedback.style.display = 'block';
+
+          if (button.dataset.answer === question.answer) {
+            button.classList.add('correct');
+            feedback.className = 'mission-feedback success';
+            feedback.innerHTML = '<strong>✅ Correct!</strong> Pattern identified successfully.';
+          } else {
+            deductScore(5);
+            button.classList.add('wrong');
+            card.querySelector(`[data-answer="${question.answer}"]`).classList.add('correct');
+            feedback.className = 'mission-feedback error';
+            feedback.innerHTML = `<strong>❌ Incorrect (-5 pts).</strong> The correct pattern is <strong>${question.answer.toUpperCase()}</strong>.`;
+          }
+
+          answered++;
+          if (answered === questions.length) {
+            state.mission2Done = true;
+            container.querySelector('#continue-mission-3').hidden = false;
+          }
+        });
+      });
+      scanner.appendChild(card);
+    });
   }
 
   // ==========================================================
-  // MISSION 2: ARITHMETIC
+  // START MISSION 3
   // ==========================================================
-  container.querySelector('#check-arithmetic').addEventListener('click', (e) => {
-    const inputs = [
-      container.querySelector('#arith-1'),
-      container.querySelector('#arith-2'),
-      container.querySelector('#arith-3'),
-      container.querySelector('#arith-4')
-    ];
-    const correct = [45, 260, 260, 420];
-    const feedback = container.querySelector('#arith-feedback');
-    const isCorrect = validateInputs(inputs, correct);
-
-    if (isCorrect) {
-      state.mission2Done = true;
-      e.target.disabled = true;
-      feedback.innerHTML = `
-        <div class="feedback-success">
-          <strong>✅ Archive Restored!</strong>
-          <p>Excellent. You successfully calculated the sum of multiple arithmetic series.</p>
-          <button class="btn btn-primary next-mission" data-next="3" style="margin-top:12px;">ENTER THE GEOMETRIC PORTAL →</button>
-        </div>
-      `;
-      bindNextMission();
-    } else {
-      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Incomplete Data.</strong> The records highlighted in red are incorrect. Check your 'a', 'd', and 'n' values.</div>`;
-    }
+  container.querySelector('#continue-mission-3').addEventListener('click', () => {
+    mission3.hidden = false;
+    mission3.scrollIntoView({ behavior: 'smooth' });
   });
 
   // ==========================================================
-  // MISSION 3: GEOMETRIC
+  // LAB QUESTION 1
   // ==========================================================
-  container.querySelector('#check-geometric').addEventListener('click', (e) => {
-    const inputs = [
-      container.querySelector('#geo-1'),
-      container.querySelector('#geo-2'),
-      container.querySelector('#geo-3')
-    ];
-    const correct = [126, 93, 635];
-    const feedback = container.querySelector('#geo-feedback');
-    const isCorrect = validateInputs(inputs, correct);
-
-    if (isCorrect) {
-      state.mission3Done = true;
-      e.target.disabled = true;
-      feedback.innerHTML = `
-        <div class="feedback-success">
-          <strong>✅ Portal Activated!</strong>
-          <p>You have mastered geometric sum expansion.</p>
-          <button class="btn btn-primary next-mission" data-next="4" style="margin-top:12px;">CONTINUE TO SAVINGS VAULT →</button>
-        </div>
-      `;
-      bindNextMission();
-    } else {
-      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Connection Failed.</strong> Red highlighted fields are incorrect. Ensure you're multiplying by the correct common ratio (r).</div>`;
-    }
-  });
-
-  // ==========================================================
-  // MISSION 4: SAVINGS
-  // ==========================================================
-  container.querySelector('#check-savings').addEventListener('click', (e) => {
-    const inputs = [
-      container.querySelector('#saving-12'),
-      container.querySelector('#saving-24')
-    ];
-    // a=100000, d=50000
-    // S12 = 6*(200000 + 550000) = 4500000
-    // S24 = 12*(200000 + 1150000) = 16200000
-    const correct = [4500000, 16200000];
-    const feedback = container.querySelector('#saving-feedback');
-    const isCorrect = validateInputs(inputs, correct);
-
-    if (isCorrect) {
-      state.mission4Done = true;
-      e.target.disabled = true;
-      feedback.innerHTML = `
-        <div class="feedback-success">
-          <strong>✅ Savings Vault Unlocked!</strong>
-          <p>Perfect calculation. The real-world data has been restored.</p>
-          <button class="btn btn-primary next-mission" data-next="5" style="margin-top:12px;">CONTINUE TO FINAL MISSION →</button>
-        </div>
-      `;
-      bindNextMission();
-    } else {
-      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Vault Remains Locked.</strong> Use a = 100000 and d = 50000. Do not use dots/commas in your answer.</div>`;
-    }
-  });
-
-  // ==========================================================
-  // MISSION 5: FOREST
-  // ==========================================================
-  container.querySelector('#restore-forest').addEventListener('click', (e) => {
-    const input = container.querySelector('#forest-answer');
+  container.querySelector('#check-lab-1').addEventListener('click', (e) => {
+    const input = container.querySelector('#lab-answer-1');
     const answer = Number(input.value);
-    const feedback = container.querySelector('#forest-feedback');
+    const feedback = container.querySelector('#lab-feedback-1');
 
-    // a=15, d=5, n=20 => S20 = 10*(30 + 95) = 1250
-    if (answer === 1250) {
-      input.classList.remove('is-wrong');
-      input.classList.add('is-correct');
-      input.disabled = true;
-      e.target.disabled = true;
-      state.mission5Done = true;
+    if (input.value === "") return;
 
-      feedback.innerHTML = `
-        <div class="feedback-success">
-          <strong>🌿 Mathscape Forest Restored!</strong>
-          <p>a = 15, d = 5, n = 20. <br>S₂₀ = 1,250 trees total.</p>
-          <button class="btn btn-primary next-mission" data-next="complete" style="margin-top:12px;">VIEW YOUR ACHIEVEMENT →</button>
-        </div>
-      `;
-      
-      container.querySelector('.next-mission[data-next="complete"]').addEventListener('click', () => {
-        container.querySelector('#mission-5').hidden = true;
-        container.querySelector('#series-complete').hidden = false;
-        container.querySelector('#series-complete').scrollIntoView({ behavior: 'smooth' });
-      });
+    input.disabled = true;
+    e.target.disabled = true;
+    feedback.style.display = 'block';
+
+    if (answer === 5) {
+      input.classList.add('correct-autofill');
+      feedback.className = 'mission-feedback success';
+      feedback.innerHTML = `<strong>✅ EXPERIMENT SUCCESSFUL!</strong><p>The common difference is +5.</p>`;
     } else {
-      input.classList.remove('is-correct');
-      input.classList.add('is-wrong');
-      feedback.innerHTML = `<div class="feedback-error"><strong>❌ The Forest Is Incomplete.</strong> Try identifying a, d, and n first, then plug them into the Arithmetic Series formula.</div>`;
+      deductScore(10);
+      input.value = 5;
+      input.classList.add('wrong-autofill');
+      feedback.className = 'mission-feedback error';
+      feedback.innerHTML = `<strong>❌ TRY AGAIN (-10 pts).</strong><p>Compare two consecutive terms (e.g., 10 − 5). The difference is 5.</p>`;
     }
+    container.querySelector('#lab-question-2').hidden = false;
   });
 
-  function bindNextMission() {
-    container.querySelectorAll('.next-mission').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const next = btn.dataset.next;
-        if (next !== 'complete') showMission(Number(next));
-      });
+  // ==========================================================
+  // LAB QUESTION 2
+  // ==========================================================
+  container.querySelector('#check-lab-2').addEventListener('click', (e) => {
+    const input = container.querySelector('#lab-answer-2');
+    const answer = Number(input.value);
+    const feedback = container.querySelector('#lab-feedback-2');
+    
+    if (input.value === "") return;
+
+    input.disabled = true;
+    e.target.disabled = true;
+    feedback.style.display = 'block';
+
+    if (answer === 3) {
+      input.classList.add('correct-autofill');
+      feedback.className = 'mission-feedback success';
+      feedback.innerHTML = `<strong>✅ EXPERIMENT COMPLETE!</strong><p>The common ratio is 3.</p>`;
+    } else {
+      deductScore(10);
+      input.value = 3;
+      input.classList.add('wrong-autofill');
+      feedback.className = 'mission-feedback error';
+      feedback.innerHTML = `<strong>❌ ANALYZE PATTERN (-10 pts).</strong><p>How do we move from 2 to 6? We multiply by 3.</p>`;
+    }
+    
+    state.mission3Done = true;
+    container.querySelector('#continue-mission-4').hidden = false;
+  });
+
+  // ==========================================================
+  // START MISSION 4
+  // ==========================================================
+  container.querySelector('#continue-mission-4').addEventListener('click', () => {
+    mission4.hidden = false;
+    mission4.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // ==========================================================
+  // FLORA QUESTION 1
+  // ==========================================================
+  const floraTypeButtons = container.querySelectorAll('#flora-type-options .quiz-opt');
+
+  floraTypeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const feedback = container.querySelector('#flora-feedback');
+      floraTypeButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
+
+      if (button.dataset.answer === 'arithmetic') {
+        button.classList.add('correct');
+        feedback.className = 'mission-feedback success';
+        feedback.innerHTML = `<strong>✅ CORRECT!</strong><p>Flora's leaves increase by the same amount each week.</p>`;
+      } else {
+        deductScore(10);
+        button.classList.add('wrong');
+        container.querySelector('#flora-type-options [data-answer="arithmetic"]').classList.add('correct');
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Notice how it increases by addition, not multiplication. It is Arithmetic.</p>`;
+      }
+      container.querySelector('#flora-question-2').hidden = false;
     });
+  });
+
+  // ==========================================================
+  // FLORA QUESTION 2
+  // ==========================================================
+  const floraDifferenceButtons = container.querySelectorAll('#flora-difference-options .quiz-opt');
+
+  floraDifferenceButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const feedback = container.querySelector('#flora-difference-feedback');
+      floraDifferenceButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
+
+      if (button.dataset.answer === '4') {
+        button.classList.add('correct');
+        feedback.className = 'mission-feedback success';
+        feedback.innerHTML = `<strong>🎉 PATTERN SOLVED!</strong><p>The number of leaves increases by 4 each week.</p>`;
+      } else {
+        deductScore(10);
+        button.classList.add('wrong');
+        container.querySelector('#flora-difference-options [data-answer="4"]').classList.add('correct');
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ LOOK CLOSER (-10 pts).</strong><p>7 − 3 = 4.</p>`;
+      }
+
+      state.mission4Done = true;
+      showFinalScore();
+    });
+  });
+
+  // ==========================================================
+  // SHOW FINAL SCORE & COMPLETE STAGE
+  // ==========================================================
+  function showFinalScore() {
+    const scoreDisplay = container.querySelector('#final-score-display');
+    const completeBtn = container.querySelector('#complete-stage');
+    
+    scoreDisplay.style.display = 'block';
+    const gradeColor = finalScore >= 80 ? '#15803d' : (finalScore >= 50 ? '#e59a2e' : '#b91c1c');
+    
+    scoreDisplay.innerHTML = `
+      <div style="font-size: 1rem; color: #64748b; margin-bottom: 8px; font-weight:bold;">FINAL INVESTIGATION SCORE</div>
+      <div style="font-size: 3rem; font-weight: bold; color: ${gradeColor};">${finalScore} / 100</div>
+    `;
+
+    completeBtn.hidden = false;
+    completeBtn.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // ==========================================================
-  // COMPLETE LEVEL
-  // ==========================================================
-  container.querySelector('#finish-level').addEventListener('click', () => {
-    let score = 0;
-    if (state.mission1Done) score += 10;
-    if (state.mission2Done) score += 25;
-    if (state.mission3Done) score += 25;
-    if (state.mission4Done) score += 20;
-    if (state.mission5Done) score += 20;
+  container.querySelector('#complete-stage').addEventListener('click', () => {
+    let badge = null;
+    if (finalScore >= 80) {
+      const added = api.badge('pattern-finder', 'Pattern Finder', '🔍');
+      if (added) {
+        badge = { name: 'Pattern Finder', icon: '🔍' };
+      }
+    }
 
-    api.complete(score, {
-      heading: 'Series Master Complete',
-      detail: 'You mastered arithmetic and geometric series and successfully applied them to contextual problems.',
-      badge: score >= 80 ? { name: 'Series Master', icon: '∑' } : null
+    api.complete(finalScore, {
+      heading: 'PATTERN CORE RESTORED!',
+      detail: `You have uncovered the hidden rules behind arithmetic and geometric sequences. You achieved a score of ${finalScore}.`,
+      badge
     });
   });
 }
