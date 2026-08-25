@@ -16,7 +16,8 @@ export function mount(container, api) {
     mission1Done: false,
     mission2Done: false,
     mission3Done: false,
-    mission4Done: false,
+    mission4_1Done: false, // Dibagi 2 karena ada 2 pertanyaan di misi 4
+    mission4_2Done: false, 
     score: 0
   };
 
@@ -185,6 +186,7 @@ export function mount(container, api) {
         outline: none;
       }
       .workspace-row input:focus { border-color: var(--accent); box-shadow: 0 0 8px var(--accent-soft); }
+      .workspace-row input:disabled { background: var(--bg-0); opacity: 0.7; cursor: not-allowed; }
       
       .sequence-display {
         font-family: var(--font-mono);
@@ -487,27 +489,24 @@ export function mount(container, api) {
       const answer = Number(button.dataset.answer);
       const feedback = container.querySelector('#difference-feedback');
 
+      // Kunci semua opsi saat dipilih
       differenceButtons.forEach(btn => btn.disabled = true);
 
       if (answer === 4) {
         button.classList.add('correct');
         feedback.innerHTML = `<div class="feedback-success"><strong>✅ Correct.</strong> The sequence increases by 4 each time. Therefore: <strong>b = 4</strong></div>`;
         state.mission1Done = true;
-        
-        setTimeout(() => {
-          mission2.hidden = false;
-          mission2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 1500);
       } else {
         button.classList.add('wrong');
-        container.querySelector('[data-answer="4"]').classList.add('correct');
-        feedback.innerHTML = `<div class="feedback-error"><strong>❌ Not quite.</strong> Compare two consecutive terms (e.g., 9 - 5) and calculate the difference.</div>`;
-        
-        setTimeout(() => {
-          mission2.hidden = false;
-          mission2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 2000);
+        container.querySelector('[data-answer="4"]').classList.add('correct'); // Tunjukkan yang benar
+        feedback.innerHTML = `<div class="feedback-error"><strong>❌ Incorrect.</strong> The correct answer is <strong>+ 4</strong> (since 9 - 5 = 4). Let's move on.</div>`;
       }
+      
+      // Auto Next Mission
+      setTimeout(() => {
+        mission2.hidden = false;
+        mission2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 2000);
     });
   });
 
@@ -519,18 +518,25 @@ export function mount(container, api) {
     const ans = Number(container.querySelector('#arith-answer').value);
     const feedback = container.querySelector('#arithmetic-feedback');
 
+    // Kunci tombol & input agar tidak bisa diubah-ubah (Auto move on)
+    btnArith.disabled = true;
+    container.querySelector('#arith-a').disabled = true;
+    container.querySelector('#arith-b').disabled = true;
+    container.querySelector('#arith-answer').disabled = true;
+
     if (a === 4 && b === 5 && ans === 49) {
-      feedback.innerHTML = `<div class="feedback-success"><strong>✅ Formula Restored.</strong><br> U₁₀ = 4 + (10 − 1)(5) <br> U₁₀ = 49</div>`;
-      btnArith.disabled = true;
+      feedback.innerHTML = `<div class="feedback-success"><strong>✅ Formula Restored.</strong><br> U₁₀ = 4 + (10 − 1)(5) = 49</div>`;
       state.mission2Done = true;
-      
-      setTimeout(() => {
-        mission3.hidden = false;
-        mission3.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 1500);
     } else {
-      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Error detected.</strong> Check the first term (a), the common difference (b), and your calculation for U₁₀.</div>`;
+      // Tampilkan jawaban yang benar kalau salah
+      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Incorrect.</strong><br>The correct values are: <strong>a = 4</strong>, <strong>b = 5</strong>, and <strong>U₁₀ = 49</strong>. Moving on...</div>`;
     }
+
+    // Auto Next Mission
+    setTimeout(() => {
+      mission3.hidden = false;
+      mission3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2500);
   });
 
   // MISSION 3: GEOMETRIC FORMULA
@@ -541,85 +547,106 @@ export function mount(container, api) {
     const ans = Number(container.querySelector('#geo-answer').value);
     const feedback = container.querySelector('#geometric-feedback');
 
+    // Kunci tombol & input (Auto move on)
+    btnGeo.disabled = true;
+    container.querySelector('#geo-a').disabled = true;
+    container.querySelector('#geo-r').disabled = true;
+    container.querySelector('#geo-answer').disabled = true;
+
     if (a === 3 && r === 2 && ans === 96) {
-      feedback.innerHTML = `<div class="feedback-success"><strong>✅ Ratio Unlocked.</strong><br> U₆ = 3 × 2⁵ <br> U₆ = 96</div>`;
-      btnGeo.disabled = true;
+      feedback.innerHTML = `<div class="feedback-success"><strong>✅ Ratio Unlocked.</strong><br> U₆ = 3 × 2⁵ = 96</div>`;
       state.mission3Done = true;
-      
-      setTimeout(() => {
-        mission4.hidden = false;
-        mission4.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 1500);
     } else {
-      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Error detected.</strong> Check the first term (a), the ratio (r), and the exponent (n − 1).</div>`;
+      // Tampilkan jawaban yang benar kalau salah
+      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Incorrect.</strong><br>The correct values are: <strong>a = 3</strong>, <strong>r = 2</strong>, and <strong>U₆ = 96</strong>. Moving on...</div>`;
     }
+
+    // Auto Next Mission
+    setTimeout(() => {
+      mission4.hidden = false;
+      mission4.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2500);
   });
 
-  // MISSION 4: FORMULA SELECTION
+  // MISSION 4 (Part 1): FORMULA SELECTION
   const formulaOptions = container.querySelectorAll('#final-formula-options .formula-option');
   formulaOptions.forEach(button => {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#final-formula-feedback');
+      
+      // Kunci opsi
       formulaOptions.forEach(btn => btn.disabled = true);
 
       if (button.dataset.formula === 'correct') {
         button.classList.add('correct');
-        feedback.innerHTML = `<div class="feedback-success"><strong>✅ Correct.</strong><br> The sequence has a = 5 and b = 4.<br> Uₙ = 5 + (n − 1)(4)  ➔  <strong>Uₙ = 4n + 1</strong></div>`;
-        
-        container.querySelector('#final-question').hidden = false;
-        setTimeout(() => {
-          container.querySelector('#final-question').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 800);
+        feedback.innerHTML = `<div class="feedback-success"><strong>✅ Correct.</strong><br> Uₙ = 5 + (n − 1)(4)  ➔  <strong>Uₙ = 4n + 1</strong></div>`;
+        state.mission4_1Done = true;
       } else {
         button.classList.add('wrong');
         container.querySelector('[data-formula="correct"]').classList.add('correct');
-        feedback.innerHTML = `<div class="feedback-error"><strong>❌ Incorrect.</strong> Remember, Uₙ = 5 + 4(n - 1). Distribute the 4 and simplify!</div>`;
-        
-        container.querySelector('#final-question').hidden = false;
+        // Kasih tau yang benar
+        feedback.innerHTML = `<div class="feedback-error"><strong>❌ Incorrect.</strong> The correct formula is <strong>Uₙ = 4n + 1</strong>. (Since 5 + 4n - 4 = 4n + 1).</div>`;
       }
+      
+      // Buka pertanyaan final (Part 2) 
+      setTimeout(() => {
+        container.querySelector('#final-question').hidden = false;
+        container.querySelector('#final-question').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 1500);
     });
   });
 
-  // FINAL ANSWER
+  // MISSION 4 (Part 2): FINAL ANSWER
   const btnFinal = container.querySelector('#check-final-answer');
   btnFinal.addEventListener('click', () => {
     const ans = Number(container.querySelector('#final-answer').value);
     const feedback = container.querySelector('#final-answer-feedback');
 
+    // Kunci tombol & input (Auto move on)
+    btnFinal.disabled = true;
+    container.querySelector('#final-answer').disabled = true;
+
     if (ans === 81) {
       feedback.innerHTML = `<div class="feedback-success"><strong>🎉 Formula Engine Activated!</strong><br> U₂₀ = 4(20) + 1 = 81</div>`;
-      btnFinal.disabled = true;
-      state.mission4Done = true;
-      
-      setTimeout(() => {
-        completionSection.hidden = false;
-        completionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 1500);
+      state.mission4_2Done = true;
     } else {
-      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Try again.</strong> Use the formula: Uₙ = 4n + 1 where n is 20.</div>`;
+      // Kasih jawaban benar jika salah
+      feedback.innerHTML = `<div class="feedback-error"><strong>❌ Incorrect.</strong><br>Using Uₙ = 4n + 1, U₂₀ is 4(20) + 1 = <strong>81</strong>.</div>`;
     }
+
+    // Auto move to Completion Section
+    setTimeout(() => {
+      completionSection.hidden = false;
+      completionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2500);
   });
 
   // ==========================================
-  // COMPLETE LEVEL
+  // COMPLETE LEVEL (Trigger Transition)
   // ==========================================
   container.querySelector('#complete-level').addEventListener('click', () => {
+    
+    // Kalkulasi Skor (Total 100)
     let score = 0;
     if (state.mission1Done) score += 20;
     if (state.mission2Done) score += 25;
     if (state.mission3Done) score += 25;
-    if (state.mission4Done) score += 30;
+    if (state.mission4_1Done) score += 10;
+    if (state.mission4_2Done) score += 20;
 
     state.score = score;
     let badge = null;
 
-    if (score >= 80) { // Changed to >=80 to be more forgiving, or you can keep 100
+    // Dapat badge jika skor 80 ke atas
+    if (score >= 80) { 
       const added = api.badge('formula-finder', 'Formula Finder', '⚙️');
       if (added) {
         badge = { name: 'Formula Finder', icon: '⚙️' };
       }
     }
 
+    // api.complete memicu "Results Screen" di main.js 
+    // yang sudah otomatis menyediakan tombol "Continue to Series Master ->"
     api.complete(score, {
       heading: 'Formula Engine Restored',
       detail: `You completed the Formula Vault and restored the rules for finding the nth term of arithmetic and geometric sequences.`,
