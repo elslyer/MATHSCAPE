@@ -547,8 +547,8 @@ export function mount(container, api) {
         <div class="case-story">
           <p>A geometric anomaly has appeared in Mathscape: an infinitely generating square.</p>
           <ul style="margin-top:10px;">
-            <li>The original Square A has a diagonal length of <strong>16&radic;2 units</strong>.</li>
-            <li>A new Square B is spawned inside it, then Square C inside B, continuing infinitely.</li>
+            <li>The original Square ABCD has a diagonal length of <strong>16&radic;2 units</strong>.</li>
+            <li>A new Square EFGH is spawned inside it, then Square HIJD inside EFGH, continuing infinitely.</li>
             <li>Each new square has an <strong>Area equal to 25%</strong> of the previous square.</li>
           </ul>
         </div>
