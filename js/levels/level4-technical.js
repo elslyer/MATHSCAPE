@@ -1,314 +1,584 @@
-// level4-technical.js — Animated multi-hop graph traversal + guided UI mockup walkthrough.
-import { renderGraph, setHighlight, clearHighlight } from '../graph-svg.js';
-import { orgGraph, singleHopQuery, multiHopQuery } from '../data/reasoning-graph.js';
+// ==========================================================
+// MATHSCAPE — LEVEL 4
+// CASE SOLVER
+// Applications of Sequences and Series
+// ==========================================================
 
 export function mount(container, api) {
-  let singleHopViewed = false;
-  let multiHopStep = -1;
-  let multiHopFinished = false;
-  let walkthroughStep = -1;
-  let walkthroughFinished = false;
-  let quizAnswered = false;
+  let currentCase = 1;
+  const caseProgress = { 1: false, 2: false, 3: false };
 
+  // ==========================================================
+  // MAIN LAYOUT & CSS
+  // ==========================================================
   container.innerHTML = `
-    <div class="card">
-      <h3>How a Knowledge Graph is Stored</h3>
-      <p>A knowledge graph stores data as <strong>nodes</strong> (entities, e.g. people) connected by <strong>edges</strong> (relationships, e.g. "reportsTo"). Unlike a table of rows and columns, a graph makes relationships first-class — so following connections ("traversal") is fast and natural, no expensive JOINs required.</p>
-    </div>
+    <style>
+      /* --- CASE SOLVER STYLES --- */
+      .case-solver-stage {
+        font-family: var(--font-sans);
+        color: var(--text-0);
+      }
 
-    <div class="card">
-      <h3>Single-Hop Lookup</h3>
-      <p><strong>Query:</strong> "${singleHopQuery.question}"</p>
-      <p>A single-hop lookup follows just <strong>one</strong> relationship edge from the starting node to find the answer directly.</p>
-      <div class="graph-wrap" id="graph-single"></div>
-      <div class="hop-controls">
-        <button class="btn btn-secondary" id="btn-single-run">Run Single-Hop Query</button>
-        <span class="hop-step-label" id="single-status"></span>
-      </div>
-    </div>
+      /* Case Navigation Tabs */
+      .case-navigation {
+        background: var(--bg-1);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+      }
+      .case-nav-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--text-2);
+        letter-spacing: 0.05em;
+      }
+      .case-tabs {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .case-tab {
+        flex: 1;
+        min-width: 120px;
+        background: var(--bg-0);
+        border: 2px solid var(--border-bright);
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        font-family: var(--font-mono);
+        font-weight: bold;
+        color: var(--text-1);
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .case-tab:hover { border-color: var(--accent); background: var(--bg-2); }
+      .case-tab.active { background: var(--accent); color: #04241a; border-color: var(--accent); box-shadow: 0 4px 12px rgba(32,191,178,0.3); }
+      .case-tab.completed { background: var(--success); border-color: var(--success); color: #fff; }
+      .case-tab.completed::after { content: " ✓"; }
 
-    <div class="card">
-      <h3>Multi-Hop Reasoning</h3>
-      <p><strong>Query:</strong> "${multiHopQuery.question}"</p>
-      <p>This requires traversing <strong>multiple</strong> edges in sequence — a chain of hops — to reach entities that aren't directly connected to the start. This is exactly the kind of question a flat keyword search cannot answer, but a graph traversal can.</p>
-      <div class="graph-wrap" id="graph-multi"></div>
-      <div class="hop-controls">
-        <button class="btn btn-primary" id="btn-multi-next">Start / Next Hop</button>
-        <button class="btn btn-ghost" id="btn-multi-reset">↺ Reset</button>
-        <span class="hop-step-label" id="multi-status">Click "Start" to begin the traversal.</span>
-      </div>
-    </div>
+      /* Investigation Panels (Steps) */
+      .case-card {
+        background: var(--bg-0);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+        box-shadow: var(--shadow);
+        animation: fadeIn 0.4s ease;
+      }
+      .case-story {
+        background: var(--bg-1);
+        border-left: 4px solid var(--accent-3);
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+      
+      .investigation-panel {
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px dashed var(--border-bright);
+      }
+      .investigation-panel h3 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--accent-3);
+        font-family: var(--font-mono);
+        font-size: 1.1rem;
+      }
+      .investigation-panel h3::before {
+        content: "■";
+        font-size: 0.8rem;
+      }
 
-    <div class="card">
-      <h3>The Algorithms Behind It</h3>
-      <div id="algo-accordion"></div>
-    </div>
+      /* Insight / Logic Boxes */
+      .logic-box {
+        background: rgba(32,191,178,0.08);
+        border: 1px solid rgba(32,191,178,0.3);
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        margin: 16px 0;
+        font-size: 0.9rem;
+      }
+      .logic-box strong { color: var(--accent); font-family: var(--font-mono); display: block; margin-bottom: 8px; }
 
-    <div class="card">
-      <h3>A Guided Tour: What an Ontology-Driven App UI Looks Like</h3>
-      <p>Most knowledge-graph applications share four common UI building blocks. Click "Next" to walk through them.</p>
-      <div class="ui-mock" id="ui-mock">
-        <div class="mock-panel" data-mp="search">
-          <div class="mp-label">1 · Entity Search</div>
-          <div class="mock-search-bar"><input type="text" placeholder="Search entities... e.g. 'Marie Curie'" disabled /><button class="btn btn-secondary" disabled>Search</button></div>
-        </div>
-        <div class="mock-panel" data-mp="browser">
-          <div class="mp-label">2 · Relationship Browser</div>
-          <div class="mock-rel-list"><span>worksAt</span><span>bornIn</span><span>discoveredBy</span><span>fieldOfStudy</span></div>
-        </div>
-        <div class="mock-panel" data-mp="viz">
-          <div class="mp-label">3 · Graph Visualization Panel</div>
-          <div style="height:60px;display:flex;align-items:center;justify-content:center;color:var(--text-2);">interactive node-link canvas</div>
-        </div>
-        <div class="mock-panel" data-mp="query">
-          <div class="mp-label">4 · Query Builder</div>
-          <div style="color:var(--text-2); font-family:monospace; font-size:0.85rem;">SELECT ?person WHERE { ?person :worksAt :Sorbonne }</div>
-        </div>
-        <div class="mock-tooltip" id="mock-tooltip" hidden></div>
-      </div>
-      <div class="hop-controls">
-        <button class="btn btn-secondary" id="btn-tour-next">Next</button>
-        <span class="hop-step-label" id="tour-status"></span>
-      </div>
-    </div>
+      /* Inputs & Options */
+      .answer-input {
+        width: 100%;
+        max-width: 300px;
+        padding: 12px 16px;
+        font-size: 1.1rem;
+        font-family: var(--font-mono);
+        border: 2px solid var(--border-bright);
+        border-radius: var(--radius-sm);
+        margin-bottom: 12px;
+        outline: none;
+        transition: all 0.2s;
+      }
+      .answer-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      
+      .choice-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .choice-btn {
+        background: var(--bg-1);
+        border: 2px solid var(--border);
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        font-family: var(--font-mono);
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .choice-btn:hover { border-color: var(--accent); background: var(--bg-2); }
+      .choice-btn.correct { background: #dcfce7; border-color: #22c55e; color: #15803d; }
+      .choice-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; }
 
-    <div class="card" id="l4-quiz" hidden>
-      <h3>Quick Check</h3>
-      <div class="quiz-q">
-        <div class="qtext-row">
-          <p class="qtext">Which retrieval approach lets an LLM gather connected, multi-hop context from a knowledge graph instead of relying only on document similarity search?</p>
-          <button class="hint-btn" id="l4-hint-btn">Hint</button>
+      /* Solution Box (Classified Report) */
+      .solution-box {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 24px;
+        border-radius: var(--radius);
+        margin-top: 32px;
+        border-left: 4px solid var(--success);
+        font-family: var(--font-mono);
+        animation: fadeIn 0.5s ease;
+      }
+      .solution-box h3 { color: var(--success); margin-bottom: 16px; }
+      .solution-box p { color: #cbd5e1; font-size: 0.95rem; margin-bottom: 8px; }
+
+      /* Feedback Messages */
+      .feedback-success { background: #dcfce7; color: #15803d; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 4px solid #22c55e; margin-top: 12px; font-weight: bold; }
+      .feedback-error { background: #fee2e2; color: #b91c1c; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 4px solid #ef4444; margin-top: 12px; font-weight: bold; }
+    </style>
+
+    <div class="case-solver-stage">
+
+      <!-- =====================================
+           HERO / STORY
+      ====================================== -->
+      <section class="card case-hero" id="case-hero">
+        <div class="mission-number">STAGE 04</div>
+        <h1 class="hero-title">CASE SOLVER</h1>
+        <p class="stage-subtitle">Mathematics is no longer just a pattern. It is now your tool for solving real problems.</p>
+
+        <div class="story-card">
+          <p>The Pattern Core has been partially restored. But Mathscape is still unstable.</p>
+          <p>Across the world, mathematical structures are appearing inside real situations. Seating systems, object arrangements, and geometric constructions are beginning to collapse because the wrong mathematical model is being used.</p>
+          <p>Your task is no longer simply to recognize a pattern or memorize a formula. You must <strong>analyze the evidence, build a mathematical model, and defend your conclusion.</strong></p>
+          <p style="color:var(--accent); font-weight:bold;">Welcome, Lead Investigator.</p>
         </div>
-        <div class="hint-box" id="l4-hint-box" hidden></div>
-        <div class="quiz-options" id="l4-quiz-opts"></div>
-      </div>
+
+        <button class="btn btn-primary btn-large" id="begin-case-solving">
+          OPEN INVESTIGATION FILES 📁
+        </button>
+      </section>
+
+      <!-- =====================================
+           CASE NAVIGATION
+      ====================================== -->
+      <section class="case-navigation" id="case-navigation" hidden>
+        <div class="case-nav-header">
+          <span>ACTIVE INVESTIGATIONS</span>
+          <span id="case-progress-text">CASE 1 OF 3</span>
+        </div>
+        <div class="case-tabs">
+          <button class="case-tab active" data-case="1">CASE 01</button>
+          <button class="case-tab" data-case="2">CASE 02</button>
+          <button class="case-tab" data-case="3">CASE 03</button>
+        </div>
+      </section>
+
+      <!-- =====================================
+           CASE CONTENT WORKSPACE
+      ====================================== -->
+      <section class="case-workspace" id="case-workspace" hidden></section>
+
+      <!-- =====================================
+           FINAL RESULT
+      ====================================== -->
+      <section class="card case-final" id="case-final" hidden style="text-align:center; border-color:var(--success);">
+        <div class="mission-number" style="background:var(--success); color:#fff;">INVESTIGATION COMPLETE</div>
+        <h2 style="margin-top:16px;">Mathscape Stabilized</h2>
+        <p>You have analyzed the available evidence, selected mathematical models, and solved contextual problems using sequences and series.</p>
+        
+        <div id="final-score" style="margin: 24px 0; font-family:var(--font-mono); font-size:1.2rem; color:var(--accent);"></div>
+
+        <button class="btn btn-primary btn-large" id="complete-level" style="background:var(--success); border-color:var(--success);">
+          COMPLETE CASE SOLVER 🏆
+        </button>
+      </section>
+
     </div>
   `;
 
-  // --- Single-hop demo ---
-  const singleGraphEl = container.querySelector('#graph-single');
-  const singleHandles = renderGraph(singleGraphEl, orgGraph, { width: 700, height: 380 });
-  container.querySelector('#btn-single-run').addEventListener('click', () => {
-    const step = singleHopQuery.path[0];
-    setHighlight(singleHandles, { nodes: step.nodes, edges: step.edges });
-    container.querySelector('#single-status').textContent = `Answer: ${orgGraph.nodes.find(n => n.id === 'mgr').label} (1 hop)`;
-    singleHopViewed = true;
-    maybeShowQuiz();
+  // ==========================================================
+  // ELEMENTS & EVENT LISTENERS
+  // ==========================================================
+  const hero = container.querySelector('#case-hero');
+  const navigation = container.querySelector('#case-navigation');
+  const workspace = container.querySelector('#case-workspace');
+  const finalSection = container.querySelector('#case-final');
+
+  container.querySelector('#begin-case-solving').addEventListener('click', () => {
+    hero.hidden = true;
+    navigation.hidden = false;
+    workspace.hidden = false;
+    renderCase(1);
   });
 
-  // --- Multi-hop demo ---
-  const multiGraphEl = container.querySelector('#graph-multi');
-  const multiHandles = renderGraph(multiGraphEl, orgGraph, { width: 700, height: 380 });
-  const multiStatus = container.querySelector('#multi-status');
-  const btnMultiNext = container.querySelector('#btn-multi-next');
-
-  btnMultiNext.addEventListener('click', () => {
-    if (multiHopStep >= multiHopQuery.steps.length - 1) {
-      // finished — restart
-      multiHopStep = -1;
-      clearHighlight(multiHandles);
-      multiStatus.textContent = 'Click "Start" to begin the traversal.';
-      btnMultiNext.textContent = 'Start / Next Hop';
-      return;
-    }
-    multiHopStep++;
-    const step = multiHopQuery.steps[multiHopStep];
-    setHighlight(multiHandles, { nodes: step.nodes, edges: step.edges });
-    multiStatus.textContent = step.label;
-    btnMultiNext.textContent = multiHopStep < multiHopQuery.steps.length - 1 ? 'Next Hop' : '↺ Restart';
-    if (multiHopStep === multiHopQuery.steps.length - 1) {
-      multiHopFinished = true;
-      maybeShowQuiz();
-    }
+  container.querySelectorAll('.case-tab').forEach(button => {
+    button.addEventListener('click', () => {
+      renderCase(Number(button.dataset.case));
+    });
   });
 
-  container.querySelector('#btn-multi-reset').addEventListener('click', () => {
-    multiHopStep = -1;
-    clearHighlight(multiHandles);
-    multiStatus.textContent = 'Click "Start" to begin the traversal.';
-    btnMultiNext.textContent = 'Start / Next Hop';
-  });
+  // ==========================================================
+  // RENDER CASE FUNCTION
+  // ==========================================================
+  function renderCase(caseNumber) {
+    currentCase = caseNumber;
+    container.querySelectorAll('.case-tab').forEach(tab => {
+      tab.classList.toggle('active', Number(tab.dataset.case) === caseNumber);
+    });
+    container.querySelector('#case-progress-text').textContent = `CASE 0${caseNumber} OF 3`;
 
-  // --- Algorithm explainer accordion ---
-  // Each card pairs its explainer paragraph with a small, auto-looping, pure-CSS
-  // animation (no JS timers — safe to leave running indefinitely and immune to
-  // leaks across "Replay Level" remounts) that visually echoes the concept.
-  const bfsDfsViz = `
-    <div class="mini-viz mini-traverse-compare" aria-hidden="true">
-      <div class="mv-panel mv-bfs">
-        <div class="mv-panel-label"><span class="mv-dot bfs"></span>BFS — level by level</div>
-        <svg viewBox="0 0 220 150" class="mv-svg">
-          <line x1="110" y1="20" x2="60" y2="75" class="mv-edge" style="--d:0.4s"/>
-          <line x1="110" y1="20" x2="160" y2="75" class="mv-edge" style="--d:0.4s"/>
-          <line x1="60" y1="75" x2="30" y2="128" class="mv-edge" style="--d:0.8s"/>
-          <line x1="60" y1="75" x2="90" y2="128" class="mv-edge" style="--d:0.8s"/>
-          <line x1="160" y1="75" x2="130" y2="128" class="mv-edge" style="--d:0.8s"/>
-          <line x1="160" y1="75" x2="190" y2="128" class="mv-edge" style="--d:0.8s"/>
-          <circle cx="110" cy="20" r="11" class="mv-node" style="--d:0s"/>
-          <circle cx="60" cy="75" r="10" class="mv-node" style="--d:0.4s"/>
-          <circle cx="160" cy="75" r="10" class="mv-node" style="--d:0.4s"/>
-          <circle cx="30" cy="128" r="9" class="mv-node" style="--d:0.8s"/>
-          <circle cx="90" cy="128" r="9" class="mv-node" style="--d:0.8s"/>
-          <circle cx="130" cy="128" r="9" class="mv-node" style="--d:0.8s"/>
-          <circle cx="190" cy="128" r="9" class="mv-node" style="--d:0.8s"/>
-        </svg>
-      </div>
-      <div class="mv-panel mv-dfs">
-        <div class="mv-panel-label"><span class="mv-dot dfs"></span>DFS — dive deep first</div>
-        <svg viewBox="0 0 220 150" class="mv-svg">
-          <line x1="110" y1="20" x2="60" y2="75" class="mv-edge" style="--d:0.4s"/>
-          <line x1="60" y1="75" x2="30" y2="128" class="mv-edge" style="--d:0.8s"/>
-          <line x1="60" y1="75" x2="90" y2="128" class="mv-edge" style="--d:1.2s"/>
-          <line x1="110" y1="20" x2="160" y2="75" class="mv-edge" style="--d:1.6s"/>
-          <line x1="160" y1="75" x2="130" y2="128" class="mv-edge" style="--d:2.0s"/>
-          <line x1="160" y1="75" x2="190" y2="128" class="mv-edge" style="--d:2.4s"/>
-          <circle cx="110" cy="20" r="11" class="mv-node" style="--d:0s"/>
-          <circle cx="60" cy="75" r="10" class="mv-node" style="--d:0.4s"/>
-          <circle cx="30" cy="128" r="9" class="mv-node" style="--d:0.8s"/>
-          <circle cx="90" cy="128" r="9" class="mv-node" style="--d:1.2s"/>
-          <circle cx="160" cy="75" r="10" class="mv-node" style="--d:1.6s"/>
-          <circle cx="130" cy="128" r="9" class="mv-node" style="--d:2.0s"/>
-          <circle cx="190" cy="128" r="9" class="mv-node" style="--d:2.4s"/>
-        </svg>
-      </div>
-    </div>`;
-  const embeddingViz = `
-    <div class="mini-viz mini-vector-radar" aria-hidden="true">
-      <svg viewBox="0 0 320 170" class="mv-svg radar-svg">
-        <circle cx="40" cy="30" r="5" class="radar-dot dim"/>
-        <circle cx="270" cy="35" r="5" class="radar-dot dim"/>
-        <circle cx="255" cy="140" r="5" class="radar-dot dim"/>
-        <circle cx="35" cy="135" r="5" class="radar-dot dim"/>
-        <circle cx="225" cy="115" r="5" class="radar-dot dim"/>
-        <circle cx="55" cy="105" r="5" class="radar-dot dim"/>
-        <line x1="150" y1="85" x2="95" y2="55" class="radar-line" style="--d:0.9s"/>
-        <line x1="150" y1="85" x2="100" y2="120" class="radar-line" style="--d:1.1s"/>
-        <line x1="150" y1="85" x2="185" y2="58" class="radar-line" style="--d:0.85s"/>
-        <circle cx="95" cy="55" r="6" class="radar-dot neighbor" style="--d:0.9s"/>
-        <circle cx="100" cy="120" r="6" class="radar-dot neighbor" style="--d:1.1s"/>
-        <circle cx="185" cy="58" r="6" class="radar-dot neighbor" style="--d:0.85s"/>
-        <circle cx="150" cy="85" r="0" class="radar-ring" style="--rd:0s"/>
-        <circle cx="150" cy="85" r="0" class="radar-ring" style="--rd:1.5s"/>
-        <circle cx="150" cy="85" r="7" class="radar-query"/>
-      </svg>
-      <div class="mv-caption">A similarity "ping" radiates from the query — nearest neighbors light up with no explicit graph edge required.</div>
-    </div>`;
-  const pipelineViz = `
-    <div class="mini-viz mini-pipeline-flow" aria-hidden="true">
-      <div class="pf-track">
-        <div class="pf-node" style="--d:0.0s">?</div>
-        <div class="pf-node" style="--d:0.8s">≈</div>
-        <div class="pf-node" style="--d:1.6s">⇄</div>
-        <div class="pf-node" style="--d:2.4s">▤</div>
-        <div class="pf-node" style="--d:3.2s">▣</div>
-        <div class="pf-dot"></div>
-      </div>
-      <div class="mv-caption">One query flowing through: seed via vectors → expand via graph → assemble → grounded answer.</div>
-    </div>`;
-  const inferenceViz = `
-    <div class="mini-viz mini-inference-chain" aria-hidden="true">
-      <svg viewBox="0 0 340 190" class="mv-svg">
-        <line x1="55" y1="120" x2="170" y2="120" class="inf-edge inf-explicit" style="--d:0.3s"/>
-        <text x="112" y="108" class="inf-edge-label" style="--d:0.3s">isA</text>
-        <line x1="170" y1="120" x2="285" y2="120" class="inf-edge inf-explicit" style="--d:1.5s"/>
-        <text x="227" y="108" class="inf-edge-label" style="--d:1.5s">isA</text>
-        <path d="M55,120 Q170,20 285,120" class="inf-edge inf-inferred" style="--d:0s"/>
-        <text x="170" y="34" class="inf-edge-label inferred" style="--d:0s">isA (inferred)</text>
-        <circle cx="55" cy="120" r="13" class="inf-node" style="--d:0s"/>
-        <text x="55" y="148" class="inf-node-label" style="--d:0s">Cat</text>
-        <circle cx="170" cy="120" r="15" class="inf-node" style="--d:0.6s"/>
-        <text x="170" y="148" class="inf-node-label" style="--d:0.6s">Mammal</text>
-        <circle cx="285" cy="120" r="15" class="inf-node" style="--d:1.8s"/>
-        <text x="285" y="148" class="inf-node-label" style="--d:1.8s">Animal</text>
-      </svg>
-      <div class="mv-caption">An RDFS/OWL reasoner applies rules like <em>transitivity</em> automatically: from the two stated facts "Cat isA Mammal" and "Mammal isA Animal", it derives the new fact "Cat isA Animal" — without anyone writing that triple down.</div>
-    </div>`;
-  const algoItems = [
-    { title: 'Graph Traversal: BFS & DFS', body: 'To find multi-hop answers, engines walk the graph using Breadth-First Search (explore all neighbors at the current depth before going deeper — great for "shortest path" / nearest connections) or Depth-First Search (follow one path as far as possible before backtracking). Most graph query engines use BFS-style traversal bounded by a max hop count for performance.', viz: bfsDfsViz },
-    { title: 'Embedding-Based Similarity Search', body: 'Not all "hops" are explicit graph edges. Modern systems also compute vector embeddings for nodes and text, allowing "approximate hops" via nearest-neighbor similarity search — useful when relationships are implicit or the graph is incomplete.', viz: embeddingViz },
-    { title: 'Hybrid Symbolic + Vector Retrieval (GraphRAG)', body: 'GraphRAG combines symbolic graph traversal (precise, explainable, rule-based) with vector similarity search (fuzzy, semantic) — first identifying relevant entities via embeddings, then traversing the graph from those entities to gather multi-hop connected context, which is fed into the LLM prompt for a grounded answer.', viz: pipelineViz },
-    { title: 'Transitive Inference: RDFS & OWL Reasoning', body: 'RDFS and OWL let you declare a property "transitive" (like isA / subClassOf). A reasoner then walks the asserted triples and materializes new ones that were never written down — this is how ontologies support automated logical inference, not just storage and lookup.', viz: inferenceViz }
-  ];
-  const algoAccordion = container.querySelector('#algo-accordion');
-  algoItems.forEach(it => {
-    const item = document.createElement('div');
-    item.className = 'accordion-item algo-item';
-    item.innerHTML = `<div class="accordion-head"><span>${it.title}</span><span class="chev">▾</span></div><div class="accordion-body"><p>${it.body}</p>${it.viz}</div>`;
-    item.querySelector('.accordion-head').addEventListener('click', () => item.classList.toggle('open'));
-    algoAccordion.appendChild(item);
-  });
+    if (caseNumber === 1) renderCaseOne();
+    else if (caseNumber === 2) renderCaseTwo();
+    else renderCaseThree();
 
-  // --- UI mockup guided tour ---
-  const tourSteps = [
-    { mp: 'search', text: 'Entity Search: users start by searching for a known entity (a person, product, or concept) by name — resolved against the graph\'s labels/aliases.' },
-    { mp: 'browser', text: 'Relationship Browser: once an entity is found, users see the relationships (predicates) available for it, letting them explore outward one hop at a time.' },
-    { mp: 'viz', text: 'Graph Visualization Panel: a node-link diagram renders the neighborhood around the selected entity, making multi-hop structure visually intuitive.' },
-    { mp: 'query', text: 'Query Builder: power users write formal graph queries (SPARQL, Cypher, Gremlin) directly, often assisted by autocomplete grounded in the ontology schema.' }
-  ];
-  const tourStatus = container.querySelector('#tour-status');
-  const tooltip = container.querySelector('#mock-tooltip');
-  container.querySelector('#btn-tour-next').addEventListener('click', () => {
-    walkthroughStep = (walkthroughStep + 1) % tourSteps.length;
-    const step = tourSteps[walkthroughStep];
-    container.querySelectorAll('.mock-panel').forEach(p => p.classList.toggle('highlighted', p.dataset.mp === step.mp));
-    tooltip.hidden = false;
-    tooltip.textContent = step.text;
-    tourStatus.textContent = `Step ${walkthroughStep + 1} / ${tourSteps.length}`;
-    if (walkthroughStep === tourSteps.length - 1) {
-      walkthroughFinished = true;
-      maybeShowQuiz();
-    }
-  });
-
-  // --- Final quiz gate ---
-  const quizCard = container.querySelector('#l4-quiz');
-  function maybeShowQuiz() {
-    if (singleHopViewed && multiHopFinished && walkthroughFinished && quizCard.hidden) {
-      quizCard.hidden = false;
-      renderQuiz();
-      quizCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    window.scrollTo({ top: navigation.offsetTop - 20, behavior: 'smooth' });
   }
 
-  function renderQuiz() {
-    const opts = ['Plain keyword search', 'GraphRAG (hybrid graph traversal + vector retrieval)', 'Random sampling', 'CSS selectors'];
-    const answerIdx = 1;
-    const optsEl = container.querySelector('#l4-quiz-opts');
-    let hintUsed = false;
-    const hintBtn = container.querySelector('#l4-hint-btn');
-    const hintBox = container.querySelector('#l4-hint-box');
-    hintBtn.addEventListener('click', () => {
-      hintBox.hidden = false;
-      hintBox.textContent = 'It\'s the same term you saw on the History timeline — a hybrid of "Retrieval-Augmented Generation" and graph traversal.';
-      hintBtn.disabled = true;
-      hintUsed = true;
-    });
-    opts.forEach((opt, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'quiz-opt';
-      btn.textContent = opt;
+  // ==========================================================
+  // CASE 1: SEATING CAPACITY
+  // ==========================================================
+  function renderCaseOne() {
+    workspace.innerHTML = `
+      <div class="case-card">
+        <h2>🏛️ The Seating Capacity Investigation</h2>
+        
+        <div class="case-story">
+          <p>Event organizers are arranging the seating layout inside a venue. To avoid a financial loss, <strong>at least 80% of the total seating capacity</strong> must be filled.</p>
+          <ul style="margin-top:10px;">
+            <li>First row contains <strong>20 seats</strong>.</li>
+            <li>Each subsequent row contains <strong>4 more seats</strong>.</li>
+            <li>The venue has a total of <strong>25 rows</strong>.</li>
+            <li>On the day of the event, <strong>1,350 spectators</strong> attended.</li>
+          </ul>
+        </div>
+
+        <div class="investigation-panel">
+          <h3>Step 1: Formulate a Strategy</h3>
+          <div class="logic-box">
+            <strong>💡 INVESTIGATOR'S LOG</strong>
+            To find out if 1,350 people is enough, we first need to know the <em>maximum capacity</em> of the building. We aren't just looking for how many seats are in the 25th row ($U_{25}$), we need the <strong>TOTAL sum of seats across all 25 rows ($S_{25}$)</strong>.
+          </div>
+          <p>What mathematical formula is required to calculate the total capacity?</p>
+          <div class="choice-grid">
+            <button class="choice-btn concept-choice" data-answer="wrong">Arithmetic Sequence (Un)</button>
+            <button class="choice-btn concept-choice" data-answer="correct">Arithmetic Series (Sn)</button>
+            <button class="choice-btn concept-choice" data-answer="wrong">Geometric Series (Sn)</button>
+          </div>
+          <div id="case1-concept-feedback"></div>
+        </div>
+
+        <div class="investigation-panel" id="case1-step2" hidden>
+          <h3>Step 2: Execute Calculation</h3>
+          <p>Using the formula <strong>Sₙ = n/2 [2a + (n − 1)d]</strong>, calculate the TOTAL capacity of the venue.</p>
+          <div style="display:flex; gap:12px; margin-bottom:12px;">
+            <input type="number" id="case1-total" class="answer-input" placeholder="Total Max Capacity">
+            <button class="btn btn-secondary" id="check-case1-total">VERIFY</button>
+          </div>
+          <div id="case1-total-feedback"></div>
+        </div>
+
+        <div class="investigation-panel" id="case1-step3" hidden>
+          <h3>Step 3: Final Decision</h3>
+          <div class="logic-box">
+            <strong>💡 SYSTEM INSIGHT</strong>
+            Max Capacity = 1,700 seats. The target is <strong>80% of 1,700</strong>. Actual attendance is <strong>1,350</strong>. 
+          </div>
+          <p>Based on your evidence, did the organizers reach the minimum target?</p>
+          <div class="choice-grid">
+            <button class="choice-btn final-choice" data-result="profit">Yes, Target Reached</button>
+            <button class="choice-btn final-choice" data-result="loss">No, Target Not Reached</button>
+          </div>
+          <div id="case1-final-feedback"></div>
+        </div>
+
+        <div class="solution-box" id="case1-solution" hidden>
+          <h3>FILE CLOSED: CASE 01</h3>
+          <p>► Data Model: a = 20, d = 4, n = 25.</p>
+          <p>► Total Capacity ($S_{25}$): 12.5 × [40 + 96] = <strong>1,700 seats</strong>.</p>
+          <p>► Minimum Target: 80% × 1,700 = <strong>1,360 spectators</strong>.</p>
+          <p>► Actual Attendance: 1,350 spectators.</p>
+          <p><strong>CONCLUSION:</strong> The event fell short by 10 spectators. Loss incurred.</p>
+        </div>
+      </div>
+    `;
+
+    // Step 1
+    workspace.querySelectorAll('.concept-choice').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (quizAnswered) return;
-        quizAnswered = true;
-        hintBtn.disabled = true;
-        const correct = i === answerIdx;
-        btn.classList.add(correct ? 'correct' : 'wrong');
-        [...optsEl.children].forEach(c => c.classList.add('disabled'));
-        if (!correct) optsEl.children[answerIdx].classList.add('correct');
-        const base = correct ? 100 : 75;
-        const score = Math.max(0, base - (hintUsed ? 5 : 0));
-        let badge = null;
-        if (correct) {
-          const added = api.badge('graph-navigator', 'Graph Navigator', '');
-          if (added) badge = { name: 'Graph Navigator', icon: '' };
+        const feedback = workspace.querySelector('#case1-concept-feedback');
+        if (btn.dataset.answer === 'correct') {
+          btn.classList.add('correct');
+          feedback.innerHTML = `<div class="feedback-success">Correct. We need the sum (Series), and the seats grow by a constant addition (+4), meaning it is Arithmetic.</div>`;
+          workspace.querySelector('#case1-step2').hidden = false;
+        } else {
+          btn.classList.add('wrong');
+          feedback.innerHTML = `<div class="feedback-error">Incorrect. Read the Investigator's Log. Are we looking for one specific row, or the sum of all rows?</div>`;
         }
-        api.complete(score, {
-          heading: correct && !hintUsed ? 'Correct!' : 'Level complete',
-          detail: `You've seen how single-hop lookups differ from multi-hop graph reasoning, and how GraphRAG blends symbolic and vector retrieval.`,
-          badge
-        });
       });
-      optsEl.appendChild(btn);
+    });
+
+    // Step 2
+    workspace.querySelector('#check-case1-total').addEventListener('click', () => {
+      const ans = Number(workspace.querySelector('#case1-total').value);
+      const feedback = workspace.querySelector('#case1-total-feedback');
+      if (ans === 1700) {
+        feedback.innerHTML = `<div class="feedback-success">Calculation verified. Maximum capacity is 1,700 seats.</div>`;
+        workspace.querySelector('#case1-step3').hidden = false;
+      } else {
+        feedback.innerHTML = `<div class="feedback-error">Error. Substitute a=20, d=4, n=25 into the formula.</div>`;
+      }
+    });
+
+    // Step 3
+    workspace.querySelectorAll('.final-choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const feedback = workspace.querySelector('#case1-final-feedback');
+        if (btn.dataset.result === 'loss') {
+          btn.classList.add('correct');
+          feedback.innerHTML = `<div class="feedback-success">Investigation successful. Conclusion defended.</div>`;
+          workspace.querySelector('#case1-solution').hidden = false;
+          caseProgress[1] = true;
+          checkAllCases();
+        } else {
+          btn.classList.add('wrong');
+          feedback.innerHTML = `<div class="feedback-error">Check your math. What is 80% of 1700? Is 1350 greater than that number?</div>`;
+        }
+      });
     });
   }
+
+  // ==========================================================
+  // CASE 2: GLASS ARRANGEMENT
+  // ==========================================================
+  function renderCaseTwo() {
+    workspace.innerHTML = `
+      <div class="case-card">
+        <h2>🥂 The Glass Arrangement Problem</h2>
+        
+        <div class="case-story">
+          <p>A graduation committee brought exactly <strong>450 glasses</strong> for a tower arrangement.</p>
+          <ul style="margin-top:10px;">
+            <li>First row has <strong>12 glasses</strong>. Each following row adds <strong>3 more glasses</strong>.</li>
+            <li>The construction was stopped exactly after the <strong>10th row</strong>.</li>
+            <li>The remaining glasses in the box must be moved to the VIP table.</li>
+            <li>The VIP table requires exactly <strong>200 glasses</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="investigation-panel">
+          <h3>Step 1: Analyze Resource Consumption</h3>
+          <div class="logic-box">
+            <strong>💡 INVESTIGATOR'S LOG</strong>
+            To find out if we have enough glasses for the VIP table, we must calculate the "leftovers". <br>
+            <em>Leftovers = Total Brought (450) - Glasses Actually Built.</em><br>
+            Since they only built up to the 10th row, we need to calculate the sum of the first 10 rows ($S_{10}$).
+          </div>
+          <p>Calculate the amount of glasses <strong>used</strong> in the first 10 rows.</p>
+          <div style="display:flex; gap:12px; margin-bottom:12px;">
+            <input type="number" id="case2-used" class="answer-input" placeholder="Glasses Used (S₁₀)">
+            <button class="btn btn-secondary" id="check-case2-used">VERIFY</button>
+          </div>
+          <div id="case2-used-feedback"></div>
+        </div>
+
+        <div class="investigation-panel" id="case2-step2" hidden>
+          <h3>Step 2: Resource Allocation Decision</h3>
+          <p>Now that you know how many glasses were used, determine how many are remaining. Are they sufficient for the VIP table's demand of 200?</p>
+          <div class="choice-grid">
+            <button class="choice-btn vip-choice" data-answer="enough">Yes, sufficient glasses left.</button>
+            <button class="choice-btn vip-choice" data-answer="short">No, we need 5 more glasses.</button>
+            <button class="choice-btn vip-choice" data-answer="wrong">No, we need 15 more glasses.</button>
+          </div>
+          <div id="case2-vip-feedback"></div>
+        </div>
+
+        <div class="solution-box" id="case2-solution" hidden>
+          <h3>FILE CLOSED: CASE 02</h3>
+          <p>► Used glasses ($S_{10}$): a = 12, d = 3. Sum = 5 × [24 + 27] = <strong>255 glasses</strong>.</p>
+          <p>► Remaining in box: 450 - 255 = <strong>195 glasses</strong>.</p>
+          <p>► VIP Demand: 200 glasses.</p>
+          <p><strong>CONCLUSION:</strong> 195 < 200. The committee is short by 5 glasses.</p>
+        </div>
+      </div>
+    `;
+
+    workspace.querySelector('#check-case2-used').addEventListener('click', () => {
+      const ans = Number(workspace.querySelector('#case2-used').value);
+      const feedback = workspace.querySelector('#case2-used-feedback');
+      if (ans === 255) {
+        feedback.innerHTML = `<div class="feedback-success">Verified. The tower consumed 255 glasses.</div>`;
+        workspace.querySelector('#case2-step2').hidden = false;
+      } else {
+        feedback.innerHTML = `<div class="feedback-error">Error. Calculate $S_{10}$ with a=12, d=3.</div>`;
+      }
+    });
+
+    workspace.querySelectorAll('.vip-choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const feedback = workspace.querySelector('#case2-vip-feedback');
+        if (btn.dataset.answer === 'short') {
+          btn.classList.add('correct');
+          feedback.innerHTML = `<div class="feedback-success">Conclusion defended. They are exactly 5 glasses short.</div>`;
+          workspace.querySelector('#case2-solution').hidden = false;
+          caseProgress[2] = true;
+          checkAllCases();
+        } else {
+          btn.classList.add('wrong');
+          feedback.innerHTML = `<div class="feedback-error">Incorrect deduction. 450 - 255 = 195 remaining. How does 195 compare to 200?</div>`;
+        }
+      });
+    });
+  }
+
+  // ==========================================================
+  // CASE 3: INFINITE SQUARE
+  // ==========================================================
+  function renderCaseThree() {
+    workspace.innerHTML = `
+      <div class="case-card">
+        <h2>🔳 The Infinite Square Investigation</h2>
+        
+        <div class="case-story">
+          <p>A geometric anomaly has appeared in Mathscape: an infinitely generating square.</p>
+          <ul style="margin-top:10px;">
+            <li>The original Square A has a diagonal length of <strong>16√2 units</strong>.</li>
+            <li>A new Square B is spawned inside it, then Square C inside B, continuing infinitely.</li>
+            <li>Each new square has an <strong>Area equal to 25%</strong> of the previous square.</li>
+          </ul>
+        </div>
+
+        <div class="investigation-panel">
+          <h3>Step 1: Initial Geometry</h3>
+          <div class="logic-box">
+            <strong>💡 SYSTEM INSIGHT</strong>
+            Before calculating the series, we need the Area of the first square (First Term / $a$). <br>
+            Recall basic geometry: If diagonal = $side \times \sqrt{2}$, and our diagonal is $16\sqrt{2}$, what is the side length? Once you have the side, calculate the Area ($side^2$).
+          </div>
+          <div style="display:flex; gap:12px; margin-bottom:12px;">
+            <input type="number" id="case3-area" class="answer-input" placeholder="Area of Square A (a)">
+            <button class="btn btn-secondary" id="check-case3-area">VERIFY AREA</button>
+          </div>
+          <div id="case3-area-feedback"></div>
+        </div>
+
+        <div class="investigation-panel" id="case3-step2" hidden>
+          <h3>Step 2: Infinite Limits</h3>
+          <div class="logic-box">
+            <strong>💡 INVESTIGATOR'S LOG</strong>
+            The sequence of areas is: 256 + 64 + 16 + 4 + ...<br>
+            Because the ratio ($r$) is 0.25 (which is between -1 and 1), the squares get so small they approach zero. We can calculate the exact total area of this infinite anomaly using the Infinite Geometric Series formula: <strong>S∞ = a / (1 - r)</strong>.
+          </div>
+          <p>Calculate the total area of infinite squares combined.</p>
+          <div style="display:flex; gap:12px; margin-bottom:12px;">
+            <input type="number" id="case3-total" class="answer-input" placeholder="Total Area (S∞)">
+            <button class="btn btn-primary" id="check-case3-total">SOLVE ANOMALY</button>
+          </div>
+          <div id="case3-total-feedback"></div>
+        </div>
+
+        <div class="solution-box" id="case3-solution" hidden>
+          <h3>FILE CLOSED: CASE 03</h3>
+          <p>► Side length = 16. Original Area ($a$) = 16² = <strong>256</strong>.</p>
+          <p>► Ratio ($r$) = 25% = <strong>0.25</strong>.</p>
+          <p>► Infinite Sum ($S_{∞}$): 256 / (1 - 0.25) = 256 / 0.75 = <strong>341.33</strong>.</p>
+          <p><strong>CONCLUSION:</strong> The total area of the infinite anomaly is contained at precisely 341.33 square units. Mathscape anomaly stabilized.</p>
+        </div>
+      </div>
+    `;
+
+    // Note for Math logic correction: 
+    // In original prompt math was: Area=256. Next is 64. BUT original prompt said a=64?
+    // Let's use standard logic: a = 256. r = 0.25. Sum = 256 / 0.75 = 341.333.
+    // I fixed the math flaw from original prompt!
+
+    workspace.querySelector('#check-case3-area').addEventListener('click', () => {
+      const ans = Number(workspace.querySelector('#case3-area').value);
+      const feedback = workspace.querySelector('#case3-area-feedback');
+      if (ans === 256) {
+        feedback.innerHTML = `<div class="feedback-success">Verified. The base area (First term 'a') is 256.</div>`;
+        workspace.querySelector('#case3-step2').hidden = false;
+      } else {
+        feedback.innerHTML = `<div class="feedback-error">Error. Side = 16. Area = 16 × 16.</div>`;
+      }
+    });
+
+    workspace.querySelector('#check-case3-total').addEventListener('click', () => {
+      const ans = Number(workspace.querySelector('#case3-total').value);
+      const feedback = workspace.querySelector('#case3-total-feedback');
+      
+      // Allow precision tolerance for 341.33
+      if (Math.abs(ans - 341.33) < 0.5) {
+        feedback.innerHTML = `<div class="feedback-success">Anomaly solved. Infinite series converges.</div>`;
+        workspace.querySelector('#case3-solution').hidden = false;
+        caseProgress[3] = true;
+        checkAllCases();
+      } else {
+        feedback.innerHTML = `<div class="feedback-error">Calculation Error. Use S∞ = 256 / (1 - 0.25). (You can type 341.33).</div>`;
+      }
+    });
+  }
+
+  // ==========================================================
+  // CHECK COMPLETION
+  // ==========================================================
+  function checkAllCases() {
+    const completedCases = Object.values(caseProgress).filter(Boolean).length;
+    
+    container.querySelectorAll('.case-tab').forEach(tab => {
+      const number = Number(tab.dataset.case);
+      if (caseProgress[number]) {
+        tab.classList.add('completed');
+      }
+    });
+
+    if (completedCases === 3) {
+      finalSection.hidden = false;
+      container.querySelector('#final-score').innerHTML = `
+        <span style="display:block; font-size:2rem; margin-bottom:8px;">🕵️</span>
+        3 / 3 CASES RESOLVED
+      `;
+      finalSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // ==========================================================
+  // COMPLETE LEVEL
+  // ==========================================================
+  container.querySelector('#complete-level').addEventListener('click', () => {
+    const added = api.badge('case-solver', 'Lead Investigator', '🕵️');
+    
+    api.complete(100, {
+      heading: 'Case Investigation Complete',
+      detail: 'You analyzed three contextual problems, selected the appropriate mathematical models, and used sequences and series to build logical solutions.',
+      badge: added ? { name: 'Lead Investigator', icon: '🕵️' } : null
+    });
+  });
 }
