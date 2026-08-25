@@ -537,7 +537,13 @@ export function mount(container, api) {
     workspace.innerHTML = `
       <div class="case-card">
         <h2>🔳 The Infinite Square Investigation</h2>
-        
+        <div class="case-image-container">
+  <img
+    src="assets/Case-03.png"
+    alt="The Infinite Square Investigation"
+    class="case-image"
+  >
+</div>
         <div class="case-story">
           <p>A geometric anomaly has appeared in Mathscape: an infinitely generating square.</p>
           <ul style="margin-top:10px;">
