@@ -1575,3 +1575,38 @@ button,
 
   object-fit: contain;
 }
+.investigator-log {
+  line-height: 1.8;
+}
+
+.investigator-log p {
+  display: block;
+  margin: 14px 0;
+}
+
+.investigator-log strong,
+.investigator-log em {
+  display: inline;
+}
+
+.investigator-log strong {
+  color: var(--accent);
+}
+
+.formula-highlight {
+  display: block;
+  margin: 20px auto;
+  padding: 16px 24px;
+
+  width: fit-content;
+  max-width: 100%;
+
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+
+  color: var(--text-0);
+  background: var(--accent-soft);
+
+  border-left: 3px solid var(--accent);
+}
