@@ -1,3 +1,4 @@
+import { downloadCertificate } from './certificate.js';
 // ==========================================
 // MATHSCAPE — MAIN APPLICATION CONTROLLER
 // Navigation, World Map, Progress & Stages
@@ -515,35 +516,33 @@ function renderBadges() {
   `;
 
 
-  // Gabungkan badge + tombol sertifikat
-  badgeShelf.innerHTML =
-    badgesHTML + certificateHTML;
+// Gabungkan badge + tombol sertifikat
+badgeShelf.innerHTML =
+  badgesHTML + certificateHTML;
 
 
-  // Event tombol
-  const certificateButton =
-    document.getElementById(
-      'btn-download-certificate'
-    );
+// ==========================================
+// DOWNLOAD CERTIFICATE EVENT
+// ==========================================
+
+const certificateButton =
+  document.getElementById(
+    'btn-download-certificate'
+  );
 
 
-  if (certificateButton) {
+if (certificateButton) {
 
-    certificateButton.addEventListener(
-      'click',
-      () => {
+  certificateButton.addEventListener(
+    'click',
+    () => {
 
-        alert(
-          'Certificate download will be available here.'
-        );
+      downloadCertificate();
 
-      }
-    );
-
-  }
+    }
+  );
 
 }
-
 // ==========================================
 // LEVEL MANAGEMENT
 // ==========================================
