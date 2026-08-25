@@ -519,7 +519,7 @@ function renderBadges() {
 // Gabungkan badge + tombol sertifikat
 badgeShelf.innerHTML =
   badgesHTML + certificateHTML;
-
+}
 
 // ==========================================
 // DOWNLOAD CERTIFICATE EVENT
