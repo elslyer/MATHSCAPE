@@ -17,6 +17,113 @@
   />
 
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- ==========================================
+       TAMBAHAN CSS UNTUK VISUAL INPUT NAMA
+  =========================================== -->
+  <style>
+    /* Styling untuk kotak pendaftaran agar terlihat seperti game/kartu misi */
+    .player-registration-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 24px 32px;
+      max-width: 450px;
+      margin: 32px auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .player-registration-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .player-name-input {
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .player-name-input label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      color: #e2e8f0;
+      text-transform: uppercase;
+    }
+
+    .input-container {
+      position: relative;
+      width: 100%;
+    }
+
+    /* Styling input field yang lebih modern */
+    .input-container input {
+      width: 100%;
+      padding: 14px 16px 14px 44px; /* Padding kiri lebih besar untuk icon */
+      background: rgba(0, 0, 0, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 1.1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    /* Ikon di dalam input field */
+    .input-icon-inside {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      opacity: 0.6;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    /* Efek ketika input sedang diketik/fokus */
+    .input-container input:focus {
+      border-color: #4da6ff;
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 15px rgba(77, 166, 255, 0.3);
+    }
+
+    .input-container input:focus + .input-icon-inside {
+      opacity: 1;
+    }
+
+    .input-hint {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* Membuat tombol start menyesuaikan lebar kartu dan beranimasi */
+    #btn-start {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    #btn-start:hover {
+      transform: scale(1.02);
+    }
+  </style>
 </head>
 
 <body>
@@ -25,6 +132,7 @@
   src="./assets/Backsound.mp3"
   loop
 ></audio>
+
     <!-- TOP NAVIGATION -->
     <header class="topbar">
 
@@ -67,7 +175,6 @@
 
 
     <main id="main-content">
-
 
       <!-- =========================
            LANDING SCREEN
@@ -135,31 +242,40 @@
 
           </ul>
 
+          <!-- ==========================================
+               BAGIAN INPUT NAMA YANG SUDAH DIKEMBANGKAN
+          =========================================== -->
+          <div class="player-registration-box">
+            <div class="player-name-input">
+              <label for="player-name">
+                <span class="label-icon">👤</span> ENTER YOUR NAME
+              </label>
+              
+              <div class="input-container">
+                <input
+                  type="text"
+                  id="player-name"
+                  placeholder="e.g. Pythagoras..."
+                  maxlength="40"
+                  autocomplete="name"
+                />
+                <!-- Ikon pensil di dalam input -->
+                <span class="input-icon-inside">✏️</span>
+              </div>
+              
+              <small class="input-hint">
+                *This name will be printed on your final Mathscape Certificate.
+              </small>
+            </div>
 
-     <div class="player-name-input">
-
-  <label for="player-name">
-    ENTER YOUR NAME
-  </label>
-
-  <input
-    type="text"
-    id="player-name"
-    placeholder="Type your name here..."
-    maxlength="40"
-    autocomplete="name"
-  />
-
-</div>
-
-
-<button
-  class="btn btn-primary btn-large"
-  id="btn-start"
->
-  START JOURNEY ✦
-</button>
-
+            <button
+              class="btn btn-primary btn-large"
+              id="btn-start"
+            >
+              START JOURNEY ✦
+            </button>
+          </div>
+          <!-- ========================================== -->
 
           <p class="hero-note">
             🎮 Learn through exploration •
