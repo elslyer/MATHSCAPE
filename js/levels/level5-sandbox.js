@@ -13,69 +13,69 @@ export function mount(container, api) {
   }
 
   // =====================================================
-  // QUESTION DATA (Math Typography Fixed)
+  // QUESTION DATA (English Version)
   // =====================================================
   const mcQuestions = [
     {
       id: 1,
-      question: `Perhatikan barisan bilangan berikut:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">3, 8, 13, 18, 23, ...</strong><br><br>Pola perubahan angka dari satu suku ke suku berikutnya adalah ...`,
-      options: ['Dikali 5', 'Ditambah 5', 'Dikurangi 5', 'Dibagi 5'],
+      question: `Observe the following number sequence:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">3, 8, 13, 18, 23, ...</strong><br><br>The pattern of change from one term to the next is ...`,
+      options: ['Multiplied by 5', 'Added by 5', 'Subtracted by 5', 'Divided by 5'],
       answer: 1,
-      explanation: `Selisih setiap suku adalah sama (8 - 3 = 5; 13 - 8 = 5). Jadi polanya adalah <strong>ditambah 5</strong>.`
+      explanation: `The difference between each consecutive term is constant (8 - 3 = 5; 13 - 8 = 5). Therefore, the pattern is <strong>added by 5</strong>.`
     },
     {
       id: 2,
-      question: `Diberikan empat buah barisan bilangan berikut:<br><br>
+      question: `Given the following four number sequences:<br><br>
         (1) 2, 4, 8, 16, ...<br>
         (2) 5, 10, 15, 20, ...<br>
         (3) 100, 50, 25, 12.5, ...<br>
         (4) 10, 7, 4, 1, ...<br><br>
-        Di antara barisan di atas, yang termasuk <strong>barisan geometri</strong> adalah ...`,
-      options: ['(1) dan (2)', '(2) dan (4)', '(1) dan (3)', '(3) dan (4)'],
+        Which of the sequences above are <strong>geometric sequences</strong>?`,
+      options: ['(1) and (2)', '(2) and (4)', '(1) and (3)', '(3) and (4)'],
       answer: 2,
-      explanation: `Barisan (1) memiliki rasio 2 (dikali 2). Barisan (3) memiliki rasio 1/2 (dibagi 2 atau dikali 0.5). Keduanya adalah barisan Geometri.`
+      explanation: `Sequence (1) has a common ratio of 2 (multiplied by 2). Sequence (3) has a common ratio of 1/2 (divided by 2 or multiplied by 0.5). Both are Geometric sequences.`
     },
     {
       id: 3,
-      question: `Diketahui sebuah barisan aritmetika:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">45, 38, 31, 24, ...</strong><br><br>Nilai beda (<strong>b</strong>) dari barisan tersebut adalah ...`,
+      question: `Given the following arithmetic sequence:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">45, 38, 31, 24, ...</strong><br><br>The common difference (<strong>d</strong>) of this sequence is ...`,
       options: ['7', '6', '−6', '−7'],
       answer: 3,
-      explanation: `Beda (b) diperoleh dari suku kedua dikurangi suku pertama: b = 38 - 45 = <strong>-7</strong>.`
+      explanation: `The common difference (d) is obtained by subtracting the first term from the second term: d = 38 - 45 = <strong>-7</strong>.`
     },
     {
       id: 4,
-      question: `Suatu barisan geometri memiliki suku-suku:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">3, −6, 12, −24, 48, ...</strong><br><br>Rasio (<strong>r</strong>) dari barisan tersebut adalah ...`,
+      question: `A geometric sequence has the following terms:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">3, −6, 12, −24, 48, ...</strong><br><br>The common ratio (<strong>r</strong>) of this sequence is ...`,
       options: ['2', '−2', '3', '−3'],
       answer: 1,
-      explanation: `Rasio (r) = -6 ÷ 3 = <strong>-2</strong>. Karena rasionya negatif, tandanya bergantian (positif, negatif, positif).`
+      explanation: `The common ratio (r) = -6 ÷ 3 = <strong>-2</strong>. Because the ratio is negative, the signs alternate (positive, negative, positive, ...).`
     },
     {
       id: 5,
-      question: `Diberikan barisan bilangan berderajat dua (bertingkat):<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">2, 3, 5, 8, 12, ...</strong><br><br>Dua suku berikutnya untuk melanjutkan barisan tersebut adalah ...`,
-      options: ['16 dan 20', '17 dan 23', '17 dan 22', '16 dan 21'],
+      question: `Given the following second-order (quadratic) sequence:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">2, 3, 5, 8, 12, ...</strong><br><br>The next two terms to continue the sequence are ...`,
+      options: ['16 and 20', '17 and 23', '17 and 22', '16 and 21'],
       answer: 1,
-      explanation: `Selisihnya bertambah secara teratur: +1, +2, +3, +4. Maka selisih berikutnya adalah +5 dan +6.<br>12 + 5 = <strong>17</strong>, lalu 17 + 6 = <strong>23</strong>.`
+      explanation: `The differences increase sequentially: +1, +2, +3, +4. Therefore, the next differences are +5 and +6.<br>12 + 5 = <strong>17</strong>, and then 17 + 6 = <strong>23</strong>.`
     },
     {
       id: 6,
-      question: `Rumus suku ke-n yang paling tepat untuk mewakili barisan aritmetika:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">5, 9, 13, 17, 21, ...</strong><br><br>adalah ...`,
+      question: `The most accurate n-th term formula to represent the arithmetic sequence:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">5, 9, 13, 17, 21, ...</strong><br><br>is ...`,
       options: ['U<sub>n</sub> = 4n + 1', 'U<sub>n</sub> = 4n − 1', 'U<sub>n</sub> = 5n − 1', 'U<sub>n</sub> = 5n + 1'],
       answer: 0,
-      explanation: `Diketahui a = 5, b = 4.<br>U<sub>n</sub> = a + (n - 1)b<br>U<sub>n</sub> = 5 + (n - 1)4<br>U<sub>n</sub> = 5 + 4n - 4<br><strong>U<sub>n</sub> = 4n + 1</strong>.`
+      explanation: `Given a = 5, d = 4.<br>U<sub>n</sub> = a + (n - 1)d<br>U<sub>n</sub> = 5 + (n - 1)4<br>U<sub>n</sub> = 5 + 4n - 4<br><strong>U<sub>n</sub> = 4n + 1</strong>.`
     },
     {
       id: 7,
-      question: `Diketahui rumus suku ke-n dari suatu barisan geometri:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">U<sub>n</sub> = 2 &times; 3<sup>(n−1)</sup></strong><br><br>Nilai suku ke-6 atau <strong>U<sub>6</sub></strong> adalah ...`,
+      question: `Given the n-th term formula of a geometric sequence:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">U<sub>n</sub> = 2 &times; 3<sup>(n−1)</sup></strong><br><br>The value of the 6th term (<strong>U<sub>6</sub></strong>) is ...`,
       options: ['243', '486', '729', '1458'],
       answer: 1,
       explanation: `U<sub>6</sub> = 2 &times; 3<sup>(6-1)</sup><br>U<sub>6</sub> = 2 &times; 3<sup>5</sup><br>U<sub>6</sub> = 2 &times; 243 = <strong>486</strong>.`
     },
     {
       id: 8,
-      question: `Hitung jumlah 15 suku pertama (<strong>S<sub>15</sub></strong>) dari deret aritmetika berikut:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">4 + 7 + 10 + 13 + ...</strong>`,
+      question: `Calculate the sum of the first 15 terms (<strong>S<sub>15</sub></strong>) of the following arithmetic series:<br><br><strong style="font-size:1.3rem; color:var(--accent-3);">4 + 7 + 10 + 13 + ...</strong>`,
       options: ['375', '385', '360', '400'],
       answer: 0,
-      explanation: `a = 4, b = 3, n = 15.<br>S<sub>15</sub> = 15/2 &times; [2(4) + 14(3)]<br>S<sub>15</sub> = 15/2 &times; [8 + 42]<br>S<sub>15</sub> = 15/2 &times; 50 = <strong>375</strong>.`
+      explanation: `a = 4, d = 3, n = 15.<br>S<sub>15</sub> = 15/2 &times; [2(4) + 14(3)]<br>S<sub>15</sub> = 15/2 &times; [8 + 42]<br>S<sub>15</sub> = 15/2 &times; 50 = <strong>375</strong>.`
     }
   ];
 
@@ -83,26 +83,26 @@ export function mount(container, api) {
     {
       id: 9,
       type: 'essay',
-      question: `Andi ingin menghitung suku ke-50 dari barisan aritmetika: <strong>2, 5, 8, 11, ...</strong><br><br>
-        <strong>Metode A:</strong> Menghitung manual satu per satu sampai suku ke-50.<br>
-        <strong>Metode B:</strong> Menggunakan rumus <strong>U<sub>n</sub> = a + (n - 1)b</strong>.<br><br>
-        Bandingkan efektivitas kedua metode tersebut dan sebutkan hasil akhir U<sub>50</sub>-nya.`,
-      keywords: ['efisien', 'cepat', 'rumus', '149'],
-      modelAnswer: `Metode B jauh lebih efektif dan cepat. Metode A rawan kesalahan (human error) karena harus menghitung panjang. Dengan Metode B (Rumus):<br>a = 2, b = 3, n = 50.<br>U<sub>50</sub> = 2 + 49(3) = 2 + 147 = <strong>149</strong>.`
+      question: `Andi wants to calculate the 50th term of the arithmetic sequence: <strong>2, 5, 8, 11, ...</strong><br><br>
+        <strong>Method A:</strong> Manually counting and listing one by one until the 50th term.<br>
+        <strong>Method B:</strong> Using the formula <strong>U<sub>n</sub> = a + (n - 1)d</strong>.<br><br>
+        Compare the effectiveness of both methods and state the final result for U<sub>50</sub>.`,
+      keywords: ['efficient', 'fast', 'formula', '149'],
+      modelAnswer: `Method B is much more efficient and faster. Method A is prone to human error due to lengthy manual calculations. Using Method B (Formula):<br>a = 2, d = 3, n = 50.<br>U<sub>50</sub> = 2 + 49(3) = 2 + 147 = <strong>149</strong>.`
     },
     {
       id: 10,
       type: 'essay',
-      question: `Sebuah kabel dipotong menjadi <strong>6 bagian</strong> yang panjangnya membentuk barisan geometri. <br><br>Jika potongan terpendek <strong>5 cm</strong> dan terpanjang <strong>160 cm</strong>, hitunglah total panjang kabel semula (<strong>S<sub>6</sub></strong>).`,
-      keywords: ['315', 'rasio', '2'],
+      question: `A cable is cut into <strong>6 pieces</strong> whose lengths form a geometric sequence. <br><br>If the shortest piece is <strong>5 cm</strong> and the longest piece is <strong>160 cm</strong>, calculate the original total length of the cable before it was cut (<strong>S<sub>6</sub></strong>).`,
+      keywords: ['315', 'ratio', '2'],
       modelAnswer: `a = 5, U<sub>6</sub> = 160.<br>U<sub>6</sub> = a &times; r<sup>5</sup><br>160 = 5 &times; r<sup>5</sup><br>32 = r<sup>5</sup> &rarr; r = 2.<br><br>S<sub>6</sub> = 5(2<sup>6</sup> - 1) / (2 - 1) = 5(64 - 1) = 5 &times; 63 = <strong>315 cm</strong>.`
     },
     {
       id: 11,
       type: 'essay',
-      question: `Budi menabung setiap bulan. Bulan pertama <strong>Rp100.000</strong>. Bulan berikutnya ia selalu menambah <strong>Rp15.000</strong> lebih banyak dari bulan sebelumnya.<br><br>Hitunglah total tabungan Budi setelah <strong>2 tahun</strong> (24 bulan).`,
-      keywords: ['6540000', '6.540.000', 'aritmetika'],
-      modelAnswer: `n = 24, a = 100.000, b = 15.000.<br>S<sub>24</sub> = 24/2 &times; [2(100.000) + 23(15.000)]<br>S<sub>24</sub> = 12 &times; [200.000 + 345.000]<br>S<sub>24</sub> = 12 &times; 545.000 = <strong>Rp6.540.000</strong>.`
+      question: `Budi saves money every month. In the first month, he saves <strong>$100</strong>. As his income grows, he decides to increase his savings by <strong>$15</strong> more than the previous month for each subsequent month.<br><br>Calculate Budi's total savings after exactly <strong>2 years</strong> (24 months).`,
+      keywords: ['6540', '6,540', 'arithmetic'],
+      modelAnswer: `n = 24, a = 100, d = 15.<br>S<sub>24</sub> = 24/2 &times; [2(100) + 23(15)]<br>S<sub>24</sub> = 12 &times; [200 + 345]<br>S<sub>24</sub> = 12 &times; 545 = <strong>$6,540</strong>.`
     }
   ];
 
@@ -217,7 +217,7 @@ export function mount(container, api) {
     } else {
       // Essay
       contentHTML += `
-        <textarea class="essay-textarea" id="essay-input-${qNum}" placeholder="Tuliskan proses perhitungan dan jawaban akhirmu di sini..."></textarea>
+        <textarea class="essay-textarea" id="essay-input-${qNum}" placeholder="Write your calculation process and final answer here..."></textarea>
         <button class="btn btn-primary" id="submit-essay-${qNum}" style="margin-top:16px; background:var(--accent-2);">SUBMIT ANALYSIS</button>
       `;
     }
@@ -271,7 +271,7 @@ export function mount(container, api) {
       submitBtn.addEventListener('click', () => {
         const inputEl = wrapper.querySelector(`#essay-input-${qNum}`);
         const text = inputEl.value.toLowerCase();
-        if (text.trim() === '') return; // Prevent empty
+        if (text.trim() === '') return; // Prevent empty submission
 
         inputEl.disabled = true;
         submitBtn.style.display = 'none';
