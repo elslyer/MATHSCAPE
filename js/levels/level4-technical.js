@@ -284,8 +284,33 @@ export function mount(container, api) {
           <h3>Step 1: Formulate a Strategy</h3>
           <div class="logic-box">
             <strong>💡 INVESTIGATOR'S LOG</strong>
-            To find out if 1,350 people is enough, we first need to know the <em>maximum capacity</em> of the building. We aren't just looking for how many seats are in the 25th row ($U_{25}$), we need the <strong>TOTAL sum of seats across all 25 rows ($S_{25}$)</strong>.
-          </div>
+<p>
+  To find out if <strong>1,350 people</strong> is enough, we first need to determine the
+  <em>maximum capacity</em> of the building.
+</p>
+
+<p>
+  We are not simply looking for the number of seats in the
+  <strong>25<sup>th</sup> row</strong>,
+  represented by
+  <strong>U<sub>25</sub></strong>.
+</p>
+
+<p>
+  Instead, we need to calculate the <strong>total number of seats across all 25 rows</strong>,
+  represented by:
+</p>
+
+<div class="formula-highlight">
+  S<sub>25</sub> = U<sub>1</sub> + U<sub>2</sub> + U<sub>3</sub> + ... + U<sub>25</sub>
+</div>
+
+<p>
+  In other words, the challenge requires us to find
+  <strong>the total sum of seats across all 25 rows</strong>,
+  or <strong>S<sub>25</sub></strong>.
+</p>
+</div>
           <p>What mathematical formula is required to calculate the total capacity?</p>
           <div class="choice-grid">
             <button class="choice-btn concept-choice" data-answer="wrong">Arithmetic Sequence (Un)</button>
