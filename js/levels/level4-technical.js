@@ -6,7 +6,13 @@
 
 export function mount(container, api) {
   let currentCase = 1;
+  let finalScore = 100; // Initial max score
   const caseProgress = { 1: false, 2: false, 3: false };
+
+  // Helper to deduct score for wrong answers
+  function deductScore(points) {
+    finalScore = Math.max(0, finalScore - points);
+  }
 
   // ==========================================================
   // MAIN LAYOUT & CSS
@@ -106,9 +112,22 @@ export function mount(container, api) {
         padding: 16px;
         border-radius: var(--radius-sm);
         margin: 16px 0;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
       }
       .logic-box strong { color: var(--accent); font-family: var(--font-mono); display: block; margin-bottom: 8px; }
+      .formula-highlight {
+        background: var(--bg-2);
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--accent-3);
+        border: 1px dashed var(--border-bright);
+        margin: 12px 0;
+      }
 
       /* Inputs & Options */
       .answer-input {
@@ -121,9 +140,12 @@ export function mount(container, api) {
         border-radius: var(--radius-sm);
         margin-bottom: 12px;
         outline: none;
-        transition: all 0.2s;
+        transition: all 0.3s;
       }
       .answer-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .answer-input:disabled { opacity: 0.9; cursor: not-allowed; }
+      .answer-input.correct-autofill { border-color: var(--success); background: #dcfce7; color: var(--success); }
+      .answer-input.wrong-autofill { border-color: var(--danger); background: #fee2e2; color: var(--danger); font-weight:bold; }
       
       .choice-grid {
         display: grid;
@@ -141,9 +163,10 @@ export function mount(container, api) {
         cursor: pointer;
         transition: all 0.2s;
       }
-      .choice-btn:hover { border-color: var(--accent); background: var(--bg-2); }
-      .choice-btn.correct { background: #dcfce7; border-color: #22c55e; color: #15803d; }
-      .choice-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; }
+      .choice-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--bg-2); }
+      .choice-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+      .choice-btn.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; opacity: 1; }
+      .choice-btn.wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important; }
 
       /* Solution Box (Classified Report) */
       .solution-box {
@@ -160,8 +183,8 @@ export function mount(container, api) {
       .solution-box p { color: #cbd5e1; font-size: 0.95rem; margin-bottom: 8px; }
 
       /* Feedback Messages */
-      .feedback-success { background: #dcfce7; color: #15803d; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 4px solid #22c55e; margin-top: 12px; font-weight: bold; }
-      .feedback-error { background: #fee2e2; color: #b91c1c; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 4px solid #ef4444; margin-top: 12px; font-weight: bold; }
+      .feedback-success { background: #dcfce7; color: #15803d; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 4px solid #22c55e; margin-top: 12px; font-weight: bold; animation: fadeIn 0.3s; }
+      .feedback-error { background: #fee2e2; color: #b91c1c; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 4px solid #ef4444; margin-top: 12px; font-weight: bold; animation: fadeIn 0.3s; }
     </style>
 
     <div class="case-solver-stage">
@@ -214,7 +237,7 @@ export function mount(container, api) {
         <h2 style="margin-top:16px;">Mathscape Stabilized</h2>
         <p>You have analyzed the available evidence, selected mathematical models, and solved contextual problems using sequences and series.</p>
         
-        <div id="final-score" style="margin: 24px 0; font-family:var(--font-mono); font-size:1.2rem; color:var(--accent);"></div>
+        <div id="final-score-display" style="margin: 24px 0; font-family:var(--font-mono); font-size:1.2rem; color:var(--accent);"></div>
 
         <button class="btn btn-primary btn-large" id="complete-level" style="background:var(--success); border-color:var(--success);">
           COMPLETE CASE SOLVER 🏆
@@ -241,6 +264,9 @@ export function mount(container, api) {
 
   container.querySelectorAll('.case-tab').forEach(button => {
     button.addEventListener('click', () => {
+      // Allow switching only if we want them to browse freely.
+      // However, their answers in other tabs will reset if they haven't finished.
+      // That's fine for this interactive module.
       renderCase(Number(button.dataset.case));
     });
   });
@@ -280,55 +306,28 @@ export function mount(container, api) {
           </ul>
         </div>
 
-<div class="investigator-log">
-
-  <div class="log-title">
-    INVESTIGATOR'S LOG
-  </div>
-
-  <p>
-    To find out if <strong>1,350 people</strong> is enough,
-    we first need to determine the <em>maximum capacity</em>
-    of the building.
-  </p>
-
-  <p>
-    We are not simply looking for the number of seats in the
-    <strong>25<sup>th</sup> row</strong>, represented by
-    <strong>U<sub>25</sub></strong>.
-  </p>
-
-  <p>
-    Instead, we need to calculate the
-    <strong>total number of seats across all 25 rows</strong>,
-    represented by:
-  </p>
-
-  <div class="formula-highlight">
-    S<sub>25</sub> =
-    U<sub>1</sub> + U<sub>2</sub> + U<sub>3</sub>
-    + ... + U<sub>25</sub>
-  </div>
-
-  <p>
-    In other words, the challenge requires us to find
-    <strong>the total sum of seats across all 25 rows</strong>,
-    or <strong>S<sub>25</sub></strong>.
-  </p>
-
-</div>
+        <div class="investigation-panel">
+          <h3>Step 1: Formulate a Strategy</h3>
+          <div class="logic-box">
+            <strong>💡 INVESTIGATOR'S LOG</strong>
+            To find out if 1,350 people is enough, we first need to determine the <em>maximum capacity</em> of the building.<br><br>
+            We are not simply looking for the number of seats in the 25<sup>th</sup> row (<strong>U<sub>25</sub></strong>). We need to calculate the <strong>total number of seats across all 25 rows</strong>:
+            <div class="formula-highlight">
+              S<sub>25</sub> = U<sub>1</sub> + U<sub>2</sub> + U<sub>3</sub> + ... + U<sub>25</sub>
+            </div>
+          </div>
           <p>What mathematical formula is required to calculate the total capacity?</p>
           <div class="choice-grid">
-            <button class="choice-btn concept-choice" data-answer="wrong">Arithmetic Sequence (Un)</button>
-            <button class="choice-btn concept-choice" data-answer="correct">Arithmetic Series (Sn)</button>
-            <button class="choice-btn concept-choice" data-answer="wrong">Geometric Series (Sn)</button>
+            <button class="choice-btn concept-choice" data-answer="wrong">Arithmetic Sequence (U<sub>n</sub>)</button>
+            <button class="choice-btn concept-choice" data-answer="correct">Arithmetic Series (S<sub>n</sub>)</button>
+            <button class="choice-btn concept-choice" data-answer="wrong">Geometric Series (S<sub>n</sub>)</button>
           </div>
           <div id="case1-concept-feedback"></div>
         </div>
 
         <div class="investigation-panel" id="case1-step2" hidden>
           <h3>Step 2: Execute Calculation</h3>
-          <p>Using the formula <strong>Sₙ = n/2 [2a + (n − 1)d]</strong>, calculate the TOTAL capacity of the venue.</p>
+          <p>Using the formula <strong>S<sub>n</sub> = n/2 [2a + (n − 1)d]</strong>, calculate the TOTAL capacity of the venue.</p>
           <div style="display:flex; gap:12px; margin-bottom:12px;">
             <input type="number" id="case1-total" class="answer-input" placeholder="Total Max Capacity">
             <button class="btn btn-secondary" id="check-case1-total">VERIFY</button>
@@ -353,7 +352,7 @@ export function mount(container, api) {
         <div class="solution-box" id="case1-solution" hidden>
           <h3>FILE CLOSED: CASE 01</h3>
           <p>► Data Model: a = 20, d = 4, n = 25.</p>
-          <p>► Total Capacity ($S_{25}$): 12.5 × [40 + 96] = <strong>1,700 seats</strong>.</p>
+          <p>► Total Capacity (S<sub>25</sub>): 12.5 × [40 + 96] = <strong>1,700 seats</strong>.</p>
           <p>► Minimum Target: 80% × 1,700 = <strong>1,360 spectators</strong>.</p>
           <p>► Actual Attendance: 1,350 spectators.</p>
           <p><strong>CONCLUSION:</strong> The event fell short by 10 spectators. Loss incurred.</p>
@@ -362,46 +361,69 @@ export function mount(container, api) {
     `;
 
     // Step 1
-    workspace.querySelectorAll('.concept-choice').forEach(btn => {
+    const conceptBtns = workspace.querySelectorAll('.concept-choice');
+    conceptBtns.forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        conceptBtns.forEach(b => b.disabled = true); // Lock all buttons
+        
         const feedback = workspace.querySelector('#case1-concept-feedback');
         if (btn.dataset.answer === 'correct') {
           btn.classList.add('correct');
           feedback.innerHTML = `<div class="feedback-success">Correct. We need the sum (Series), and the seats grow by a constant addition (+4), meaning it is Arithmetic.</div>`;
-          workspace.querySelector('#case1-step2').hidden = false;
         } else {
+          deductScore(10);
           btn.classList.add('wrong');
-          feedback.innerHTML = `<div class="feedback-error">Incorrect. Read the Investigator's Log. Are we looking for one specific row, or the sum of all rows?</div>`;
+          workspace.querySelector('[data-answer="correct"]').classList.add('correct');
+          feedback.innerHTML = `<div class="feedback-error">Incorrect analysis. (-10 pts)<br>The correct answer is <strong>Arithmetic Series (S<sub>n</sub>)</strong> because we are looking for the total sum of all rows.</div>`;
         }
+        workspace.querySelector('#case1-step2').hidden = false;
       });
     });
 
     // Step 2
-    workspace.querySelector('#check-case1-total').addEventListener('click', () => {
-      const ans = Number(workspace.querySelector('#case1-total').value);
+    const checkTotalBtn = workspace.querySelector('#check-case1-total');
+    checkTotalBtn.addEventListener('click', () => {
+      const input = workspace.querySelector('#case1-total');
+      const ans = Number(input.value);
       const feedback = workspace.querySelector('#case1-total-feedback');
+      
+      input.disabled = true;
+      checkTotalBtn.disabled = true;
+
       if (ans === 1700) {
+        input.classList.add('correct-autofill');
         feedback.innerHTML = `<div class="feedback-success">Calculation verified. Maximum capacity is 1,700 seats.</div>`;
-        workspace.querySelector('#case1-step3').hidden = false;
       } else {
-        feedback.innerHTML = `<div class="feedback-error">Error. Substitute a=20, d=4, n=25 into the formula.</div>`;
+        deductScore(10);
+        input.value = 1700; // Autofill with correct answer
+        input.classList.add('wrong-autofill');
+        feedback.innerHTML = `<div class="feedback-error">Calculation Error. (-10 pts)<br>Substituting a=20, d=4, n=25 yields S<sub>25</sub> = 1,700 seats.</div>`;
       }
+      workspace.querySelector('#case1-step3').hidden = false;
     });
 
     // Step 3
-    workspace.querySelectorAll('.final-choice').forEach(btn => {
+    const finalBtns = workspace.querySelectorAll('.final-choice');
+    finalBtns.forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        finalBtns.forEach(b => b.disabled = true);
+        
         const feedback = workspace.querySelector('#case1-final-feedback');
         if (btn.dataset.result === 'loss') {
           btn.classList.add('correct');
           feedback.innerHTML = `<div class="feedback-success">Investigation successful. Conclusion defended.</div>`;
-          workspace.querySelector('#case1-solution').hidden = false;
-          caseProgress[1] = true;
-          checkAllCases();
         } else {
+          deductScore(10);
           btn.classList.add('wrong');
-          feedback.innerHTML = `<div class="feedback-error">Check your math. What is 80% of 1700? Is 1350 greater than that number?</div>`;
+          workspace.querySelector('[data-result="loss"]').classList.add('correct');
+          feedback.innerHTML = `<div class="feedback-error">Incorrect deduction. (-10 pts)<br>80% of 1700 is 1360. Since 1350 is less than 1360, the target was NOT reached.</div>`;
         }
+        
+        workspace.querySelector('#case1-solution').hidden = false;
+        caseProgress[1] = true;
+        checkAllCases();
       });
     });
   }
@@ -418,7 +440,7 @@ export function mount(container, api) {
           <p>A graduation committee brought exactly <strong>450 glasses</strong> for a tower arrangement.</p>
           <ul style="margin-top:10px;">
             <li>First row has <strong>12 glasses</strong>. Each following row adds <strong>3 more glasses</strong>.</li>
-            <li>The construction was stopped exactly after the <strong>10th row</strong>.</li>
+            <li>The construction was stopped exactly after the <strong>10<sup>th</sup> row</strong>.</li>
             <li>The remaining glasses in the box must be moved to the VIP table.</li>
             <li>The VIP table requires exactly <strong>200 glasses</strong>.</li>
           </ul>
@@ -430,7 +452,7 @@ export function mount(container, api) {
             <strong>💡 INVESTIGATOR'S LOG</strong>
             To find out if we have enough glasses for the VIP table, we must calculate the "leftovers". <br>
             <em>Leftovers = Total Brought (450) - Glasses Actually Built.</em><br>
-            Since they only built up to the 10th row, we need to calculate the sum of the first 10 rows ($S_{10}$).
+            Since they only built up to the 10<sup>th</sup> row, we need to calculate the sum of the first 10 rows (<strong>S<sub>10</sub></strong>).
           </div>
           <p>Calculate the amount of glasses <strong>used</strong> in the first 10 rows.</p>
           <div style="display:flex; gap:12px; margin-bottom:12px;">
@@ -453,7 +475,7 @@ export function mount(container, api) {
 
         <div class="solution-box" id="case2-solution" hidden>
           <h3>FILE CLOSED: CASE 02</h3>
-          <p>► Used glasses ($S_{10}$): a = 12, d = 3. Sum = 5 × [24 + 27] = <strong>255 glasses</strong>.</p>
+          <p>► Used glasses (S<sub>10</sub>): a = 12, d = 3. Sum = 5 × [24 + 27] = <strong>255 glasses</strong>.</p>
           <p>► Remaining in box: 450 - 255 = <strong>195 glasses</strong>.</p>
           <p>► VIP Demand: 200 glasses.</p>
           <p><strong>CONCLUSION:</strong> 195 < 200. The committee is short by 5 glasses.</p>
@@ -461,30 +483,49 @@ export function mount(container, api) {
       </div>
     `;
 
-    workspace.querySelector('#check-case2-used').addEventListener('click', () => {
-      const ans = Number(workspace.querySelector('#case2-used').value);
+    // Step 1
+    const checkUsedBtn = workspace.querySelector('#check-case2-used');
+    checkUsedBtn.addEventListener('click', () => {
+      const input = workspace.querySelector('#case2-used');
+      const ans = Number(input.value);
       const feedback = workspace.querySelector('#case2-used-feedback');
+      
+      input.disabled = true;
+      checkUsedBtn.disabled = true;
+
       if (ans === 255) {
+        input.classList.add('correct-autofill');
         feedback.innerHTML = `<div class="feedback-success">Verified. The tower consumed 255 glasses.</div>`;
-        workspace.querySelector('#case2-step2').hidden = false;
       } else {
-        feedback.innerHTML = `<div class="feedback-error">Error. Calculate $S_{10}$ with a=12, d=3.</div>`;
+        deductScore(10);
+        input.value = 255;
+        input.classList.add('wrong-autofill');
+        feedback.innerHTML = `<div class="feedback-error">Error (-10 pts).<br> Calculating S<sub>10</sub> with a=12 and d=3 results in 255 glasses used.</div>`;
       }
+      workspace.querySelector('#case2-step2').hidden = false;
     });
 
-    workspace.querySelectorAll('.vip-choice').forEach(btn => {
+    // Step 2
+    const vipBtns = workspace.querySelectorAll('.vip-choice');
+    vipBtns.forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        vipBtns.forEach(b => b.disabled = true);
+        
         const feedback = workspace.querySelector('#case2-vip-feedback');
         if (btn.dataset.answer === 'short') {
           btn.classList.add('correct');
           feedback.innerHTML = `<div class="feedback-success">Conclusion defended. They are exactly 5 glasses short.</div>`;
-          workspace.querySelector('#case2-solution').hidden = false;
-          caseProgress[2] = true;
-          checkAllCases();
         } else {
+          deductScore(10);
           btn.classList.add('wrong');
-          feedback.innerHTML = `<div class="feedback-error">Incorrect deduction. 450 - 255 = 195 remaining. How does 195 compare to 200?</div>`;
+          workspace.querySelector('[data-answer="short"]').classList.add('correct');
+          feedback.innerHTML = `<div class="feedback-error">Incorrect deduction (-10 pts).<br> 450 brought - 255 used = 195 remaining. 195 is exactly 5 short of 200.</div>`;
         }
+        
+        workspace.querySelector('#case2-solution').hidden = false;
+        caseProgress[2] = true;
+        checkAllCases();
       });
     });
   }
@@ -500,7 +541,7 @@ export function mount(container, api) {
         <div class="case-story">
           <p>A geometric anomaly has appeared in Mathscape: an infinitely generating square.</p>
           <ul style="margin-top:10px;">
-            <li>The original Square A has a diagonal length of <strong>16√2 units</strong>.</li>
+            <li>The original Square A has a diagonal length of <strong>16&radic;2 units</strong>.</li>
             <li>A new Square B is spawned inside it, then Square C inside B, continuing infinitely.</li>
             <li>Each new square has an <strong>Area equal to 25%</strong> of the previous square.</li>
           </ul>
@@ -510,8 +551,8 @@ export function mount(container, api) {
           <h3>Step 1: Initial Geometry</h3>
           <div class="logic-box">
             <strong>💡 SYSTEM INSIGHT</strong>
-            Before calculating the series, we need the Area of the first square (First Term / $a$). <br>
-            Recall basic geometry: If diagonal = $side \times \sqrt{2}$, and our diagonal is $16\sqrt{2}$, what is the side length? Once you have the side, calculate the Area ($side^2$).
+            Before calculating the series, we need the Area of the first square (First Term / <strong>a</strong>). <br>
+            Recall basic geometry: If diagonal = side &times; &radic;2, and our diagonal is 16&radic;2, what is the side length? Once you have the side, calculate the Area (side<sup>2</sup>).
           </div>
           <div style="display:flex; gap:12px; margin-bottom:12px;">
             <input type="number" id="case3-area" class="answer-input" placeholder="Area of Square A (a)">
@@ -525,7 +566,10 @@ export function mount(container, api) {
           <div class="logic-box">
             <strong>💡 INVESTIGATOR'S LOG</strong>
             The sequence of areas is: 256 + 64 + 16 + 4 + ...<br>
-            Because the ratio ($r$) is 0.25 (which is between -1 and 1), the squares get so small they approach zero. We can calculate the exact total area of this infinite anomaly using the Infinite Geometric Series formula: <strong>S∞ = a / (1 - r)</strong>.
+            Because the ratio (<strong>r</strong>) is 0.25 (which is between -1 and 1), the squares get so small they approach zero. We can calculate the exact total area of this infinite anomaly using the Infinite Geometric Series formula: 
+            <div class="formula-highlight">
+              S<sub>&infin;</sub> = a / (1 - r)
+            </div>
           </div>
           <p>Calculate the total area of infinite squares combined.</p>
           <div style="display:flex; gap:12px; margin-bottom:12px;">
@@ -537,43 +581,60 @@ export function mount(container, api) {
 
         <div class="solution-box" id="case3-solution" hidden>
           <h3>FILE CLOSED: CASE 03</h3>
-          <p>► Side length = 16. Original Area ($a$) = 16² = <strong>256</strong>.</p>
-          <p>► Ratio ($r$) = 25% = <strong>0.25</strong>.</p>
-          <p>► Infinite Sum ($S_{∞}$): 256 / (1 - 0.25) = 256 / 0.75 = <strong>341.33</strong>.</p>
+          <p>► Side length = 16. Original Area (a) = 16<sup>2</sup> = <strong>256</strong>.</p>
+          <p>► Ratio (r) = 25% = <strong>0.25</strong>.</p>
+          <p>► Infinite Sum (S<sub>&infin;</sub>): 256 / (1 - 0.25) = 256 / 0.75 = <strong>341.33</strong>.</p>
           <p><strong>CONCLUSION:</strong> The total area of the infinite anomaly is contained at precisely 341.33 square units. Mathscape anomaly stabilized.</p>
         </div>
       </div>
     `;
 
-    // Note for Math logic correction: 
-    // In original prompt math was: Area=256. Next is 64. BUT original prompt said a=64?
-    // Let's use standard logic: a = 256. r = 0.25. Sum = 256 / 0.75 = 341.333.
-    // I fixed the math flaw from original prompt!
-
-    workspace.querySelector('#check-case3-area').addEventListener('click', () => {
-      const ans = Number(workspace.querySelector('#case3-area').value);
+    // Step 1
+    const checkAreaBtn = workspace.querySelector('#check-case3-area');
+    checkAreaBtn.addEventListener('click', () => {
+      const input = workspace.querySelector('#case3-area');
+      const ans = Number(input.value);
       const feedback = workspace.querySelector('#case3-area-feedback');
+      
+      input.disabled = true;
+      checkAreaBtn.disabled = true;
+
       if (ans === 256) {
+        input.classList.add('correct-autofill');
         feedback.innerHTML = `<div class="feedback-success">Verified. The base area (First term 'a') is 256.</div>`;
-        workspace.querySelector('#case3-step2').hidden = false;
       } else {
-        feedback.innerHTML = `<div class="feedback-error">Error. Side = 16. Area = 16 × 16.</div>`;
+        deductScore(10);
+        input.value = 256;
+        input.classList.add('wrong-autofill');
+        feedback.innerHTML = `<div class="feedback-error">Error (-10 pts).<br> Side = 16. Area = 16 &times; 16 = 256.</div>`;
       }
+      workspace.querySelector('#case3-step2').hidden = false;
     });
 
-    workspace.querySelector('#check-case3-total').addEventListener('click', () => {
-      const ans = Number(workspace.querySelector('#case3-total').value);
+    // Step 2
+    const checkTotalBtn = workspace.querySelector('#check-case3-total');
+    checkTotalBtn.addEventListener('click', () => {
+      const input = workspace.querySelector('#case3-total');
+      const ans = Number(input.value);
       const feedback = workspace.querySelector('#case3-total-feedback');
+      
+      input.disabled = true;
+      checkTotalBtn.disabled = true;
       
       // Allow precision tolerance for 341.33
       if (Math.abs(ans - 341.33) < 0.5) {
+        input.classList.add('correct-autofill');
         feedback.innerHTML = `<div class="feedback-success">Anomaly solved. Infinite series converges.</div>`;
-        workspace.querySelector('#case3-solution').hidden = false;
-        caseProgress[3] = true;
-        checkAllCases();
       } else {
-        feedback.innerHTML = `<div class="feedback-error">Calculation Error. Use S∞ = 256 / (1 - 0.25). (You can type 341.33).</div>`;
+        deductScore(10);
+        input.value = 341.33;
+        input.classList.add('wrong-autofill');
+        feedback.innerHTML = `<div class="feedback-error">Calculation Error (-10 pts).<br> S<sub>&infin;</sub> = 256 / 0.75 = 341.33.</div>`;
       }
+      
+      workspace.querySelector('#case3-solution').hidden = false;
+      caseProgress[3] = true;
+      checkAllCases();
     });
   }
 
@@ -592,9 +653,13 @@ export function mount(container, api) {
 
     if (completedCases === 3) {
       finalSection.hidden = false;
-      container.querySelector('#final-score').innerHTML = `
-        <span style="display:block; font-size:2rem; margin-bottom:8px;">🕵️</span>
-        3 / 3 CASES RESOLVED
+      
+      // Show Final Score
+      const gradeColor = finalScore >= 80 ? 'var(--success)' : (finalScore >= 50 ? 'var(--accent-2)' : 'var(--danger)');
+      container.querySelector('#final-score-display').innerHTML = `
+        <span style="display:block; font-size:2.5rem; margin-bottom:8px;">🕵️</span>
+        <div style="font-size: 1rem; color: var(--text-1); margin-bottom: 8px;">FINAL INVESTIGATION SCORE</div>
+        <div style="font-size: 3rem; font-weight: bold; color: ${gradeColor};">${finalScore} / 100</div>
       `;
       finalSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -604,12 +669,17 @@ export function mount(container, api) {
   // COMPLETE LEVEL
   // ==========================================================
   container.querySelector('#complete-level').addEventListener('click', () => {
-    const added = api.badge('case-solver', 'Lead Investigator', '🕵️');
+    // Berikan badge hanya jika skor akhir memuaskan (misal >= 80)
+    let badge = null;
+    if (finalScore >= 80) {
+      const added = api.badge('case-solver', 'Lead Investigator', '🕵️');
+      if (added) badge = { name: 'Lead Investigator', icon: '🕵️' };
+    }
     
-    api.complete(100, {
+    api.complete(finalScore, {
       heading: 'Case Investigation Complete',
-      detail: 'You analyzed three contextual problems, selected the appropriate mathematical models, and used sequences and series to build logical solutions.',
-      badge: added ? { name: 'Lead Investigator', icon: '🕵️' } : null
+      detail: `You analyzed three contextual problems and used mathematical models to build logical solutions. You achieved a score of ${finalScore}.`,
+      badge: badge
     });
   });
 }
