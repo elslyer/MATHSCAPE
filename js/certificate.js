@@ -95,7 +95,7 @@ export function downloadCertificate() {
 
 
     ctx.font =
-      'bold 42px monospace';
+      'bold 60px monospace';
 
 
     ctx.fillText(
@@ -114,7 +114,7 @@ export function downloadCertificate() {
 
 
     ctx.font =
-      '22px monospace';
+      '30px monospace';
 
 
     ctx.fillText(
