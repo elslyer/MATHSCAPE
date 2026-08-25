@@ -5,13 +5,18 @@
 
 export function mount(container, api) {
   let currentMission = 0;
+  
+  // Sistem Dynamic Scoring
+  let finalScore = 100;
+  function deductScore(points) {
+    finalScore = Math.max(0, finalScore - points);
+  }
 
   const state = {
     mission1Done: false,
     mission2Done: false,
     mission3Done: false,
-    mission4Done: false,
-    score: 0
+    mission4Done: false
   };
 
   // ==========================================================
@@ -49,10 +54,10 @@ export function mount(container, api) {
         color: white;
         box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
       }
-      .btn-primary:hover { background-color: #4338ca; transform: translateY(-2px); }
+      .btn-primary:hover:not(:disabled) { background-color: #4338ca; transform: translateY(-2px); }
       .btn-large { font-size: 1.2rem; padding: 16px 32px; width: 100%; margin-top: 20px; }
       .btn:disabled, .quiz-opt:disabled {
-        opacity: 0.6;
+        opacity: 0.7;
         cursor: not-allowed;
         transform: none;
       }
@@ -65,6 +70,11 @@ export function mount(container, api) {
         padding: 24px;
         margin-bottom: 24px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        animation: fadeIn 0.4s ease;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
       }
       .mission-section {
         margin-top: 60px;
@@ -79,19 +89,19 @@ export function mount(container, api) {
         display: inline-block;
         background: #e0e7ff;
         color: #4f46e5;
-        padding: 4px 12px;
+        padding: 6px 14px;
         border-radius: 20px;
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-weight: bold;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
         letter-spacing: 1px;
       }
 
       /* --- HERO & ILLUSTRATIONS --- */
       .stage-hero { text-align: center; }
       .stage-subtitle { font-size: 1.2rem; color: #64748b; margin-bottom: 30px; }
-      .stage-illustration { margin: 30px 0; border-radius: 12px; overflow: hidden; }
-      .stage-illustration-image { max-width: 100%; height: auto; display: block; border-radius: 12px; }
+      .stage-illustration { margin: 30px 0; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; }
+      .stage-illustration-image { max-width: 80%; height: auto; display: block; border-radius: 12px; }
 
       /* --- VIDEO WRAPPER (Responsive) --- */
       .learning-video { margin: 30px 0; }
@@ -130,16 +140,19 @@ export function mount(container, api) {
         transition: all 0.2s;
       }
       .quiz-opt:hover:not(:disabled) { border-color: #4f46e5; background: #e0e7ff; color: #4f46e5; }
-      .quiz-opt.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; }
+      .quiz-opt.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; opacity: 1; }
       .quiz-opt.wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important; }
 
       /* --- FEEDBACK MESSAGES --- */
       .mission-feedback {
         margin-top: 16px;
-        padding: 12px;
+        padding: 16px;
         border-radius: 8px;
         font-weight: 500;
+        animation: fadeIn 0.3s ease;
       }
+      .mission-feedback.success { background-color: #dcfce7; color: #15803d; border-left: 4px solid #22c55e; }
+      .mission-feedback.error { background-color: #fee2e2; color: #b91c1c; border-left: 4px solid #ef4444; }
       .mission-feedback strong { display: block; font-size: 1.1rem; margin-bottom: 4px; }
       .mission-feedback p { margin: 0; }
 
@@ -149,50 +162,32 @@ export function mount(container, api) {
         padding: 24px;
         border-radius: 12px;
         margin-bottom: 24px;
+        text-align: center;
       }
-      .stadium-row {
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-      }
-      .stadium-row > span {
-        width: 60px;
-        font-weight: bold;
-        color: #64748b;
-        font-size: 0.9rem;
-      }
-      .seat-bar {
-        flex-grow: 1;
-        background: #e2e8f0;
-        height: 32px;
-        border-radius: 16px;
-        overflow: hidden;
-      }
-      .seat-bar > div {
-        background: #3b82f6;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding-right: 12px;
-        color: white;
-        font-size: 0.85rem;
-        font-weight: bold;
-        border-radius: 16px;
-        transition: width 1s ease-in-out;
+      .stadium-pattern-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
       }
 
-      /* --- INPUT FIELDS --- */
-      input[type="number"] {
+      /* --- INPUT FIELDS & AUTOFILL --- */
+      .answer-input {
         width: 100%;
         padding: 12px;
         font-size: 1.1rem;
+        font-weight: bold;
+        text-align: center;
         border: 2px solid #cbd5e1;
         border-radius: 8px;
         margin-bottom: 16px;
         box-sizing: border-box;
+        transition: all 0.3s;
       }
-      input[type="number"]:focus { border-color: #4f46e5; outline: none; }
+      .answer-input:focus { border-color: #4f46e5; outline: none; box-shadow: 0 0 0 3px #e0e7ff; }
+      .answer-input:disabled { opacity: 0.9; cursor: not-allowed; }
+      .answer-input.correct-autofill { border-color: #22c55e; background: #dcfce7; color: #15803d; }
+      .answer-input.wrong-autofill { border-color: #ef4444; background: #fee2e2; color: #b91c1c; }
+
       .sequence-display {
         font-size: 1.5rem;
         font-weight: bold;
@@ -202,6 +197,7 @@ export function mount(container, api) {
         background: #e0e7ff;
         padding: 16px;
         border-radius: 8px;
+        border: 1px dashed #a5b4fc;
       }
 
       /* --- FLORA DATA --- */
@@ -214,9 +210,7 @@ export function mount(container, api) {
         border-radius: 12px;
         margin-bottom: 24px;
       }
-      .flora-data div {
-        text-align: center;
-      }
+      .flora-data div { text-align: center; }
       .flora-data span { display: block; font-size: 0.8rem; color: #166534; font-weight: bold; }
       .flora-data strong { display: block; font-size: 1.2rem; color: #15803d; }
     </style>
@@ -230,21 +224,20 @@ export function mount(container, api) {
         <h1>PATTERN FINDER</h1>
         <p class="stage-subtitle">The patterns of Mathscape are beginning to disappear.</p>
 
-        <div class="story-card">
+        <div class="story-card" style="text-align: left;">
           <p>Deep within Mathscape, numbers once followed perfect and predictable rules.</p>
           <p>But something has disturbed the Pattern Core. Sequences are breaking apart, and mathematical order is slowly fading away.</p>
           <p>Your mission is to explore the hidden patterns, uncover their rules, and restore the first piece of mathematical order.</p>
         </div>
 
         <div class="stage-illustration">
-          <img src="./assets/Bunga-Angka.png" alt="Bunga Angka - Mathematical Pattern" class="stage-illustration-image">
+          <img src="./assets/Bunga-Angka.png" alt="Mathematical Pattern" class="stage-illustration-image">
         </div>
 
         <button class="btn btn-primary btn-large" id="begin-stage">
           BEGIN THE QUEST →
         </button>
       </section>
-
 
       <!-- =====================================
            LEARNING SECTION
@@ -268,11 +261,10 @@ export function mount(container, api) {
 
         <div style="text-align: center;">
           <button class="btn btn-primary btn-large" id="start-mission-1">
-            START MISSION 1 →
+            START MISSION 01 →
           </button>
         </div>
       </section>
-
 
       <!-- =====================================
            MISSION 1
@@ -291,17 +283,9 @@ export function mount(container, api) {
           </p>
         </div>
 
- <!-- Stadium illustration -->
-
-<div class="stadium-pattern">
-
-  <img
-    src="assets/Sofa-Angka.png"
-    alt="Arithmetic Sequence Stadium Illustration"
-    class="stadium-pattern-image"
-  >
-
-</div>
+        <div class="stadium-pattern">
+          <img src="assets/Sofa-Angka.png" alt="Arithmetic Sequence Stadium" class="stadium-pattern-image">
+        </div>
 
         <!-- Question 1 -->
         <div class="challenge-card">
@@ -313,24 +297,24 @@ export function mount(container, api) {
             <button class="quiz-opt" data-answer="multiply2">×2</button>
             <button class="quiz-opt" data-answer="multiply4">×4</button>
           </div>
-          <div class="mission-feedback" id="stadium-feedback"></div>
+          <div class="mission-feedback" id="stadium-feedback" style="display:none;"></div>
         </div>
 
         <!-- Question 2 -->
         <div class="challenge-card" id="stadium-question-2" hidden>
           <h3>🎯 COMPLETE THE PATTERN</h3>
           <div class="sequence-display">12 → 16 → 20 → 24 → ?</div>
-          <p style="text-align:center;">What is the next number?</p>
+          <p style="text-align:center;">What is the next number in this arithmetic sequence?</p>
           <div class="answer-grid" id="stadium-next-options">
             <button class="quiz-opt" data-answer="26">26</button>
             <button class="quiz-opt" data-answer="28">28</button>
             <button class="quiz-opt" data-answer="32">32</button>
           </div>
-          <div class="mission-feedback" id="stadium-next-feedback"></div>
+          <div class="mission-feedback" id="stadium-next-feedback" style="display:none;"></div>
         </div>
 
         <button class="btn btn-primary btn-large" id="continue-mission-2" hidden>
-          CONTINUE TO MISSION 2 →
+          CONTINUE TO MISSION 02 →
         </button>
       </section>
 
@@ -354,7 +338,7 @@ export function mount(container, api) {
         <div id="sequence-scanner"></div>
 
         <button class="btn btn-primary btn-large" id="continue-mission-3" hidden>
-          CONTINUE TO MISSION 3 →
+          CONTINUE TO MISSION 03 →
         </button>
       </section>
 
@@ -376,27 +360,27 @@ export function mount(container, api) {
         </div>
 
         <div class="pattern-lab">
-          <div class="lab-question">
+          <div class="lab-question challenge-card">
             <h3>🔬 EXPERIMENT A</h3>
             <div class="sequence-display">5 → 10 → 15 → 20 → ?</div>
-            <p>What is the common difference?</p>
-            <input type="number" id="lab-answer-1" placeholder="Enter your answer (e.g., 5)" />
+            <p style="text-align:center;">What is the common difference?</p>
+            <input type="number" id="lab-answer-1" class="answer-input" placeholder="Enter your answer (e.g., 5)" />
             <button class="btn btn-primary" style="width:100%;" id="check-lab-1">CHECK ANSWER</button>
-            <div class="mission-feedback" id="lab-feedback-1"></div>
+            <div class="mission-feedback" id="lab-feedback-1" style="display:none;"></div>
           </div>
 
-          <div class="lab-question" id="lab-question-2" hidden>
+          <div class="lab-question challenge-card" id="lab-question-2" hidden>
             <h3>🔬 EXPERIMENT B</h3>
             <div class="sequence-display">2 → 6 → 18 → 54 → ?</div>
-            <p>What is the common ratio?</p>
-            <input type="number" id="lab-answer-2" placeholder="Enter your answer" />
+            <p style="text-align:center;">What is the common ratio?</p>
+            <input type="number" id="lab-answer-2" class="answer-input" placeholder="Enter your answer" />
             <button class="btn btn-primary" style="width:100%;" id="check-lab-2">CHECK ANSWER</button>
-            <div class="mission-feedback" id="lab-feedback-2"></div>
+            <div class="mission-feedback" id="lab-feedback-2" style="display:none;"></div>
           </div>
         </div>
 
         <button class="btn btn-primary btn-large" id="continue-mission-4" hidden>
-          CONTINUE TO MISSION 4 →
+          CONTINUE TO MISSION 04 →
         </button>
       </section>
 
@@ -444,19 +428,22 @@ export function mount(container, api) {
             <button class="quiz-opt" data-answer="geometric">GEOMETRIC</button>
             <button class="quiz-opt" data-answer="neither">NEITHER</button>
           </div>
-          <div class="mission-feedback" id="flora-feedback"></div>
+          <div class="mission-feedback" id="flora-feedback" style="display:none;"></div>
         </div>
 
         <div class="challenge-card" id="flora-question-2" hidden>
           <h3>🔍 FIND THE DIFFERENCE</h3>
-          <p>What is the common difference?</p>
+          <p>What is the common difference in Flora's leaves?</p>
           <div class="answer-grid" id="flora-difference-options">
             <button class="quiz-opt" data-answer="2">+2</button>
             <button class="quiz-opt" data-answer="4">+4</button>
             <button class="quiz-opt" data-answer="8">+8</button>
           </div>
-          <div class="mission-feedback" id="flora-difference-feedback"></div>
+          <div class="mission-feedback" id="flora-difference-feedback" style="display:none;"></div>
         </div>
+
+        <!-- Score Display -->
+        <div id="final-score-display" style="text-align:center; margin: 40px 0; display:none;"></div>
 
         <button class="btn btn-primary btn-large" id="complete-stage" hidden>
           RESTORE THE PATTERN CORE 🏆
@@ -501,18 +488,18 @@ export function mount(container, api) {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#stadium-feedback');
       stadiumRuleButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
 
       if (button.dataset.answer === '4') {
         button.classList.add('correct');
-        feedback.style.backgroundColor = '#dcfce7';
-        feedback.style.color = '#15803d';
-        feedback.innerHTML = `<strong>🎉 CLUE DISCOVERED!</strong><p>Each row increases by 4 seats.</p>`;
+        feedback.className = 'mission-feedback success';
+        feedback.innerHTML = `<strong>🎉 CLUE DISCOVERED!</strong><p>Each row increases consistently by 4 seats.</p>`;
       } else {
+        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('[data-answer="4"]').classList.add('correct');
-        feedback.style.backgroundColor = '#fee2e2';
-        feedback.style.color = '#b91c1c';
-        feedback.innerHTML = `<strong>❌ NOT QUITE.</strong><p>Compare two consecutive rows: 16 − 12 = 4.</p>`;
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Compare two consecutive rows (e.g., 16 − 12 = 4). The rule is +4.</p>`;
       }
       container.querySelector('#stadium-question-2').hidden = false;
     });
@@ -527,20 +514,18 @@ export function mount(container, api) {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#stadium-next-feedback');
       stadiumNextButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
 
       if (button.dataset.answer === '28') {
         button.classList.add('correct');
-        feedback.style.backgroundColor = '#dcfce7';
-        feedback.style.color = '#15803d';
+        feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>✅ PATTERN RESTORED!</strong><p>The sequence continues: 12, 16, 20, 24, 28.</p>`;
-        state.score += 20;
       } else {
+        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('#stadium-next-options [data-answer="28"]').classList.add('correct');
-        feedback.style.backgroundColor = '#fee2e2';
-        feedback.style.color = '#b91c1c';
-        feedback.innerHTML = `<strong>❌ KEEP INVESTIGATING.</strong><p>The rule is +4, so 24 + 4 = 28.</p>`;
-        state.score += 10;
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ KEEP INVESTIGATING (-10 pts).</strong><p>The rule is +4, so 24 + 4 = 28.</p>`;
       }
 
       state.mission1Done = true;
@@ -562,7 +547,6 @@ export function mount(container, api) {
   // ==========================================================
   function renderSequenceScanner() {
     const scanner = container.querySelector('#sequence-scanner');
-    // Prevent double rendering if clicked twice
     if(scanner.innerHTML !== "") return; 
 
     const questions = [
@@ -572,50 +556,47 @@ export function mount(container, api) {
     ];
 
     let answered = 0;
-    let correct = 0;
 
-    questions.forEach((question) => {
+    questions.forEach((question, index) => {
       const card = document.createElement('div');
       card.className = 'challenge-card';
 
       card.innerHTML = `
-        <div class="sequence-display" style="background:#f1f5f9; color:#334155;">
+        <div class="sequence-display" style="background:#f8fafc; color:#0f172a;">
           ${question.sequence}
         </div>
         <p style="text-align:center;">Identify the sequence type.</p>
         <div class="answer-grid">
-          <button class="quiz-opt" data-answer="arithmetic">ARITHMETIC</button>
-          <button class="quiz-opt" data-answer="geometric">GEOMETRIC</button>
-          <button class="quiz-opt" data-answer="neither">NEITHER</button>
+          <button class="quiz-opt q${index}" data-answer="arithmetic">ARITHMETIC</button>
+          <button class="quiz-opt q${index}" data-answer="geometric">GEOMETRIC</button>
+          <button class="quiz-opt q${index}" data-answer="neither">NEITHER</button>
         </div>
-        <div class="mission-feedback"></div>
+        <div class="mission-feedback" style="display:none;"></div>
       `;
 
-      const buttons = card.querySelectorAll('.quiz-opt');
+      const buttons = card.querySelectorAll(`.q${index}`);
 
       buttons.forEach(button => {
         button.addEventListener('click', () => {
           buttons.forEach(btn => { btn.disabled = true; });
           const feedback = card.querySelector('.mission-feedback');
+          feedback.style.display = 'block';
 
           if (button.dataset.answer === question.answer) {
             button.classList.add('correct');
-            feedback.style.backgroundColor = '#dcfce7';
-            feedback.style.color = '#15803d';
-            feedback.innerHTML = '<strong>✅ Correct!</strong> Pattern identified.';
-            correct++;
+            feedback.className = 'mission-feedback success';
+            feedback.innerHTML = '<strong>✅ Correct!</strong> Pattern identified successfully.';
           } else {
+            deductScore(5);
             button.classList.add('wrong');
             card.querySelector(`[data-answer="${question.answer}"]`).classList.add('correct');
-            feedback.style.backgroundColor = '#fee2e2';
-            feedback.style.color = '#b91c1c';
-            feedback.innerHTML = '<strong>❌ Incorrect.</strong> The scanner has revealed the correct pattern.';
+            feedback.className = 'mission-feedback error';
+            feedback.innerHTML = `<strong>❌ Incorrect (-5 pts).</strong> The correct pattern is <strong>${question.answer.toUpperCase()}</strong>.`;
           }
 
           answered++;
           if (answered === questions.length) {
             state.mission2Done = true;
-            state.score += Math.round((correct / questions.length) * 20);
             container.querySelector('#continue-mission-3').hidden = false;
           }
         });
@@ -640,21 +621,24 @@ export function mount(container, api) {
     const answer = Number(input.value);
     const feedback = container.querySelector('#lab-feedback-1');
 
-    if (input.value === "") return; // Prevent empty checks
+    if (input.value === "") return;
+
+    input.disabled = true;
+    e.target.disabled = true;
+    feedback.style.display = 'block';
 
     if (answer === 5) {
-      feedback.style.backgroundColor = '#dcfce7';
-      feedback.style.color = '#15803d';
+      input.classList.add('correct-autofill');
+      feedback.className = 'mission-feedback success';
       feedback.innerHTML = `<strong>✅ EXPERIMENT SUCCESSFUL!</strong><p>The common difference is +5.</p>`;
-      state.score += 15;
-      e.target.disabled = true;
-      input.disabled = true;
-      container.querySelector('#lab-question-2').hidden = false;
     } else {
-      feedback.style.backgroundColor = '#fee2e2';
-      feedback.style.color = '#b91c1c';
-      feedback.innerHTML = `<strong>❌ TRY AGAIN.</strong><p>Compare two consecutive terms: 10 − 5.</p>`;
+      deductScore(10);
+      input.value = 5;
+      input.classList.add('wrong-autofill');
+      feedback.className = 'mission-feedback error';
+      feedback.innerHTML = `<strong>❌ TRY AGAIN (-10 pts).</strong><p>Compare two consecutive terms (e.g., 10 − 5). The difference is 5.</p>`;
     }
+    container.querySelector('#lab-question-2').hidden = false;
   });
 
   // ==========================================================
@@ -667,20 +651,24 @@ export function mount(container, api) {
     
     if (input.value === "") return;
 
+    input.disabled = true;
+    e.target.disabled = true;
+    feedback.style.display = 'block';
+
     if (answer === 3) {
-      feedback.style.backgroundColor = '#dcfce7';
-      feedback.style.color = '#15803d';
+      input.classList.add('correct-autofill');
+      feedback.className = 'mission-feedback success';
       feedback.innerHTML = `<strong>✅ EXPERIMENT COMPLETE!</strong><p>The common ratio is 3.</p>`;
-      state.score += 15;
-      state.mission3Done = true;
-      e.target.disabled = true;
-      input.disabled = true;
-      container.querySelector('#continue-mission-4').hidden = false;
     } else {
-      feedback.style.backgroundColor = '#fee2e2';
-      feedback.style.color = '#b91c1c';
-      feedback.innerHTML = `<strong>❌ ANALYZE THE PATTERN AGAIN.</strong><p>How do we move from 2 to 6?</p>`;
+      deductScore(10);
+      input.value = 3;
+      input.classList.add('wrong-autofill');
+      feedback.className = 'mission-feedback error';
+      feedback.innerHTML = `<strong>❌ ANALYZE PATTERN (-10 pts).</strong><p>How do we move from 2 to 6? We multiply by 3.</p>`;
     }
+    
+    state.mission3Done = true;
+    container.querySelector('#continue-mission-4').hidden = false;
   });
 
   // ==========================================================
@@ -700,19 +688,18 @@ export function mount(container, api) {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#flora-feedback');
       floraTypeButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
 
       if (button.dataset.answer === 'arithmetic') {
         button.classList.add('correct');
-        feedback.style.backgroundColor = '#dcfce7';
-        feedback.style.color = '#15803d';
+        feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>✅ CORRECT!</strong><p>Flora's leaves increase by the same amount each week.</p>`;
-        state.score += 10;
       } else {
+        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('#flora-type-options [data-answer="arithmetic"]').classList.add('correct');
-        feedback.style.backgroundColor = '#fee2e2';
-        feedback.style.color = '#b91c1c';
-        feedback.innerHTML = `<strong>❌ NOT QUITE.</strong><p>Compare the difference between consecutive weeks.</p>`;
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Notice how it increases by addition, not multiplication. It is Arithmetic.</p>`;
       }
       container.querySelector('#flora-question-2').hidden = false;
     });
@@ -727,33 +714,46 @@ export function mount(container, api) {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#flora-difference-feedback');
       floraDifferenceButtons.forEach(btn => { btn.disabled = true; });
+      feedback.style.display = 'block';
 
       if (button.dataset.answer === '4') {
         button.classList.add('correct');
-        feedback.style.backgroundColor = '#dcfce7';
-        feedback.style.color = '#15803d';
+        feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>🎉 PATTERN SOLVED!</strong><p>The number of leaves increases by 4 each week.</p>`;
-        state.score += 10;
       } else {
+        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('#flora-difference-options [data-answer="4"]').classList.add('correct');
-        feedback.style.backgroundColor = '#fee2e2';
-        feedback.style.color = '#b91c1c';
-        feedback.innerHTML = `<strong>❌ LOOK CLOSER.</strong><p>7 − 3 = 4.</p>`;
+        feedback.className = 'mission-feedback error';
+        feedback.innerHTML = `<strong>❌ LOOK CLOSER (-10 pts).</strong><p>7 − 3 = 4.</p>`;
       }
 
       state.mission4Done = true;
-      container.querySelector('#complete-stage').hidden = false;
+      showFinalScore();
     });
   });
 
   // ==========================================================
-  // COMPLETE STAGE
+  // SHOW FINAL SCORE & COMPLETE STAGE
   // ==========================================================
-  container.querySelector('#complete-stage').addEventListener('click', () => {
-    const finalScore = Math.min(100, state.score);
-    let badge = null;
+  function showFinalScore() {
+    const scoreDisplay = container.querySelector('#final-score-display');
+    const completeBtn = container.querySelector('#complete-stage');
+    
+    scoreDisplay.style.display = 'block';
+    const gradeColor = finalScore >= 80 ? '#15803d' : (finalScore >= 50 ? '#e59a2e' : '#b91c1c');
+    
+    scoreDisplay.innerHTML = `
+      <div style="font-size: 1rem; color: #64748b; margin-bottom: 8px; font-weight:bold;">FINAL INVESTIGATION SCORE</div>
+      <div style="font-size: 3rem; font-weight: bold; color: ${gradeColor};">${finalScore} / 100</div>
+    `;
 
+    completeBtn.hidden = false;
+    completeBtn.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  container.querySelector('#complete-stage').addEventListener('click', () => {
+    let badge = null;
     if (finalScore >= 80) {
       const added = api.badge('pattern-finder', 'Pattern Finder', '🔍');
       if (added) {
@@ -763,7 +763,7 @@ export function mount(container, api) {
 
     api.complete(finalScore, {
       heading: 'PATTERN CORE RESTORED!',
-      detail: `You have uncovered the hidden rules behind arithmetic and geometric sequences. The first piece of mathematical order has returned to Mathscape.`,
+      detail: `You have uncovered the hidden rules behind arithmetic and geometric sequences. You achieved a score of ${finalScore}.`,
       badge
     });
   });
