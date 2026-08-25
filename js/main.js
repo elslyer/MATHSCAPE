@@ -442,6 +442,10 @@ function renderMap() {
 // BADGES
 // ==========================================
 
+// ==========================================
+// BADGES & CERTIFICATE
+// ==========================================
+
 function renderBadges() {
 
   const badgeShelf =
@@ -455,13 +459,14 @@ function renderBadges() {
     progress.getBadges();
 
 
+  // Jika belum ada badge
   if (badges.length === 0) {
 
     badgeShelf.innerHTML = `
 
       <div class="badge-empty">
 
-        🏆 Your achievements will appear here.
+        Your achievements will appear here.
 
       </div>
 
@@ -472,8 +477,17 @@ function renderBadges() {
   }
 
 
-  badgeShelf.innerHTML =
-    badges.map(badge => `
+  // Sembunyikan badge Formula Finder
+  const visibleBadges =
+    badges.filter(
+      badge =>
+        badge.name !== 'Formula Finder'
+    );
+
+
+  // Tampilkan badge lainnya
+  const badgesHTML =
+    visibleBadges.map(badge => `
 
       <span class="badge-chip">
 
@@ -485,8 +499,50 @@ function renderBadges() {
 
     `).join('');
 
-}
 
+  // Tombol Download Certificate
+  const certificateHTML = `
+
+    <button
+      class="btn btn-primary"
+      id="btn-download-certificate"
+    >
+
+      DOWNLOAD CERTIFICATE
+
+    </button>
+
+  `;
+
+
+  // Gabungkan badge + tombol sertifikat
+  badgeShelf.innerHTML =
+    badgesHTML + certificateHTML;
+
+
+  // Event tombol
+  const certificateButton =
+    document.getElementById(
+      'btn-download-certificate'
+    );
+
+
+  if (certificateButton) {
+
+    certificateButton.addEventListener(
+      'click',
+      () => {
+
+        alert(
+          'Certificate download will be available here.'
+        );
+
+      }
+    );
+
+  }
+
+}
 
 // ==========================================
 // LEVEL MANAGEMENT
