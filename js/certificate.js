@@ -2,7 +2,8 @@
 // MATHSCAPE CERTIFICATE GENERATOR
 // ==========================================
 
-import { progress } from './progress.js';
+import { totalScore } from './progress.js';
+
 
 export function downloadCertificate() {
 
@@ -10,8 +11,8 @@ export function downloadCertificate() {
   // GET LIVE SCORE
   // ==========================================
 
-  const totalScore =
-    progress.getTotalScore();
+  const score =
+    totalScore();
 
 
   // ==========================================
@@ -82,7 +83,7 @@ export function downloadCertificate() {
 
 
     // ==========================================
-    // SCORE
+    // DRAW LIVE SCORE
     // ==========================================
 
     ctx.fillStyle =
@@ -98,14 +99,14 @@ export function downloadCertificate() {
 
 
     ctx.fillText(
-      `${totalScore} / ${maxScore}`,
-      canvas.width * 0.78,
-      canvas.height * 0.56
+      score,
+      canvas.width * 0.75,
+      canvas.height * 0.57
     );
 
 
     // ==========================================
-    // DATE
+    // DRAW DATE
     // ==========================================
 
     ctx.textAlign =
@@ -118,7 +119,7 @@ export function downloadCertificate() {
 
     ctx.fillText(
       completionDate,
-      canvas.width * 0.02,
+      canvas.width * 0.16,
       canvas.height * 0.84
     );
 
@@ -145,6 +146,10 @@ export function downloadCertificate() {
 
   };
 
+
+  // ==========================================
+  // ERROR HANDLING
+  // ==========================================
 
   certificateImage.onerror = () => {
 
