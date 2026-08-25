@@ -16,6 +16,16 @@ export function downloadCertificate() {
 
 
   // ==========================================
+  // GET PLAYER NAME
+  // ==========================================
+
+  const playerName =
+    localStorage.getItem(
+      'mathscape-player-name'
+    ) || 'Mathscape Explorer';
+
+
+  // ==========================================
   // MAXIMUM SCORE
   // ==========================================
 
@@ -79,6 +89,29 @@ export function downloadCertificate() {
       certificateImage,
       0,
       0
+    );
+
+
+    // ==========================================
+    // DRAW PLAYER NAME
+    // ==========================================
+
+    ctx.fillStyle =
+      '#ffffff';
+
+
+    ctx.textAlign =
+      'center';
+
+
+    ctx.font =
+      'bold 72px monospace';
+
+
+    ctx.fillText(
+      playerName,
+      canvas.width * 0.5,
+      canvas.height * 0.46
     );
 
 
