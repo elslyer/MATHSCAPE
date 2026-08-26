@@ -312,10 +312,6 @@ export function mount(container, api) {
           </div>
           <div class="mission-feedback" id="stadium-next-feedback" style="display:none;"></div>
         </div>
-
-        <button class="btn btn-primary btn-large" id="continue-mission-2" hidden>
-          CONTINUE TO MISSION 02 →
-        </button>
       </section>
 
 
@@ -336,10 +332,6 @@ export function mount(container, api) {
         </div>
 
         <div id="sequence-scanner"></div>
-
-        <button class="btn btn-primary btn-large" id="continue-mission-3" hidden>
-          CONTINUE TO MISSION 03 →
-        </button>
       </section>
 
 
@@ -360,6 +352,7 @@ export function mount(container, api) {
         </div>
 
         <div class="pattern-lab">
+          <!-- Question 1 -->
           <div class="lab-question challenge-card">
             <h3>🔬 EXPERIMENT A</h3>
             <div class="sequence-display">5 → 10 → 15 → 20 → ?</div>
@@ -369,6 +362,7 @@ export function mount(container, api) {
             <div class="mission-feedback" id="lab-feedback-1" style="display:none;"></div>
           </div>
 
+          <!-- Question 2 -->
           <div class="lab-question challenge-card" id="lab-question-2" hidden>
             <h3>🔬 EXPERIMENT B</h3>
             <div class="sequence-display">2 → 6 → 18 → 54 → ?</div>
@@ -378,10 +372,6 @@ export function mount(container, api) {
             <div class="mission-feedback" id="lab-feedback-2" style="display:none;"></div>
           </div>
         </div>
-
-        <button class="btn btn-primary btn-large" id="continue-mission-4" hidden>
-          CONTINUE TO MISSION 04 →
-        </button>
       </section>
 
 
@@ -420,6 +410,7 @@ export function mount(container, api) {
           </div>
         </div>
 
+        <!-- Question 1 -->
         <div class="challenge-card">
           <h3>🌿 ANALYZE THE GROWTH</h3>
           <p>What type of sequence does Flora's growth follow?</p>
@@ -431,6 +422,7 @@ export function mount(container, api) {
           <div class="mission-feedback" id="flora-feedback" style="display:none;"></div>
         </div>
 
+        <!-- Question 2 -->
         <div class="challenge-card" id="flora-question-2" hidden>
           <h3>🔍 FIND THE DIFFERENCE</h3>
           <p>What is the common difference in Flora's leaves?</p>
@@ -501,7 +493,13 @@ export function mount(container, api) {
         feedback.className = 'mission-feedback error';
         feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Compare two consecutive rows (e.g., 16 − 12 = 4). The rule is +4.</p>`;
       }
-      container.querySelector('#stadium-question-2').hidden = false;
+      
+      // Auto-Progress ke Pertanyaan 2
+      setTimeout(() => {
+        const nextQ = container.querySelector('#stadium-question-2');
+        nextQ.hidden = false;
+        nextQ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 2000);
     });
   });
 
@@ -529,21 +527,18 @@ export function mount(container, api) {
       }
 
       state.mission1Done = true;
-      container.querySelector('#continue-mission-2').hidden = false;
+      
+      // Auto-Progress ke Misi 2
+      setTimeout(() => {
+        mission2.hidden = false;
+        mission2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        renderSequenceScanner();
+      }, 2500);
     });
   });
 
   // ==========================================================
-  // START MISSION 2
-  // ==========================================================
-  container.querySelector('#continue-mission-2').addEventListener('click', () => {
-    mission2.hidden = false;
-    mission2.scrollIntoView({ behavior: 'smooth' });
-    renderSequenceScanner();
-  });
-
-  // ==========================================================
-  // MISSION 2 — SEQUENCE SCANNER
+  // MISSION 2 — SEQUENCE SCANNER (Berurutan)
   // ==========================================================
   function renderSequenceScanner() {
     const scanner = container.querySelector('#sequence-scanner');
@@ -555,11 +550,14 @@ export function mount(container, api) {
       { sequence: '5, 10, 15, 20, ...', answer: 'arithmetic' }
     ];
 
-    let answered = 0;
-
+    // Bangun HTML untuk 3 pertanyaan scanner
     questions.forEach((question, index) => {
       const card = document.createElement('div');
       card.className = 'challenge-card';
+      card.id = `scanner-q${index}`;
+      
+      // Sembunyikan card kedua dan ketiga pada awalnya
+      if (index > 0) card.hidden = true; 
 
       card.innerHTML = `
         <div class="sequence-display" style="background:#f8fafc; color:#0f172a;">
@@ -571,15 +569,19 @@ export function mount(container, api) {
           <button class="quiz-opt q${index}" data-answer="geometric">GEOMETRIC</button>
           <button class="quiz-opt q${index}" data-answer="neither">NEITHER</button>
         </div>
-        <div class="mission-feedback" style="display:none;"></div>
+        <div class="mission-feedback" id="feedback-q${index}" style="display:none;"></div>
       `;
+      scanner.appendChild(card);
+    });
 
-      const buttons = card.querySelectorAll(`.q${index}`);
-
+    // Tambahkan Event Listener dengan Auto-Progress
+    questions.forEach((question, index) => {
+      const buttons = scanner.querySelectorAll(`.q${index}`);
+      
       buttons.forEach(button => {
         button.addEventListener('click', () => {
           buttons.forEach(btn => { btn.disabled = true; });
-          const feedback = card.querySelector('.mission-feedback');
+          const feedback = scanner.querySelector(`#feedback-q${index}`);
           feedback.style.display = 'block';
 
           if (button.dataset.answer === question.answer) {
@@ -589,32 +591,30 @@ export function mount(container, api) {
           } else {
             deductScore(5);
             button.classList.add('wrong');
-            card.querySelector(`[data-answer="${question.answer}"]`).classList.add('correct');
+            scanner.querySelector(`#scanner-q${index} [data-answer="${question.answer}"]`).classList.add('correct');
             feedback.className = 'mission-feedback error';
             feedback.innerHTML = `<strong>❌ Incorrect (-5 pts).</strong> The correct pattern is <strong>${question.answer.toUpperCase()}</strong>.`;
           }
 
-          answered++;
-          if (answered === questions.length) {
-            state.mission2Done = true;
-            container.querySelector('#continue-mission-3').hidden = false;
-          }
+          // Pindah ke soal scanner berikutnya, atau lanjut ke Misi 3
+          setTimeout(() => {
+            if (index < questions.length - 1) {
+              const nextCard = scanner.querySelector(`#scanner-q${index + 1}`);
+              nextCard.hidden = false;
+              nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+              state.mission2Done = true;
+              mission3.hidden = false;
+              mission3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 2000);
         });
       });
-      scanner.appendChild(card);
     });
   }
 
   // ==========================================================
-  // START MISSION 3
-  // ==========================================================
-  container.querySelector('#continue-mission-3').addEventListener('click', () => {
-    mission3.hidden = false;
-    mission3.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  // ==========================================================
-  // LAB QUESTION 1
+  // MISSION 3 — LAB QUESTION 1
   // ==========================================================
   container.querySelector('#check-lab-1').addEventListener('click', (e) => {
     const input = container.querySelector('#lab-answer-1');
@@ -638,11 +638,17 @@ export function mount(container, api) {
       feedback.className = 'mission-feedback error';
       feedback.innerHTML = `<strong>❌ TRY AGAIN (-10 pts).</strong><p>Compare two consecutive terms (e.g., 10 − 5). The difference is 5.</p>`;
     }
-    container.querySelector('#lab-question-2').hidden = false;
+    
+    // Auto-Progress ke Pertanyaan 2
+    setTimeout(() => {
+      const q2 = container.querySelector('#lab-question-2');
+      q2.hidden = false;
+      q2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 2500);
   });
 
   // ==========================================================
-  // LAB QUESTION 2
+  // MISSION 3 — LAB QUESTION 2
   // ==========================================================
   container.querySelector('#check-lab-2').addEventListener('click', (e) => {
     const input = container.querySelector('#lab-answer-2');
@@ -668,19 +674,16 @@ export function mount(container, api) {
     }
     
     state.mission3Done = true;
-    container.querySelector('#continue-mission-4').hidden = false;
+    
+    // Auto-Progress ke Misi 4
+    setTimeout(() => {
+      mission4.hidden = false;
+      mission4.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2500);
   });
 
   // ==========================================================
-  // START MISSION 4
-  // ==========================================================
-  container.querySelector('#continue-mission-4').addEventListener('click', () => {
-    mission4.hidden = false;
-    mission4.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  // ==========================================================
-  // FLORA QUESTION 1
+  // MISSION 4 — FLORA QUESTION 1
   // ==========================================================
   const floraTypeButtons = container.querySelectorAll('#flora-type-options .quiz-opt');
 
@@ -701,12 +704,18 @@ export function mount(container, api) {
         feedback.className = 'mission-feedback error';
         feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Notice how it increases by addition, not multiplication. It is Arithmetic.</p>`;
       }
-      container.querySelector('#flora-question-2').hidden = false;
+      
+      // Auto-Progress ke Pertanyaan 2
+      setTimeout(() => {
+        const q2 = container.querySelector('#flora-question-2');
+        q2.hidden = false;
+        q2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 2000);
     });
   });
 
   // ==========================================================
-  // FLORA QUESTION 2
+  // MISSION 4 — FLORA QUESTION 2 (FINAL)
   // ==========================================================
   const floraDifferenceButtons = container.querySelectorAll('#flora-difference-options .quiz-opt');
 
@@ -729,7 +738,11 @@ export function mount(container, api) {
       }
 
       state.mission4Done = true;
-      showFinalScore();
+      
+      // Tampilkan Final Score otomatis
+      setTimeout(() => {
+        showFinalScore();
+      }, 2500);
     });
   });
 
@@ -749,7 +762,7 @@ export function mount(container, api) {
     `;
 
     completeBtn.hidden = false;
-    completeBtn.scrollIntoView({ behavior: 'smooth' });
+    completeBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   container.querySelector('#complete-stage').addEventListener('click', () => {
