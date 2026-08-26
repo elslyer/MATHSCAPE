@@ -20,6 +20,7 @@
 
   <!-- ==========================================
        TAMBAHAN CSS UNTUK VISUAL & INTERAKTIVITAS
+       (Sudah Dioptimalkan untuk Background Putih)
   =========================================== -->
   <style>
     /* Styling Ikon SVG agar sejajar dengan teks */
@@ -37,7 +38,7 @@
 
     /* Penyesuaian Topbar tanpa Emoji */
     .topbar-stats .stat-icon {
-      color: #4da6ff;
+      color: #2563eb; /* Biru yang lebih tegas */
       margin-right: 6px;
       display: flex;
       align-items: center;
@@ -65,17 +66,18 @@
     }
 
     .feature-item {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff; /* Kotak solid putih */
+      border: 1px solid #cbd5e1; /* Garis batas abu-abu tegas */
       border-radius: 12px;
       overflow: hidden;
       transition: all 0.3s ease;
       cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); /* Bayangan lembut */
     }
 
     .feature-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: #f8fafc; /* Sedikit menggelap saat di-hover */
+      border-color: #94a3b8;
     }
 
     .feature-header {
@@ -84,7 +86,7 @@
       align-items: center;
       justify-content: space-between;
       font-weight: 600;
-      color: #e2e8f0;
+      color: #1e293b; /* Teks judul gelap agar kontras */
     }
 
     .feature-title-wrap {
@@ -94,14 +96,14 @@
     }
 
     .feature-title-wrap svg {
-      color: #4da6ff;
+      color: #2563eb; /* Warna ikon biru tua */
       flex-shrink: 0;
     }
 
     .toggle-icon {
       font-size: 1.2rem;
       transition: transform 0.3s ease;
-      color: #4da6ff;
+      color: #2563eb;
       font-weight: 300;
     }
 
@@ -110,16 +112,16 @@
       padding: 0 20px;
       opacity: 0;
       transition: all 0.3s ease;
-      color: #94a3b8;
+      color: #475569; /* Teks deksripsi abu-abu tua */
       font-size: 0.95rem;
       line-height: 1.5;
     }
 
     /* Status ketika diklik (aktif) */
     .feature-item.active {
-      background: rgba(77, 166, 255, 0.08);
-      border-color: rgba(77, 166, 255, 0.3);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      background: #eff6ff; /* Background biru sangat muda */
+      border-color: #3b82f6; /* Garis batas biru jelas */
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1);
     }
 
     .feature-item.active .feature-content {
@@ -136,22 +138,20 @@
        STYLING REGISTRATION BOX
     ========================================== */
     .player-registration-box {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #ffffff; /* Kotak solid putih */
+      border: 2px solid #e2e8f0; /* Baseline/garis kotak tegas */
       border-radius: 16px;
       padding: 24px 32px;
       max-width: 450px;
       margin: 32px auto;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); /* Bayangan pop-up */
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .player-registration-box:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
-      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
+      border-color: #cbd5e1;
     }
 
     .player-name-input {
@@ -167,7 +167,7 @@
       margin-bottom: 12px;
       font-size: 0.95rem;
       letter-spacing: 1.5px;
-      color: #e2e8f0;
+      color: #1e293b; /* Warna Teks "ENTER YOUR NAME" Gelap */
       text-transform: uppercase;
     }
 
@@ -176,48 +176,58 @@
       width: 100%;
     }
 
+    /* Styling input field untuk tema terang */
     .input-container input {
       width: 100%;
       padding: 14px 16px 14px 44px;
-      background: rgba(0, 0, 0, 0.25);
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: #f8fafc; /* Latar abu-abu muda */
+      border: 2px solid #cbd5e1; /* Garis batas abu-abu */
       border-radius: 10px;
-      color: #ffffff;
+      color: #0f172a; /* Teks input hitam/gelap */
       font-size: 1.1rem;
       outline: none;
       transition: all 0.3s ease;
       box-sizing: border-box;
       font-family: inherit;
+      font-weight: 600;
+    }
+    
+    .input-container input::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
     }
 
+    /* Ikon di dalam input field */
     .input-icon-inside {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: #94a3b8;
+      color: #64748b; /* Ikon gelap */
       transition: color 0.3s ease;
       pointer-events: none;
     }
 
+    /* Efek ketika input sedang diketik/fokus */
     .input-container input:focus {
-      border-color: #4da6ff;
-      background: rgba(0, 0, 0, 0.4);
-      box-shadow: 0 0 15px rgba(77, 166, 255, 0.3);
+      border-color: #2563eb; /* Border biru menyala */
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); /* Cincin biru luar */
     }
 
     .input-container input:focus + .input-icon-inside {
-      color: #4da6ff;
+      color: #2563eb;
     }
 
     .input-hint {
       display: block;
       margin-top: 10px;
       font-size: 0.85rem;
-      color: #94a3b8;
+      color: #64748b; /* Warna teks keterangan gelap */
       font-style: italic;
     }
 
+    /* Tombol Start */
     #btn-start {
       width: 100%;
       display: flex;
