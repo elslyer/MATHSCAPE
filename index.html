@@ -250,58 +250,138 @@
   loop
 ></audio>
 
-    <!-- TOP NAVIGATION -->
-    <header class="topbar">
+<div class="topbar-stats" id="topbar-stats" hidden>
 
-      <div class="brand" data-nav="landing">
-        <span class="brand-icon">✦</span>
-        <span class="brand-name">MATHSCAPE</span>
-      </div>
-
-      <div class="topbar-stats" id="topbar-stats" hidden>
-
-        <div class="stat" title="Total score">
-          <span class="stat-icon">
-            <!-- Ikon Bintang (Score) -->
-            <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          </span>
-          <span id="stat-score">0</span>
-        </div>
-
-        <div class="stat" title="Achievements">
-          <span class="stat-icon">
-            <!-- Ikon Badge (Achievements) -->
-            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 15l-3 3-2-2-3 3v-8"></path><circle cx="12" cy="8" r="6"></circle><path d="M12 15l3 3 2-2 3 3v-8"></path></svg>
-          </span>
-          <span id="stat-badges">0</span>
-        </div>
-
-        <button
-          class="btn btn-ghost"
-          id="btn-map"
-          title="Mathscape World"
-        >
-          <!-- Ikon Map -->
-          <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
-          World Map
-        </button>
-
-        <button
-          class="btn btn-ghost btn-danger"
-          id="btn-reset"
-          title="Reset progress"
-        >
-          <!-- Ikon Refresh/Reset -->
-          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path></svg>
-          Reset
-        </button>
-
-      </div>
-
-    </header>
+  <!-- WOLFRAM ALPHA -->
+  <a
+    href="https://www.wolframalpha.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="wolfram-link"
+    title="Open WolframAlpha"
+  >
+    <img
+      src="assets/Wolfram.png"
+      alt="WolframAlpha"
+      class="wolfram-icon"
+    />
+  </a>
 
 
-    <main id="main-content">
+  <!-- SCORE -->
+  <div class="stat" title="Total score">
+
+    <span class="stat-icon">
+
+      <svg
+        class="icon-svg"
+        viewBox="0 0 24 24"
+      >
+        <polygon
+          points="
+            12 2
+            15.09 8.26
+            22 9.27
+            17 14.14
+            18.18 21.02
+            12 17.77
+            5.82 21.02
+            7 14.14
+            2 9.27
+            8.91 8.26
+            12 2
+          "
+        ></polygon>
+      </svg>
+
+    </span>
+
+    <span id="stat-score">0</span>
+
+  </div>
+
+
+  <!-- ACHIEVEMENTS -->
+  <div class="stat" title="Achievements">
+
+    <span class="stat-icon">
+
+      <svg
+        class="icon-svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 15l-3 3-2-2-3 3v-8"></path>
+
+        <circle
+          cx="12"
+          cy="8"
+          r="6"
+        ></circle>
+
+        <path d="M12 15l3 3 2-2 3 3v-8"></path>
+
+      </svg>
+
+    </span>
+
+    <span id="stat-badges">0</span>
+
+  </div>
+
+
+  <!-- WORLD MAP -->
+  <button
+    class="btn btn-ghost"
+    id="btn-map"
+    title="Mathscape World"
+  >
+
+    <svg
+      class="icon-svg"
+      viewBox="0 0 24 24"
+    >
+      <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+
+      <line
+        x1="8"
+        y1="2"
+        x2="8"
+        y2="18"
+      ></line>
+
+      <line
+        x1="16"
+        y1="6"
+        x2="16"
+        y2="22"
+      ></line>
+
+    </svg>
+
+    World Map
+
+  </button>
+
+
+  <!-- RESET -->
+  <button
+    class="btn btn-ghost btn-danger"
+    id="btn-reset"
+    title="Reset progress"
+  >
+
+    <svg
+      class="icon-svg"
+      viewBox="0 0 24 24"
+    >
+      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+    </svg>
+
+    Reset
+
+  </button>
+
+</div>
 
       <!-- =========================
            LANDING SCREEN
