@@ -33,6 +33,8 @@ const levelMeta = [
     id: 'level-2',
     title: 'Formula Finder',
     desc: 'Unlock the mathematical rules and discover the formula for the nth term.',
+    icon: '🏰'
+
   },
 
   {
