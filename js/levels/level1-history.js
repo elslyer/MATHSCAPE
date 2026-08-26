@@ -6,11 +6,9 @@
 export function mount(container, api) {
   let currentMission = 0;
   
-  // Sistem Dynamic Scoring
-  let finalScore = 100;
-  function deductScore(points) {
-    finalScore = Math.max(0, finalScore - points);
-  }
+  // Sistem Skoring Additive (Mulai dari 0, bertambah jika benar)
+  // Fix celah skor tidak berubah / eksploitasi skor.
+  let finalScore = 0;
 
   const state = {
     mission1Done: false,
@@ -486,12 +484,12 @@ export function mount(container, api) {
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>🎉 CLUE DISCOVERED!</strong><p>Each row increases consistently by 4 seats.</p>`;
+        finalScore += 15; // Point addition
       } else {
-        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('[data-answer="4"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
-        feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Compare two consecutive rows (e.g., 16 − 12 = 4). The rule is +4.</p>`;
+        feedback.innerHTML = `<strong>❌ NOT QUITE.</strong><p>Compare two consecutive rows (e.g., 16 − 12 = 4). The rule is +4.</p>`;
       }
       
       // Auto-Progress ke Pertanyaan 2
@@ -518,12 +516,12 @@ export function mount(container, api) {
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>✅ PATTERN RESTORED!</strong><p>The sequence continues: 12, 16, 20, 24, 28.</p>`;
+        finalScore += 15; // Point addition
       } else {
-        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('#stadium-next-options [data-answer="28"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
-        feedback.innerHTML = `<strong>❌ KEEP INVESTIGATING (-10 pts).</strong><p>The rule is +4, so 24 + 4 = 28.</p>`;
+        feedback.innerHTML = `<strong>❌ KEEP INVESTIGATING.</strong><p>The rule is +4, so 24 + 4 = 28.</p>`;
       }
 
       state.mission1Done = true;
@@ -588,12 +586,12 @@ export function mount(container, api) {
             button.classList.add('correct');
             feedback.className = 'mission-feedback success';
             feedback.innerHTML = '<strong>✅ Correct!</strong> Pattern identified successfully.';
+            finalScore += 10; // Point addition
           } else {
-            deductScore(5);
             button.classList.add('wrong');
             scanner.querySelector(`#scanner-q${index} [data-answer="${question.answer}"]`).classList.add('correct');
             feedback.className = 'mission-feedback error';
-            feedback.innerHTML = `<strong>❌ Incorrect (-5 pts).</strong> The correct pattern is <strong>${question.answer.toUpperCase()}</strong>.`;
+            feedback.innerHTML = `<strong>❌ Incorrect.</strong> The correct pattern is <strong>${question.answer.toUpperCase()}</strong>.`;
           }
 
           // Pindah ke soal scanner berikutnya, atau lanjut ke Misi 3
@@ -631,12 +629,12 @@ export function mount(container, api) {
       input.classList.add('correct-autofill');
       feedback.className = 'mission-feedback success';
       feedback.innerHTML = `<strong>✅ EXPERIMENT SUCCESSFUL!</strong><p>The common difference is +5.</p>`;
+      finalScore += 10; // Point addition
     } else {
-      deductScore(10);
       input.value = 5;
       input.classList.add('wrong-autofill');
       feedback.className = 'mission-feedback error';
-      feedback.innerHTML = `<strong>❌ TRY AGAIN (-10 pts).</strong><p>Compare two consecutive terms (e.g., 10 − 5). The difference is 5.</p>`;
+      feedback.innerHTML = `<strong>❌ TRY AGAIN.</strong><p>Compare two consecutive terms (e.g., 10 − 5). The difference is 5.</p>`;
     }
     
     // Auto-Progress ke Pertanyaan 2
@@ -665,12 +663,12 @@ export function mount(container, api) {
       input.classList.add('correct-autofill');
       feedback.className = 'mission-feedback success';
       feedback.innerHTML = `<strong>✅ EXPERIMENT COMPLETE!</strong><p>The common ratio is 3.</p>`;
+      finalScore += 10; // Point addition
     } else {
-      deductScore(10);
       input.value = 3;
       input.classList.add('wrong-autofill');
       feedback.className = 'mission-feedback error';
-      feedback.innerHTML = `<strong>❌ ANALYZE PATTERN (-10 pts).</strong><p>How do we move from 2 to 6? We multiply by 3.</p>`;
+      feedback.innerHTML = `<strong>❌ ANALYZE PATTERN.</strong><p>How do we move from 2 to 6? We multiply by 3.</p>`;
     }
     
     state.mission3Done = true;
@@ -697,12 +695,12 @@ export function mount(container, api) {
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>✅ CORRECT!</strong><p>Flora's leaves increase by the same amount each week.</p>`;
+        finalScore += 10; // Point addition
       } else {
-        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('#flora-type-options [data-answer="arithmetic"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
-        feedback.innerHTML = `<strong>❌ NOT QUITE (-10 pts).</strong><p>Notice how it increases by addition, not multiplication. It is Arithmetic.</p>`;
+        feedback.innerHTML = `<strong>❌ NOT QUITE.</strong><p>Notice how it increases by addition, not multiplication. It is Arithmetic.</p>`;
       }
       
       // Auto-Progress ke Pertanyaan 2
@@ -729,12 +727,12 @@ export function mount(container, api) {
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>🎉 PATTERN SOLVED!</strong><p>The number of leaves increases by 4 each week.</p>`;
+        finalScore += 10; // Point addition
       } else {
-        deductScore(10);
         button.classList.add('wrong');
         container.querySelector('#flora-difference-options [data-answer="4"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
-        feedback.innerHTML = `<strong>❌ LOOK CLOSER (-10 pts).</strong><p>7 − 3 = 4.</p>`;
+        feedback.innerHTML = `<strong>❌ LOOK CLOSER.</strong><p>7 − 3 = 4.</p>`;
       }
 
       state.mission4Done = true;
@@ -765,7 +763,10 @@ export function mount(container, api) {
     completeBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  container.querySelector('#complete-stage').addEventListener('click', () => {
+  container.querySelector('#complete-stage').addEventListener('click', (e) => {
+    // FIX EXPLOIT: Nonaktifkan tombol segera setelah ditekan 1x agar skor tidak berganda 
+    e.target.disabled = true;
+
     let badge = null;
     if (finalScore >= 80) {
       const added = api.badge('pattern-finder', 'Pattern Finder', '🔍');
