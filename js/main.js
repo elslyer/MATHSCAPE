@@ -342,6 +342,46 @@ document.addEventListener(
 
   }
 );
+// ==========================================
+// PLAYER GUIDE
+// ==========================================
+
+const guideButton =
+  document.getElementById('btn-guide');
+
+
+const guideModal =
+  document.getElementById('guide-modal');
+
+
+// OPEN GUIDE
+
+if (guideButton && guideModal) {
+
+  guideButton.addEventListener('click', () => {
+
+    guideModal.classList.add('active');
+
+  });
+
+}
+
+
+// CLOSE GUIDE WHEN CLICKING OUTSIDE
+
+if (guideModal) {
+
+  guideModal.addEventListener('click', (event) => {
+
+    if (event.target === guideModal) {
+
+      guideModal.classList.remove('active');
+
+    }
+
+  });
+
+}
 // World Map button
 
 const mapButton =
