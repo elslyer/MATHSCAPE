@@ -36,9 +36,9 @@
       vertical-align: middle;
     }
 
-    /* Penyesuaian Topbar tanpa Emoji */
+    /* Penyesuaian Topbar */
     .topbar-stats .stat-icon {
-      color: #2563eb; /* Biru yang lebih tegas */
+      color: #2563eb; 
       margin-right: 6px;
       display: flex;
       align-items: center;
@@ -48,6 +48,29 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+    }
+
+    /* ==========================================
+       STYLING WOLFRAM ALPHA LINK (TOP BAR)
+    ========================================== */
+    .wolfram-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    
+    .wolfram-link:hover {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+
+    .wolfram-icon {
+      height: 24px; /* Menyesuaikan tinggi ikon dengan bar */
+      width: auto;
+      border-radius: 4px;
+      object-fit: contain;
     }
 
     /* ==========================================
@@ -66,17 +89,17 @@
     }
 
     .feature-item {
-      background: #ffffff; /* Kotak solid putih */
-      border: 1px solid #cbd5e1; /* Garis batas abu-abu tegas */
+      background: #ffffff; 
+      border: 1px solid #cbd5e1; 
       border-radius: 12px;
       overflow: hidden;
       transition: all 0.3s ease;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); /* Bayangan lembut */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); 
     }
 
     .feature-item:hover {
-      background: #f8fafc; /* Sedikit menggelap saat di-hover */
+      background: #f8fafc; 
       border-color: #94a3b8;
     }
 
@@ -86,7 +109,7 @@
       align-items: center;
       justify-content: space-between;
       font-weight: 600;
-      color: #1e293b; /* Teks judul gelap agar kontras */
+      color: #1e293b; 
     }
 
     .feature-title-wrap {
@@ -96,7 +119,7 @@
     }
 
     .feature-title-wrap svg {
-      color: #2563eb; /* Warna ikon biru tua */
+      color: #2563eb; 
       flex-shrink: 0;
     }
 
@@ -112,15 +135,15 @@
       padding: 0 20px;
       opacity: 0;
       transition: all 0.3s ease;
-      color: #475569; /* Teks deksripsi abu-abu tua */
+      color: #475569; 
       font-size: 0.95rem;
       line-height: 1.5;
     }
 
     /* Status ketika diklik (aktif) */
     .feature-item.active {
-      background: #eff6ff; /* Background biru sangat muda */
-      border-color: #3b82f6; /* Garis batas biru jelas */
+      background: #eff6ff; 
+      border-color: #3b82f6; 
       box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1);
     }
 
@@ -138,13 +161,13 @@
        STYLING REGISTRATION BOX
     ========================================== */
     .player-registration-box {
-      background: #ffffff; /* Kotak solid putih */
-      border: 2px solid #e2e8f0; /* Baseline/garis kotak tegas */
+      background: #ffffff; 
+      border: 2px solid #e2e8f0; 
       border-radius: 16px;
       padding: 24px 32px;
       max-width: 450px;
       margin: 32px auto;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); /* Bayangan pop-up */
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); 
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -167,7 +190,7 @@
       margin-bottom: 12px;
       font-size: 0.95rem;
       letter-spacing: 1.5px;
-      color: #1e293b; /* Warna Teks "ENTER YOUR NAME" Gelap */
+      color: #1e293b; 
       text-transform: uppercase;
     }
 
@@ -176,14 +199,13 @@
       width: 100%;
     }
 
-    /* Styling input field untuk tema terang */
     .input-container input {
       width: 100%;
       padding: 14px 16px 14px 44px;
-      background: #f8fafc; /* Latar abu-abu muda */
-      border: 2px solid #cbd5e1; /* Garis batas abu-abu */
+      background: #f8fafc; 
+      border: 2px solid #cbd5e1; 
       border-radius: 10px;
-      color: #0f172a; /* Teks input hitam/gelap */
+      color: #0f172a; 
       font-size: 1.1rem;
       outline: none;
       transition: all 0.3s ease;
@@ -197,22 +219,20 @@
       font-weight: 400;
     }
 
-    /* Ikon di dalam input field */
     .input-icon-inside {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: #64748b; /* Ikon gelap */
+      color: #64748b; 
       transition: color 0.3s ease;
       pointer-events: none;
     }
 
-    /* Efek ketika input sedang diketik/fokus */
     .input-container input:focus {
-      border-color: #2563eb; /* Border biru menyala */
+      border-color: #2563eb; 
       background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); /* Cincin biru luar */
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); 
     }
 
     .input-container input:focus + .input-icon-inside {
@@ -223,11 +243,10 @@
       display: block;
       margin-top: 10px;
       font-size: 0.85rem;
-      color: #64748b; /* Warna teks keterangan gelap */
+      color: #64748b; 
       font-style: italic;
     }
 
-    /* Tombol Start */
     #btn-start {
       width: 100%;
       display: flex;
@@ -260,17 +279,31 @@
 
       <div class="topbar-stats" id="topbar-stats" hidden>
 
+        <!-- =====================================
+             TAUTAN WOLFRAM ALPHA
+        ====================================== -->
+        <a
+          href="https://www.wolframalpha.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="wolfram-link"
+          title="Open WolframAlpha"
+        >
+          <img
+            src="assets/Wolfram.png"
+            alt="WolframAlpha"
+            class="wolfram-icon"
+          />
+        </a>
+        <!-- ===================================== -->
+
         <div class="stat" title="Total score">
-          <span class="stat-icon">
-            <!-- Ikon Bintang (Score) -->
-            <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          </span>
+          <span class="stat-icon" style="font-size: 1.1rem;">⭐</span>
           <span id="stat-score">0</span>
         </div>
 
         <div class="stat" title="Achievements">
           <span class="stat-icon">
-            <!-- Ikon Badge (Achievements) -->
             <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 15l-3 3-2-2-3 3v-8"></path><circle cx="12" cy="8" r="6"></circle><path d="M12 15l3 3 2-2 3 3v-8"></path></svg>
           </span>
           <span id="stat-badges">0</span>
@@ -281,7 +314,6 @@
           id="btn-map"
           title="Mathscape World"
         >
-          <!-- Ikon Map -->
           <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
           World Map
         </button>
@@ -291,7 +323,6 @@
           id="btn-reset"
           title="Reset progress"
         >
-          <!-- Ikon Refresh/Reset -->
           <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path></svg>
           Reset
         </button>
@@ -344,7 +375,6 @@
           =========================================== -->
           <div class="interactive-features">
             
-            <!-- Item 1 -->
             <div class="feature-item" onclick="this.classList.toggle('active')">
               <div class="feature-header">
                 <div class="feature-title-wrap">
@@ -358,7 +388,6 @@
               </div>
             </div>
 
-            <!-- Item 2 -->
             <div class="feature-item" onclick="this.classList.toggle('active')">
               <div class="feature-header">
                 <div class="feature-title-wrap">
@@ -372,7 +401,6 @@
               </div>
             </div>
 
-            <!-- Item 3 -->
             <div class="feature-item" onclick="this.classList.toggle('active')">
               <div class="feature-header">
                 <div class="feature-title-wrap">
