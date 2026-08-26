@@ -19,7 +19,6 @@ const TOTAL_LEVELS = 5;
 // ==========================================
 
 const levelMeta = [
-
   {
     num: 1,
     id: 'level-1',
@@ -27,16 +26,13 @@ const levelMeta = [
     desc: 'Explore number patterns and discover arithmetic and geometric sequences.',
     icon: '🌲'
   },
-
   {
     num: 2,
     id: 'level-2',
     title: 'Formula Finder',
     desc: 'Unlock the mathematical rules and discover the formula for the nth term.',
     icon: '🏰'
-
   },
-
   {
     num: 3,
     id: 'level-3',
@@ -44,7 +40,6 @@ const levelMeta = [
     desc: 'Master arithmetic and geometric series and uncover the power of summation.',
     icon: '🌊'
   },
-
   {
     num: 4,
     id: 'level-4',
@@ -52,7 +47,6 @@ const levelMeta = [
     desc: 'Apply sequences and series to solve real-world mathematical challenges.',
     icon: '🏔️'
   },
-
   {
     num: 5,
     id: 'level-5',
@@ -61,32 +55,19 @@ const levelMeta = [
     icon: '👑',
     final: true
   }
-
 ];
 
 
 // ==========================================
 // LEVEL LOADERS
-//
-// Untuk sementara kita masih memakai file
-// level bawaan agar website tetap berjalan.
-//
-// NANTI kita akan mengganti isi masing-masing
-// level menjadi materi LKPD MATHSCAPE.
 // ==========================================
 
 const levelLoaders = {
-
   1: () => import('./levels/level1-history.js'),
-
   2: () => import('./levels/level2-concepts.js'),
-
   3: () => import('./levels/level3-solutions.js'),
-
   4: () => import('./levels/level4-technical.js'),
-
   5: () => import('./levels/level5-sandbox.js')
-
 };
 
 
@@ -95,19 +76,12 @@ const levelLoaders = {
 // ==========================================
 
 const screens = {
-
   landing: document.getElementById('screen-landing'),
-
   map: document.getElementById('screen-map')
-
 };
 
-
 for (let i = 1; i <= TOTAL_LEVELS; i++) {
-
-  screens[`level-${i}`] =
-    document.getElementById(`screen-level-${i}`);
-
+  screens[`level-${i}`] = document.getElementById(`screen-level-${i}`);
 }
 
 
@@ -116,73 +90,42 @@ for (let i = 1; i <= TOTAL_LEVELS; i++) {
 // ==========================================
 
 function showScreen(name) {
-
   Object.values(screens).forEach(screen => {
-
     if (screen) {
-
       screen.classList.remove('active');
-
     }
-
   });
-
 
   if (screens[name]) {
-
     screens[name].classList.add('active');
-
   }
 
-
-  const topbarStats =
-    document.getElementById('topbar-stats');
-
+  const topbarStats = document.getElementById('topbar-stats');
 
   if (topbarStats) {
-
     topbarStats.hidden = name === 'landing';
-
   }
-
 
   window.scrollTo({
-
     top: 0,
-
     behavior: 'smooth'
-
   });
-
 }
-
 
 function navTo(name) {
-
   if (name === 'map') {
-
     renderMap();
-
   }
-
-
   showScreen(name);
-
 }
 
-
 // Navigation elements
-
 document
   .querySelectorAll('[data-nav]')
   .forEach(element => {
-
     element.addEventListener('click', () => {
-
       navTo(element.dataset.nav);
-
     });
-
   });
 
 
@@ -190,248 +133,107 @@ document
 // START JOURNEY
 // ==========================================
 
-const startButton =
-  document.getElementById('btn-start');
-
-
-const playerNameInput =
-  document.getElementById('player-name');
-
+const startButton = document.getElementById('btn-start');
+const playerNameInput = document.getElementById('player-name');
 
 if (startButton) {
-
   startButton.addEventListener('click', () => {
-
-    const playerName =
-      playerNameInput.value.trim();
-
+    
+    const playerName = playerNameInput ? playerNameInput.value.trim() : '';
 
     // Jangan lanjut jika nama kosong
     if (!playerName) {
-
-      alert(
-        'Please enter your name before starting your journey.'
-      );
-
-      playerNameInput.focus();
-
+      alert('Please enter your name before starting your journey.');
+      if(playerNameInput) playerNameInput.focus();
       return;
-
     }
 
-
     // Simpan nama pemain
-    localStorage.setItem(
-      'mathscape-player-name',
-      playerName
-    );
+    localStorage.setItem('mathscape-player-name', playerName);
 
+    // Mainkan background music (jika ada)
+    const backgroundMusic = document.getElementById('background-music');
+    if (backgroundMusic) {
+      backgroundMusic.volume = 0.5;
+      backgroundMusic.play().catch(error => {
+        console.log('Background music could not start automatically:', error);
+      });
+    }
 
     // Masuk ke World Map
     navTo('map');
 
   });
-
-}
-
-// ==========================================
-// MATHSCAPE GUIDE
-// ==========================================
-
-const guideButton =
-  document.getElementById(
-    'btn-guide'
-  );
-
-
-const guideModal =
-  document.getElementById(
-    'guide-modal'
-  );
-
-
-const closeGuideButton =
-  document.getElementById(
-    'btn-close-guide'
-  );
-
-
-const guideOverlay =
-  document.getElementById(
-    'guide-overlay'
-  );
-
-
-// ==========================================
-// OPEN GUIDE
-// ==========================================
-
-if (guideButton) {
-
-  guideButton.addEventListener(
-    'click',
-    () => {
-
-      guideModal.classList.add(
-        'active'
-      );
-
-    }
-  );
-
 }
 
 
 // ==========================================
-// CLOSE WITH X BUTTON
+// PLAYER GUIDE / MATHSCAPE GUIDE MODAL
 // ==========================================
 
-if (closeGuideButton) {
-
-  closeGuideButton.addEventListener(
-    'click',
-    () => {
-
-      guideModal.classList.remove(
-        'active'
-      );
-
-    }
-  );
-
-}
-
-
-// ==========================================
-// CLOSE WHEN CLICKING OUTSIDE
-// ==========================================
-
-if (guideOverlay) {
-
-  guideOverlay.addEventListener(
-    'click',
-    () => {
-
-      guideModal.classList.remove(
-        'active'
-      );
-
-    }
-  );
-
-}
-
-
-// ==========================================
-// CLOSE WITH ESC
-// ==========================================
-
-document.addEventListener(
-  'keydown',
-  event => {
-
-    if (
-      event.key === 'Escape'
-    ) {
-
-      guideModal.classList.remove(
-        'active'
-      );
-
-    }
-
-  }
-);
-// ==========================================
-// PLAYER GUIDE
-// ==========================================
-
-const guideButton =
-  document.getElementById('btn-guide');
-
-
-const guideModal =
-  document.getElementById('guide-modal');
-
-
-// OPEN GUIDE
+const guideButton = document.getElementById('btn-guide');
+const guideModal = document.getElementById('guide-modal');
+const closeGuideButton = document.getElementById('btn-close-guide');
+const guideOverlay = document.getElementById('guide-overlay');
 
 if (guideButton && guideModal) {
-
+  
+  // Buka Guide
   guideButton.addEventListener('click', () => {
-
     guideModal.classList.add('active');
-
   });
 
-}
-
-
-// CLOSE GUIDE WHEN CLICKING OUTSIDE
-
-if (guideModal) {
-
+  // Tutup dengan klik di luar area (Overlay / Background Modal)
   guideModal.addEventListener('click', (event) => {
-
-    if (event.target === guideModal) {
-
+    if (event.target === guideModal || event.target === guideOverlay) {
       guideModal.classList.remove('active');
-
     }
-
   });
 
+  // Tutup dengan Tombol 'X' (jika ada)
+  if (closeGuideButton) {
+    closeGuideButton.addEventListener('click', () => {
+      guideModal.classList.remove('active');
+    });
+  }
+
+  // Tutup dengan tombol ESC pada Keyboard
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && guideModal.classList.contains('active')) {
+      guideModal.classList.remove('active');
+    }
+  });
 }
-// World Map button
 
-const mapButton =
-  document.getElementById('btn-map');
 
+// ==========================================
+// TOP BAR BUTTONS (Map & Reset)
+// ==========================================
+
+const mapButton = document.getElementById('btn-map');
 
 if (mapButton) {
-
   mapButton.addEventListener('click', () => {
-
     navTo('map');
-
   });
-
 }
 
 
-// Reset button
-
-const resetButton =
-  document.getElementById('btn-reset');
-
+const resetButton = document.getElementById('btn-reset');
 
 if (resetButton) {
-
   resetButton.addEventListener('click', () => {
-
     const confirmReset = confirm(
-
       'Reset all Mathscape progress? This cannot be undone.'
-
     );
 
-
     if (confirmReset) {
-
       progress.resetProgress();
-
       updateTopbar();
-
       renderMap();
-
-      showToast(
-        'Your Mathscape journey has been reset.'
-      );
-
+      showToast('Your Mathscape journey has been reset.');
     }
-
   });
-
 }
 
 
@@ -440,30 +242,16 @@ if (resetButton) {
 // ==========================================
 
 function updateTopbar() {
-
-  const scoreElement =
-    document.getElementById('stat-score');
-
-
-  const badgeElement =
-    document.getElementById('stat-badges');
-
+  const scoreElement = document.getElementById('stat-score');
+  const badgeElement = document.getElementById('stat-badges');
 
   if (scoreElement) {
-
-    scoreElement.textContent =
-      progress.totalScore();
-
+    scoreElement.textContent = progress.totalScore();
   }
-
 
   if (badgeElement) {
-
-    badgeElement.textContent =
-      progress.getBadges().length;
-
+    badgeElement.textContent = progress.getBadges().length;
   }
-
 }
 
 
@@ -472,260 +260,135 @@ function updateTopbar() {
 // ==========================================
 
 function renderMap() {
-
-  const grid =
-    document.getElementById('level-grid');
-
+  const grid = document.getElementById('level-grid');
 
   if (!grid) return;
 
-
   grid.innerHTML = '';
 
-
   levelMeta.forEach((meta, index) => {
+    const unlocked = progress.isUnlocked(meta.num);
+    const completed = progress.isCompleted(meta.num);
+    const score = progress.getScore(meta.num);
 
-    const unlocked =
-      progress.isUnlocked(meta.num);
-
-
-    const completed =
-      progress.isCompleted(meta.num);
-
-
-    const score =
-      progress.getScore(meta.num);
-
-
-    const card =
-      document.createElement('div');
-
-
+    const card = document.createElement('div');
     card.className =
       'level-card' +
       (unlocked ? '' : ' locked') +
       (meta.final ? ' final-stage' : '');
 
-
-    card.style.animationDelay =
-      `${index * 100}ms`;
-
+    card.style.animationDelay = `${index * 100}ms`;
 
     card.innerHTML = `
-
       <div class="stage-icon">
-
         ${meta.icon}
-
       </div>
 
-
       <span class="lv-num">
-
         ${meta.final
           ? 'FINAL CHALLENGE'
           : `STAGE ${meta.num}`
         }
-
       </span>
 
-
       <h3>
-
         ${meta.title}
-
       </h3>
 
-
       <p>
-
         ${meta.desc}
-
       </p>
 
-
       <div class="lv-status">
-
         <span>
-
-          ${
-            completed
-
+          ${completed
               ? '✓ Completed'
-
               : unlocked
-
                 ? 'Ready to explore'
-
                 : '🔒 Locked'
           }
-
         </span>
 
-
-        ${
-          completed
-
-            ? `<span class="lv-score">
-                ${Math.round(score)}%
-              </span>`
-
+        ${completed
+            ? `<span class="lv-score">${Math.round(score)}%</span>`
             : ''
         }
-
       </div>
-
     `;
 
-
     if (unlocked) {
-
       card.addEventListener('click', () => {
-
         openLevel(meta.num);
-
       });
-
     }
 
-
     grid.appendChild(card);
-
   });
 
-
   renderBadges();
-
   updateTopbar();
-
 }
 
-
-// ==========================================
-// BADGES
-// ==========================================
 
 // ==========================================
 // BADGES & CERTIFICATE
 // ==========================================
 
 function renderBadges() {
-
-  const badgeShelf =
-    document.getElementById('badge-shelf');
-
+  const badgeShelf = document.getElementById('badge-shelf');
 
   if (!badgeShelf) return;
 
-
-  const badges =
-    progress.getBadges();
-
+  const badges = progress.getBadges();
 
   // Jika belum ada badge
   if (badges.length === 0) {
-
     badgeShelf.innerHTML = `
-
       <div class="badge-empty">
-
         Your achievements will appear here.
-
       </div>
-
     `;
-
     return;
-
   }
 
-
-  // ==========================================
   // SEMBUNYIKAN BADGE FORMULA FINDER
-  // ==========================================
+  const visibleBadges = badges.filter(
+    badge => badge.name !== 'Formula Finder'
+  );
 
-  const visibleBadges =
-    badges.filter(
-      badge =>
-        badge.name !== 'Formula Finder'
-    );
-
-
-  // ==========================================
   // BUAT HTML BADGE
-  // ==========================================
-
-  const badgesHTML =
-    visibleBadges.map(badge => `
-
+  const badgesHTML = visibleBadges.map(badge => `
       <span class="badge-chip">
-
         ${badge.icon || '🏅'}
-
         ${badge.name}
-
       </span>
-
     `).join('');
 
-
-  // ==========================================
   // TOMBOL DOWNLOAD CERTIFICATE
-  // ==========================================
-
   const certificateHTML = `
-
-    <button
-      class="btn btn-primary"
-      id="btn-download-certificate"
-    >
-
+    <button class="btn btn-primary" id="btn-download-certificate">
       DOWNLOAD CERTIFICATE
-
     </button>
-
   `;
 
-
-  // ==========================================
   // TAMPILKAN BADGE + CERTIFICATE BUTTON
-  // ==========================================
+  badgeShelf.innerHTML = badgesHTML + certificateHTML;
 
-  badgeShelf.innerHTML =
-    badgesHTML +
-    certificateHTML;
-
-
-  // ==========================================
   // EVENT DOWNLOAD CERTIFICATE
-  // ==========================================
-
-  const certificateButton =
-    document.getElementById(
-      'btn-download-certificate'
-    );
-
-
+  const certificateButton = document.getElementById('btn-download-certificate');
   if (certificateButton) {
-
-    certificateButton.addEventListener(
-      'click',
-      () => {
-
-        downloadCertificate();
-
-      }
-    );
-
+    certificateButton.addEventListener('click', () => {
+      downloadCertificate();
+    });
   }
-
 }
+
+
 // ==========================================
 // LEVEL MANAGEMENT
 // ==========================================
 
 const mountedLevels = new Set();
-
 const mountedModules = {};
 
 
@@ -734,87 +397,23 @@ const mountedModules = {};
 // ==========================================
 
 function buildApi(num) {
-
   return {
-
     complete: (score, meta = {}) => {
-
-      progress.completeLevel(
-
-        num,
-
-        score,
-
-        TOTAL_LEVELS
-
-      );
-
-
+      progress.completeLevel(num, score, TOTAL_LEVELS);
       updateTopbar();
-
-
-      showToast(
-
-        `Stage ${num} completed! Score: ${Math.round(score)}/100`
-
-      );
-
-
-      showResults(
-
-        num,
-
-        score,
-
-        meta
-
-      );
-
+      showToast(`Stage ${num} completed! Score: ${Math.round(score)}/100`);
+      showResults(num, score, meta);
     },
 
-
-    badge: (
-
-      id,
-
-      name,
-
-      icon = '🏅'
-
-    ) => {
-
-      const added =
-        progress.addBadge(
-
-          id,
-
-          name,
-
-          icon
-
-        );
-
-
+    badge: (id, name, icon = '🏅') => {
+      const added = progress.addBadge(id, name, icon);
       if (added) {
-
-        showToast(
-
-          `Achievement unlocked: ${name}`
-
-        );
-
+        showToast(`Achievement unlocked: ${name}`);
       }
-
-
       updateTopbar();
-
-
       return added;
-
     }
-
   };
-
 }
 
 
@@ -823,90 +422,35 @@ function buildApi(num) {
 // ==========================================
 
 async function openLevel(num) {
-
-  const body =
-    document.getElementById(
-      `level-${num}-body`
-    );
-
+  const body = document.getElementById(`level-${num}-body`);
 
   if (!body) return;
 
-
   showScreen(`level-${num}`);
 
-
   if (!mountedLevels.has(num)) {
-
     body.innerHTML = `
-
       <div class="loading-stage">
-
         ✦ Entering Mathscape...
-
       </div>
-
     `;
 
-
     try {
-
-      const module =
-        await levelLoaders[num]();
-
-
+      const module = await levelLoaders[num]();
       body.innerHTML = '';
-
-
-      module.mount(
-
-        body,
-
-        buildApi(num)
-
-      );
-
-
+      module.mount(body, buildApi(num));
       mountedLevels.add(num);
-
-
-      mountedModules[num] =
-        module;
-
-    }
-
-
-    catch (error) {
-
-      console.error(
-
-        'Failed to load stage:',
-
-        num,
-
-        error
-
-      );
-
-
+      mountedModules[num] = module;
+    } catch (error) {
+      console.error('Failed to load stage:', num, error);
       body.innerHTML = `
-
         <div class="error-stage">
-
           <h3>⚠️ Unable to load this stage</h3>
-
-          <p>
-            Please refresh the page and try again.
-          </p>
-
+          <p>Please refresh the page and try again.</p>
         </div>
-
       `;
-
     }
-
   }
-
 }
 
 
@@ -915,40 +459,18 @@ async function openLevel(num) {
 // ==========================================
 
 function replay(num) {
-
-  const body =
-    document.getElementById(
-      `level-${num}-body`
-    );
-
-
-  const module =
-    mountedModules[num];
-
+  const body = document.getElementById(`level-${num}-body`);
+  const module = mountedModules[num];
 
   if (!body || !module) return;
 
-
   body.innerHTML = '';
-
-
-  module.mount(
-
-    body,
-
-    buildApi(num)
-
-  );
-
+  module.mount(body, buildApi(num));
 
   window.scrollTo({
-
     top: 0,
-
     behavior: 'smooth'
-
   });
-
 }
 
 
@@ -956,220 +478,100 @@ function replay(num) {
 // STAGE RESULTS
 // ==========================================
 
-function showResults(
-
-  num,
-
-  score,
-
-  meta
-
-) {
-
-  const body =
-    document.getElementById(
-      `level-${num}-body`
-    );
-
+function showResults(num, score, meta) {
+  const body = document.getElementById(`level-${num}-body`);
 
   if (!body) return;
 
-
-  const isFinal =
-    num === TOTAL_LEVELS;
-
-
-  const nextStage =
-    levelMeta.find(
-
-      stage =>
-
-        stage.num === num + 1
-
-    );
-
+  const isFinal = num === TOTAL_LEVELS;
+  const nextStage = levelMeta.find(stage => stage.num === num + 1);
 
   body.innerHTML = `
-
     <div class="results-panel">
-
-
       <div class="results-header">
-
         <div class="results-icon">
-
           ${
             score >= 90
-
               ? '🏆'
-
               : score >= 70
-
                 ? '⭐'
-
                 : '📘'
           }
-
         </div>
-
 
         <div>
-
           <span class="tag-label">
-
             ${
               isFinal
-
                 ? 'FINAL CHALLENGE COMPLETE'
-
                 : `STAGE ${num} COMPLETE`
             }
-
           </span>
 
-
           <h3>
-
             ${
               meta.heading ||
-
-              (
-                isFinal
-
+              (isFinal
                   ? 'You Restored Mathscape!'
-                  : 'Mission Complete!'
-              )
+                  : 'Mission Complete!')
             }
-
           </h3>
 
-
           <p>
-
             ${
               meta.detail ||
-
               'You have completed this mathematical challenge.'
             }
-
           </p>
-
         </div>
-
       </div>
-
 
       <div class="results-score">
-
         ${Math.round(score)}
-
         <span>/100</span>
-
       </div>
 
-
       <div class="results-actions">
-
-
-        <button
-          class="btn btn-ghost"
-          id="btn-replay"
-        >
-
+        <button class="btn btn-ghost" id="btn-replay">
           ↺ Replay Stage
-
         </button>
 
-
-        ${
-          !isFinal && nextStage
-
+        ${!isFinal && nextStage
             ? `
-
-              <button
-                class="btn btn-primary"
-                id="btn-next-stage"
-              >
-
-                Continue to
-                ${nextStage.title}
-                →
-
+              <button class="btn btn-primary" id="btn-next-stage">
+                Continue to ${nextStage.title} →
               </button>
-
             `
-
             : `
-
-              <button
-                class="btn btn-primary"
-                id="btn-finish-journey"
-              >
-
+              <button class="btn btn-primary" id="btn-finish-journey">
                 🏆 Finish Journey
-
               </button>
-
             `
         }
 
-
-        <button
-          class="btn btn-ghost"
-          id="btn-goto-map"
-        >
-
+        <button class="btn btn-ghost" id="btn-goto-map">
           🗺️ World Map
-
         </button>
-
-
       </div>
-
     </div>
-
   `;
 
+  document.getElementById('btn-replay')?.addEventListener('click', () => {
+    replay(num);
+  });
 
-  document
-    .getElementById('btn-replay')
-    ?.addEventListener('click', () => {
+  document.getElementById('btn-next-stage')?.addEventListener('click', () => {
+    openLevel(num + 1);
+  });
 
-      replay(num);
+  document.getElementById('btn-finish-journey')?.addEventListener('click', () => {
+    navTo('map');
+    showToast('Congratulations! You have completed MATHSCAPE! 🎉');
+  });
 
-    });
-
-
-  document
-    .getElementById('btn-next-stage')
-    ?.addEventListener('click', () => {
-
-      openLevel(num + 1);
-
-    });
-
-
-  document
-    .getElementById('btn-finish-journey')
-    ?.addEventListener('click', () => {
-
-      navTo('map');
-
-      showToast(
-        'Congratulations! You have completed MATHSCAPE! 🎉'
-      );
-
-    });
-
-
-  document
-    .getElementById('btn-goto-map')
-    ?.addEventListener('click', () => {
-
-      navTo('map');
-
-    });
-
+  document.getElementById('btn-goto-map')?.addEventListener('click', () => {
+    navTo('map');
+  });
 }
 
 
@@ -1179,38 +581,24 @@ function showResults(
 
 let toastTimer = null;
 
-
 function showToast(message) {
-
-  const toast =
-    document.getElementById('toast');
-
+  const toast = document.getElementById('toast');
 
   if (!toast) return;
 
-
   toast.textContent = message;
-
-
   toast.classList.remove('show');
 
-
+  // Trigger reflow agar animasi bisa berulang
   void toast.offsetWidth;
-
 
   toast.classList.add('show');
 
-
   clearTimeout(toastTimer);
 
-
-  toastTimer =
-    setTimeout(() => {
-
-      toast.classList.remove('show');
-
-    }, 3200);
-
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3200);
 }
 
 
@@ -1219,5 +607,4 @@ function showToast(message) {
 // ==========================================
 
 updateTopbar();
-
 renderMap();
