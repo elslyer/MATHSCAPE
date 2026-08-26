@@ -240,7 +240,7 @@ export function mount(container, api) {
         <div id="final-score-display" style="margin: 24px 0; font-family:var(--font-mono); font-size:1.2rem; color:var(--accent);"></div>
 
         <button class="btn btn-primary btn-large" id="complete-level" style="background:var(--success); border-color:var(--success);">
-          COMPLETE CASE SOLVER 🏆
+          COMPLETE CASE SOLVER & CONTINUE ➔
         </button>
       </section>
 
@@ -264,9 +264,6 @@ export function mount(container, api) {
 
   container.querySelectorAll('.case-tab').forEach(button => {
     button.addEventListener('click', () => {
-      // Allow switching only if we want them to browse freely.
-      // However, their answers in other tabs will reset if they haven't finished.
-      // That's fine for this interactive module.
       renderCase(Number(button.dataset.case));
     });
   });
@@ -365,7 +362,7 @@ export function mount(container, api) {
     conceptBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.disabled) return;
-        conceptBtns.forEach(b => b.disabled = true); // Lock all buttons
+        conceptBtns.forEach(b => b.disabled = true);
         
         const feedback = workspace.querySelector('#case1-concept-feedback');
         if (btn.dataset.answer === 'correct') {
@@ -377,7 +374,13 @@ export function mount(container, api) {
           workspace.querySelector('[data-answer="correct"]').classList.add('correct');
           feedback.innerHTML = `<div class="feedback-error">Incorrect analysis. (-10 pts)<br>The correct answer is <strong>Arithmetic Series (S<sub>n</sub>)</strong> because we are looking for the total sum of all rows.</div>`;
         }
-        workspace.querySelector('#case1-step2').hidden = false;
+        
+        // Auto Progress to Step 2
+        setTimeout(() => {
+          const step2 = workspace.querySelector('#case1-step2');
+          step2.hidden = false;
+          step2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 2500);
       });
     });
 
@@ -396,11 +399,17 @@ export function mount(container, api) {
         feedback.innerHTML = `<div class="feedback-success">Calculation verified. Maximum capacity is 1,700 seats.</div>`;
       } else {
         deductScore(10);
-        input.value = 1700; // Autofill with correct answer
+        input.value = 1700; // Autofill correct answer
         input.classList.add('wrong-autofill');
         feedback.innerHTML = `<div class="feedback-error">Calculation Error. (-10 pts)<br>Substituting a=20, d=4, n=25 yields S<sub>25</sub> = 1,700 seats.</div>`;
       }
-      workspace.querySelector('#case1-step3').hidden = false;
+
+      // Auto Progress to Step 3
+      setTimeout(() => {
+        const step3 = workspace.querySelector('#case1-step3');
+        step3.hidden = false;
+        step3.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 2500);
     });
 
     // Step 3
@@ -421,9 +430,13 @@ export function mount(container, api) {
           feedback.innerHTML = `<div class="feedback-error">Incorrect deduction. (-10 pts)<br>80% of 1700 is 1360. Since 1350 is less than 1360, the target was NOT reached.</div>`;
         }
         
-        workspace.querySelector('#case1-solution').hidden = false;
-        caseProgress[1] = true;
-        checkAllCases();
+        // Finalize Case 1 & Auto-Scroll
+        setTimeout(() => {
+          workspace.querySelector('#case1-solution').hidden = false;
+          workspace.querySelector('#case1-solution').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          caseProgress[1] = true;
+          checkAllCases();
+        }, 2500);
       });
     });
   }
@@ -502,7 +515,13 @@ export function mount(container, api) {
         input.classList.add('wrong-autofill');
         feedback.innerHTML = `<div class="feedback-error">Error (-10 pts).<br> Calculating S<sub>10</sub> with a=12 and d=3 results in 255 glasses used.</div>`;
       }
-      workspace.querySelector('#case2-step2').hidden = false;
+      
+      // Auto Progress to Step 2
+      setTimeout(() => {
+        const step2 = workspace.querySelector('#case2-step2');
+        step2.hidden = false;
+        step2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 2500);
     });
 
     // Step 2
@@ -523,9 +542,13 @@ export function mount(container, api) {
           feedback.innerHTML = `<div class="feedback-error">Incorrect deduction (-10 pts).<br> 450 brought - 255 used = 195 remaining. 195 is exactly 5 short of 200.</div>`;
         }
         
-        workspace.querySelector('#case2-solution').hidden = false;
-        caseProgress[2] = true;
-        checkAllCases();
+        // Finalize Case 2 & Auto-Scroll
+        setTimeout(() => {
+          workspace.querySelector('#case2-solution').hidden = false;
+          workspace.querySelector('#case2-solution').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          caseProgress[2] = true;
+          checkAllCases();
+        }, 2500);
       });
     });
   }
@@ -537,13 +560,14 @@ export function mount(container, api) {
     workspace.innerHTML = `
       <div class="case-card">
         <h2>🔳 The Infinite Square Investigation</h2>
-        <div class="case-image-container">
-  <img
-    src="assets/Case-03.png"
-    alt="The Infinite Square Investigation"
-    class="case-image"
-  >
-</div>
+        <div class="case-image-container" style="text-align: center; margin-bottom: 20px;">
+          <img
+            src="assets/Case-03.png"
+            alt="The Infinite Square Investigation"
+            class="case-image"
+            style="max-width: 100%; border-radius: var(--radius-sm);"
+          >
+        </div>
         <div class="case-story">
           <p>A geometric anomaly has appeared in Mathscape: an infinitely generating square.</p>
           <ul style="margin-top:10px;">
@@ -614,7 +638,13 @@ export function mount(container, api) {
         input.classList.add('wrong-autofill');
         feedback.innerHTML = `<div class="feedback-error">Error (-10 pts).<br> Side = 16. Area = 16 &times; 16 = 256.</div>`;
       }
-      workspace.querySelector('#case3-step2').hidden = false;
+      
+      // Auto Progress to Step 2
+      setTimeout(() => {
+        const step2 = workspace.querySelector('#case3-step2');
+        step2.hidden = false;
+        step2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 2500);
     });
 
     // Step 2
@@ -638,9 +668,13 @@ export function mount(container, api) {
         feedback.innerHTML = `<div class="feedback-error">Calculation Error (-10 pts).<br> S<sub>&infin;</sub> = 256 / 0.75 = 341.33.</div>`;
       }
       
-      workspace.querySelector('#case3-solution').hidden = false;
-      caseProgress[3] = true;
-      checkAllCases();
+      // Finalize Case 3 & Auto-Scroll
+      setTimeout(() => {
+        workspace.querySelector('#case3-solution').hidden = false;
+        workspace.querySelector('#case3-solution').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        caseProgress[3] = true;
+        checkAllCases();
+      }, 2500);
     });
   }
 
@@ -667,21 +701,27 @@ export function mount(container, api) {
         <div style="font-size: 1rem; color: var(--text-1); margin-bottom: 8px;">FINAL INVESTIGATION SCORE</div>
         <div style="font-size: 3rem; font-weight: bold; color: ${gradeColor};">${finalScore} / 100</div>
       `;
-      finalSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Delay before scrolling down to the Final Section
+      setTimeout(() => {
+        finalSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 1000);
     }
   }
 
   // ==========================================================
-  // COMPLETE LEVEL
+  // COMPLETE LEVEL (Trigger Transition to Mathscape Trial)
   // ==========================================================
   container.querySelector('#complete-level').addEventListener('click', () => {
-    // Berikan badge hanya jika skor akhir memuaskan (misal >= 80)
+    // Berikan badge jika skor >= 80
     let badge = null;
     if (finalScore >= 80) {
       const added = api.badge('case-solver', 'Lead Investigator', '🕵️');
       if (added) badge = { name: 'Lead Investigator', icon: '🕵️' };
     }
     
+    // api.complete memanggil UI main.js, yang secara otomatis memunculkan 
+    // tombol: ➔ Continue to The Mathscape Trial
     api.complete(finalScore, {
       heading: 'Case Investigation Complete',
       detail: `You analyzed three contextual problems and used mathematical models to build logical solutions. You achieved a score of ${finalScore}.`,
