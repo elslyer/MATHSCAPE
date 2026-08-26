@@ -13,16 +13,128 @@
 
   <link
     rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔢</text></svg>"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>"
   />
 
   <link rel="stylesheet" href="css/style.css" />
 
   <!-- ==========================================
-       TAMBAHAN CSS UNTUK VISUAL INPUT NAMA
+       TAMBAHAN CSS UNTUK VISUAL & INTERAKTIVITAS
   =========================================== -->
   <style>
-    /* Styling untuk kotak pendaftaran agar terlihat seperti game/kartu misi */
+    /* Styling Ikon SVG agar sejajar dengan teks */
+    .icon-svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* Penyesuaian Topbar tanpa Emoji */
+    .topbar-stats .stat-icon {
+      color: #4da6ff;
+      margin-right: 6px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ==========================================
+       INTERACTIVE ACCORDION (FITUR HALAMAN MUKA)
+    ========================================== */
+    .interactive-features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 32px 0;
+      text-align: left;
+      width: 100%;
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .feature-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .feature-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .feature-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .feature-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .feature-title-wrap svg {
+      color: #4da6ff;
+      flex-shrink: 0;
+    }
+
+    .toggle-icon {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+      color: #4da6ff;
+      font-weight: 300;
+    }
+
+    .feature-content {
+      max-height: 0;
+      padding: 0 20px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      color: #94a3b8;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* Status ketika diklik (aktif) */
+    .feature-item.active {
+      background: rgba(77, 166, 255, 0.08);
+      border-color: rgba(77, 166, 255, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-item.active .feature-content {
+      max-height: 120px;
+      padding: 0 20px 16px 20px;
+      opacity: 1;
+    }
+
+    .feature-item.active .toggle-icon {
+      transform: rotate(45deg);
+    }
+
+    /* ==========================================
+       STYLING REGISTRATION BOX
+    ========================================== */
     .player-registration-box {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -64,10 +176,9 @@
       width: 100%;
     }
 
-    /* Styling input field yang lebih modern */
     .input-container input {
       width: 100%;
-      padding: 14px 16px 14px 44px; /* Padding kiri lebih besar untuk icon */
+      padding: 14px 16px 14px 44px;
       background: rgba(0, 0, 0, 0.25);
       border: 2px solid rgba(255, 255, 255, 0.2);
       border-radius: 10px;
@@ -79,19 +190,16 @@
       font-family: inherit;
     }
 
-    /* Ikon di dalam input field */
     .input-icon-inside {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 1.2rem;
-      opacity: 0.6;
-      transition: opacity 0.3s ease;
+      color: #94a3b8;
+      transition: color 0.3s ease;
       pointer-events: none;
     }
 
-    /* Efek ketika input sedang diketik/fokus */
     .input-container input:focus {
       border-color: #4da6ff;
       background: rgba(0, 0, 0, 0.4);
@@ -99,7 +207,7 @@
     }
 
     .input-container input:focus + .input-icon-inside {
-      opacity: 1;
+      color: #4da6ff;
     }
 
     .input-hint {
@@ -110,7 +218,6 @@
       font-style: italic;
     }
 
-    /* Membuat tombol start menyesuaikan lebar kartu dan beranimasi */
     #btn-start {
       width: 100%;
       display: flex;
@@ -144,12 +251,18 @@
       <div class="topbar-stats" id="topbar-stats" hidden>
 
         <div class="stat" title="Total score">
-          <span class="stat-icon">⭐</span>
+          <span class="stat-icon">
+            <!-- Ikon Bintang (Score) -->
+            <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </span>
           <span id="stat-score">0</span>
         </div>
 
         <div class="stat" title="Achievements">
-          <span class="stat-icon">🏆</span>
+          <span class="stat-icon">
+            <!-- Ikon Badge (Achievements) -->
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 15l-3 3-2-2-3 3v-8"></path><circle cx="12" cy="8" r="6"></circle><path d="M12 15l3 3 2-2 3 3v-8"></path></svg>
+          </span>
           <span id="stat-badges">0</span>
         </div>
 
@@ -158,7 +271,9 @@
           id="btn-map"
           title="Mathscape World"
         >
-          🗺️ World Map
+          <!-- Ikon Map -->
+          <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+          World Map
         </button>
 
         <button
@@ -166,7 +281,9 @@
           id="btn-reset"
           title="Reset progress"
         >
-          ↺ Reset
+          <!-- Ikon Refresh/Reset -->
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path></svg>
+          Reset
         </button>
 
       </div>
@@ -201,54 +318,75 @@
           </h1>
 
           <p class="tagline">
-
             A world once governed by perfect mathematical patterns
             has begun to lose its balance.
-
             <br /><br />
-
             Sequences are disappearing. Formulas are fading.
             Mathematical pathways have been broken.
-
             <br /><br />
-
             Only a true explorer can uncover the hidden patterns
             and restore order to <strong>Mathscape</strong>.
-
           </p>
 
 
-          <ul class="hero-points">
+          <!-- ==========================================
+               FITUR INTERAKTIF (BISA DI KLIK)
+          =========================================== -->
+          <div class="interactive-features">
+            
+            <!-- Item 1 -->
+            <div class="feature-item" onclick="this.classList.toggle('active')">
+              <div class="feature-header">
+                <div class="feature-title-wrap">
+                  <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  Explore Mathematical Patterns
+                </div>
+                <span class="toggle-icon">+</span>
+              </div>
+              <div class="feature-content">
+                Enter the numerical core to observe how arithmetic and geometric sequences are formed in nature and systems.
+              </div>
+            </div>
 
-            <li>
-              🌲 Explore hidden patterns and mathematical sequences
-            </li>
+            <!-- Item 2 -->
+            <div class="feature-item" onclick="this.classList.toggle('active')">
+              <div class="feature-header">
+                <div class="feature-title-wrap">
+                  <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  Discover Sequence Rules
+                </div>
+                <span class="toggle-icon">+</span>
+              </div>
+              <div class="feature-content">
+                Unlock the logic behind the numbers. Reconstruct faded formulas to predict and calculate the n-th term of any given pattern.
+              </div>
+            </div>
 
-            <li>
-              🔍 Discover the rules behind arithmetic and geometric sequences
-            </li>
+            <!-- Item 3 -->
+            <div class="feature-item" onclick="this.classList.toggle('active')">
+              <div class="feature-header">
+                <div class="feature-title-wrap">
+                  <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                  Solve Real-World Cases
+                </div>
+                <span class="toggle-icon">+</span>
+              </div>
+              <div class="feature-content">
+                Apply your knowledge to contextual investigations. Calculate event capacities, construct models, and resolve spatial anomalies.
+              </div>
+            </div>
 
-            <li>
-              🌊 Master the power of mathematical series
-            </li>
+          </div>
 
-            <li>
-              🧩 Complete interactive challenges and learning missions
-            </li>
-
-            <li>
-              🏆 Face the Final Challenge and restore Mathscape
-            </li>
-
-          </ul>
 
           <!-- ==========================================
-               BAGIAN INPUT NAMA YANG SUDAH DIKEMBANGKAN
+               KOTAK INPUT NAMA & START
           =========================================== -->
           <div class="player-registration-box">
             <div class="player-name-input">
               <label for="player-name">
-                <span class="label-icon">👤</span> ENTER YOUR NAME
+                <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px; height:16px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                ENTER YOUR NAME
               </label>
               
               <div class="input-container">
@@ -259,8 +397,9 @@
                   maxlength="40"
                   autocomplete="name"
                 />
-                <!-- Ikon pensil di dalam input -->
-                <span class="input-icon-inside">✏️</span>
+                <span class="input-icon-inside">
+                  <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                </span>
               </div>
               
               <small class="input-hint">
@@ -278,9 +417,9 @@
           <!-- ========================================== -->
 
           <p class="hero-note">
-            🎮 Learn through exploration •
-            🧩 Solve mathematical challenges •
-            💾 Your progress is saved automatically
+            ✦ Learn through exploration •
+            ✦ Solve mathematical challenges •
+            ✦ Your progress is saved automatically
           </p>
 
         </div>
@@ -295,16 +434,14 @@
       <section class="screen" id="screen-map">
 
         <h2 class="section-title">
-          🗺️ Explore Mathscape
+          <svg class="icon-svg" viewBox="0 0 24 24" style="width:28px; height:28px; margin-right:8px;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+          Explore Mathscape
         </h2>
 
         <p class="section-sub">
-
-          The world of Mathscape is divided into four mathematical realms.
-
+          The world of Mathscape is divided into mathematical realms.
           Complete each stage to unlock the next destination
           and restore the lost patterns of the world.
-
         </p>
 
         <div
@@ -326,31 +463,12 @@
            STAGE 1
       ========================== -->
 
-      <section
-        class="screen level-screen"
-        id="screen-level-1"
-      >
-
+      <section class="screen level-screen" id="screen-level-1">
         <div class="level-header">
-
-          <button
-            class="btn btn-ghost back-btn"
-            data-nav="map"
-          >
-            ← World Map
-          </button>
-
-          <h2>
-            🌲 Stage 1 · Pattern Finder
-          </h2>
-
+          <button class="btn btn-ghost back-btn" data-nav="map">← World Map</button>
+          <h2>✦ Stage 1 · Pattern Finder</h2>
         </div>
-
-        <div
-          class="level-body"
-          id="level-1-body"
-        ></div>
-
+        <div class="level-body" id="level-1-body"></div>
       </section>
 
 
@@ -358,31 +476,12 @@
            STAGE 2
       ========================== -->
 
-      <section
-        class="screen level-screen"
-        id="screen-level-2"
-      >
-
+      <section class="screen level-screen" id="screen-level-2">
         <div class="level-header">
-
-          <button
-            class="btn btn-ghost back-btn"
-            data-nav="map"
-          >
-            ← World Map
-          </button>
-
-          <h2>
-            🏰 Stage 2 · Formula Finder
-          </h2>
-
+          <button class="btn btn-ghost back-btn" data-nav="map">← World Map</button>
+          <h2>✦ Stage 2 · Formula Finder</h2>
         </div>
-
-        <div
-          class="level-body"
-          id="level-2-body"
-        ></div>
-
+        <div class="level-body" id="level-2-body"></div>
       </section>
 
 
@@ -390,31 +489,12 @@
            STAGE 3
       ========================== -->
 
-      <section
-        class="screen level-screen"
-        id="screen-level-3"
-      >
-
+      <section class="screen level-screen" id="screen-level-3">
         <div class="level-header">
-
-          <button
-            class="btn btn-ghost back-btn"
-            data-nav="map"
-          >
-            ← World Map
-          </button>
-
-          <h2>
-            🌊 Stage 3 · Series Master
-          </h2>
-
+          <button class="btn btn-ghost back-btn" data-nav="map">← World Map</button>
+          <h2>✦ Stage 3 · Series Master</h2>
         </div>
-
-        <div
-          class="level-body"
-          id="level-3-body"
-        ></div>
-
+        <div class="level-body" id="level-3-body"></div>
       </section>
 
 
@@ -422,31 +502,12 @@
            STAGE 4
       ========================== -->
 
-      <section
-        class="screen level-screen"
-        id="screen-level-4"
-      >
-
+      <section class="screen level-screen" id="screen-level-4">
         <div class="level-header">
-
-          <button
-            class="btn btn-ghost back-btn"
-            data-nav="map"
-          >
-            ← World Map
-          </button>
-
-          <h2>
-            🏔️ Stage 4 · Case Solver
-          </h2>
-
+          <button class="btn btn-ghost back-btn" data-nav="map">← World Map</button>
+          <h2>✦ Stage 4 · Case Solver</h2>
         </div>
-
-        <div
-          class="level-body"
-          id="level-4-body"
-        ></div>
-
+        <div class="level-body" id="level-4-body"></div>
       </section>
 
 
@@ -454,60 +515,29 @@
            FINAL CHALLENGE
       ========================== -->
 
-      <section
-        class="screen level-screen"
-        id="screen-level-5"
-      >
-
+      <section class="screen level-screen" id="screen-level-5">
         <div class="level-header">
-
-          <button
-            class="btn btn-ghost back-btn"
-            data-nav="map"
-          >
-            ← World Map
-          </button>
-
-          <h2>
-            👑 Final Challenge · The Mathscape Trial
-          </h2>
-
+          <button class="btn btn-ghost back-btn" data-nav="map">← World Map</button>
+          <h2>✦ Final Challenge · The Mathscape Trial</h2>
         </div>
-
-        <div
-          class="level-body"
-          id="level-5-body"
-        ></div>
-
+        <div class="level-body" id="level-5-body"></div>
       </section>
 
     </main>
 
 
     <!-- FOOTER -->
-
     <footer class="app-footer">
-
       <span>
         MATHSCAPE — An Interactive Learning Journey for Sequences and Series
       </span>
-
     </footer>
 
 
-
   <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast"></div>
 
-  <div
-    class="toast"
-    id="toast"
-  ></div>
-
-
-  <script
-    type="module"
-    src="js/main.js"
-  ></script>
+  <script type="module" src="js/main.js"></script>
 
 </body>
 </html>
