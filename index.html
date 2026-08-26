@@ -263,51 +263,6 @@
     #btn-start:hover {
       transform: scale(1.02);
     }
-    /* ==========================================
-   PLAYER GUIDE MODAL
-========================================== */
-
-.guide-modal {
-
-  display: none;
-
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 9999;
-
-  background: rgba(0, 0, 0, 0.75);
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 30px;
-
-  cursor: pointer;
-
-}
-
-
-.guide-modal.active {
-
-  display: flex;
-
-}
-
-
-.guide-image {
-
-  max-width: 90vw;
-
-  max-height: 90vh;
-
-  object-fit: contain;
-
-  cursor: default;
-
-}
   </style>
 </head>
 
@@ -638,6 +593,18 @@
 
   <!-- TOAST NOTIFICATION -->
   <div class="toast" id="toast"></div>
+
+  <!-- PLAYER GUIDE MODAL -->
+  <div
+    class="guide-modal"
+    id="guide-modal"
+  >
+    <img
+      src="assets/Guide.png"
+      alt="Mathscape Player Guide"
+      class="guide-image"
+    />
+  </div>
 
   <script type="module" src="js/main.js"></script>
 
