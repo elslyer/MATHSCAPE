@@ -234,7 +234,114 @@ if (startButton) {
 
 }
 
+// ==========================================
+// MATHSCAPE GUIDE
+// ==========================================
 
+const guideButton =
+  document.getElementById(
+    'btn-guide'
+  );
+
+
+const guideModal =
+  document.getElementById(
+    'guide-modal'
+  );
+
+
+const closeGuideButton =
+  document.getElementById(
+    'btn-close-guide'
+  );
+
+
+const guideOverlay =
+  document.getElementById(
+    'guide-overlay'
+  );
+
+
+// ==========================================
+// OPEN GUIDE
+// ==========================================
+
+if (guideButton) {
+
+  guideButton.addEventListener(
+    'click',
+    () => {
+
+      guideModal.classList.add(
+        'active'
+      );
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// CLOSE WITH X BUTTON
+// ==========================================
+
+if (closeGuideButton) {
+
+  closeGuideButton.addEventListener(
+    'click',
+    () => {
+
+      guideModal.classList.remove(
+        'active'
+      );
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// CLOSE WHEN CLICKING OUTSIDE
+// ==========================================
+
+if (guideOverlay) {
+
+  guideOverlay.addEventListener(
+    'click',
+    () => {
+
+      guideModal.classList.remove(
+        'active'
+      );
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// CLOSE WITH ESC
+// ==========================================
+
+document.addEventListener(
+  'keydown',
+  event => {
+
+    if (
+      event.key === 'Escape'
+    ) {
+
+      guideModal.classList.remove(
+        'active'
+      );
+
+    }
+
+  }
+);
 // World Map button
 
 const mapButton =
