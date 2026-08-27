@@ -18,6 +18,10 @@
 
   <link rel="stylesheet" href="css/style.css" />
 
+  <!-- ==========================================
+       TAMBAHAN CSS UNTUK VISUAL & INTERAKTIVITAS
+       (Sudah Dioptimalkan untuk Background Putih)
+  =========================================== -->
   <style>
     /* Styling Ikon SVG agar sejajar dengan teks */
     .icon-svg {
@@ -47,9 +51,9 @@
     }
 
     /* ==========================================
-       STYLING GUIDE & WOLFRAM LINK (TOP BAR)
+       STYLING GUIDE, MODULE & WOLFRAM LINK (TOP BAR)
     ========================================== */
-    .guide-link, .wolfram-link {
+    .guide-link, .module-link, .wolfram-link {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -61,12 +65,12 @@
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
     
-    .guide-link:hover, .wolfram-link:hover {
+    .guide-link:hover, .module-link:hover, .wolfram-link:hover {
       transform: scale(1.1);
       opacity: 0.8;
     }
 
-    .guide-icon, .wolfram-icon {
+    .guide-icon, .module-icon, .wolfram-icon {
       height: 40px; 
       width: auto;
       border-radius: 4px;
@@ -140,6 +144,7 @@
       line-height: 1.5;
     }
 
+    /* Status ketika diklik (aktif) */
     .feature-item.active {
       background: #eff6ff; 
       border-color: #3b82f6; 
@@ -313,6 +318,21 @@
         <button class="guide-link" id="btn-guide" title="Mathscape Guide">
           <img src="./assets/QMark.png" alt="Mathscape Guide" class="guide-icon" />
         </button>
+
+        <!-- LEARNING MODULE -->
+        <a
+          href="https://drive.google.com/drive/folders/1O4myxtIbmDCbA89R-I3dr6UN8mkn1JHV?usp=drive_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="module-link"
+          title="Open Learning Module"
+        >
+          <img
+            src="./assets/Module.png"
+            alt="Learning Module"
+            class="module-icon"
+          />
+        </a>
 
         <!-- TAUTAN WOLFRAM ALPHA -->
         <a href="https://www.wolframalpha.com/" target="_blank" rel="noopener noreferrer" class="wolfram-link" title="Open WolframAlpha">
