@@ -168,41 +168,24 @@ if (startButton) {
 
 
 // ==========================================
-// PLAYER GUIDE / MATHSCAPE GUIDE MODAL
+// PANDUAN (GUIDE MODAL) - Buka & Tutup Sembarang
 // ==========================================
 
 const guideButton = document.getElementById('btn-guide');
 const guideModal = document.getElementById('guide-modal');
-const closeGuideButton = document.getElementById('btn-close-guide');
-const guideOverlay = document.getElementById('guide-overlay');
 
 if (guideButton && guideModal) {
   
-  // Buka Guide
+  // Buka modal saat icon diklik
   guideButton.addEventListener('click', () => {
     guideModal.classList.add('active');
   });
 
-  // Tutup dengan klik di luar area (Overlay / Background Modal)
-  guideModal.addEventListener('click', (event) => {
-    if (event.target === guideModal || event.target === guideOverlay) {
-      guideModal.classList.remove('active');
-    }
+  // Tutup modal jika diklik sembarang tempat
+  guideModal.addEventListener('click', () => {
+    guideModal.classList.remove('active');
   });
 
-  // Tutup dengan Tombol 'X' (jika ada)
-  if (closeGuideButton) {
-    closeGuideButton.addEventListener('click', () => {
-      guideModal.classList.remove('active');
-    });
-  }
-
-  // Tutup dengan tombol ESC pada Keyboard
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && guideModal.classList.contains('active')) {
-      guideModal.classList.remove('active');
-    }
-  });
 }
 
 
