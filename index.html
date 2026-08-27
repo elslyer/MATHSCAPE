@@ -298,7 +298,6 @@
     /* ==========================================
        MATHSCAPE CHAMP CHARACTER
     ========================================== */
-
     .landing-hero {
       position: relative;
     }
@@ -324,6 +323,73 @@
         transform: translateY(
           calc(-50% - 12px)
         );
+      }
+    }
+
+    /* ==========================================
+       HIBOY / DEVELOPER BUTTON
+    ========================================== */
+    .hiboy-link {
+      position: absolute;
+      right: -280px; /* Posisi di sebelah kanan */
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: champFloat 3.5s ease-in-out infinite reverse; /* Animasi melayang berlawanan dengan Champ */
+    }
+
+    .hiboy-icon {
+      width: 150px; /* Ukuran icon Hiboy */
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.25s ease;
+    }
+
+    .hiboy-link:hover .hiboy-icon {
+      transform: scale(1.08); /* Efek membesar pada gambar, bukan kontainer, agar tidak tabrakan dengan keyframes */
+    }
+
+    /* ==========================================
+       KNOW ME MODAL
+    ========================================== */
+    .knowme-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      padding: 20px;
+    }
+
+    .knowme-modal.active {
+      display: flex;
+    }
+
+    .knowme-image {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      cursor: pointer;
+      animation: knowmeAppear 0.25s ease;
+    }
+
+    @keyframes knowmeAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
       }
     }
   </style>
@@ -407,12 +473,25 @@
       <section class="screen active" id="screen-landing">
         <div class="landing-hero">
           
-          <!-- GAMBAR CHAMP -->
+          <!-- GAMBAR CHAMP (KIRI) -->
           <img
             src="./assets/Champ.png"
             alt="Mathscape Champion"
             class="champ-image"
           />
+
+          <!-- TOMBOL HIBOY (KANAN) -->
+          <button
+            class="hiboy-link"
+            id="btn-knowme"
+            type="button"
+          >
+            <img
+              src="./assets/Hiboy.png"
+              alt="About the Developer"
+              class="hiboy-icon"
+            />
+          </button>
 
           <div class="math-symbols">
             <span>∑</span>
@@ -596,6 +675,13 @@
   <!-- PLAYER GUIDE MODAL -->
   <div class="guide-modal" id="guide-modal">
     <img src="assets/Guide.png" alt="Mathscape Player Guide" class="guide-image" />
+  </div>
+
+  <!-- ==========================================
+       ABOUT DEVELOPER MODAL (KNOWME)
+  ========================================== -->
+  <div class="knowme-modal" id="knowme-modal">
+    <img src="./assets/Knowme.png" alt="About the Developer" class="knowme-image" />
   </div>
 
   <script type="module" src="js/main.js"></script>
