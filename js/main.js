@@ -190,6 +190,28 @@ if (guideButton && guideModal) {
 
 
 // ==========================================
+// KNOW ME / DEVELOPER INTRODUCTION (HIBOY)
+// ==========================================
+
+const knowMeButton = document.getElementById('btn-knowme');
+const knowMeModal = document.getElementById('knowme-modal');
+
+if (knowMeButton && knowMeModal) {
+
+  // Buka modal saat gambar Hiboy diklik
+  knowMeButton.addEventListener('click', () => {
+    knowMeModal.classList.add('active');
+  });
+
+  // Tutup modal jika diklik sembarang tempat
+  knowMeModal.addEventListener('click', () => {
+    knowMeModal.classList.remove('active');
+  });
+
+}
+
+
+// ==========================================
 // TOP BAR BUTTONS (Map & Reset)
 // ==========================================
 
