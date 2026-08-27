@@ -213,7 +213,12 @@ function renderMap() {
     const score = progress.getScore(meta.num);
 
     const card = document.createElement('div');
-    card.className = 'level-card' + (unlocked ? '' : ' locked') + (meta.final ? ' final-stage' : '');
+    
+    // MENAMBAHKAN KELAS COMPLETED JIKA SUDAH SELESAI
+    card.className = 'level-card' + 
+      (completed ? ' completed' : (unlocked ? '' : ' locked')) + 
+      (meta.final ? ' final-stage' : '');
+      
     card.style.animationDelay = `${index * 100}ms`;
 
     card.innerHTML = `
