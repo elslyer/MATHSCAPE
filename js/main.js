@@ -267,7 +267,7 @@ function renderMap() {
 let labInitialized = false;
 
 function initLab() {
-  if (labInitialized) return; // Mencegah event listener ganda
+  if (labInitialized) return; 
   labInitialized = true;
 
   const typeSelect = document.getElementById('lab-type');
@@ -278,8 +278,14 @@ function initLab() {
   const stepLabel = document.getElementById('lab-step-label');
   const nInput = document.getElementById('lab-n');
   const nVal = document.getElementById('lab-n-val');
+  
   const outputText = document.getElementById('lab-output-text');
-  const outputVisual = document.getElementById('lab-output-visual');
+  
+  // Formula Elements
+  const unFormula = document.getElementById('un-formula');
+  const unResult = document.getElementById('un-result');
+  const snFormula = document.getElementById('sn-formula');
+  const snResult = document.getElementById('sn-result');
 
   function updateLab() {
     const type = typeSelect.value;
@@ -291,9 +297,9 @@ function initLab() {
     aVal.textContent = a;
     stepVal.textContent = step;
     nVal.textContent = n;
-    stepLabel.textContent = type === 'arithmetic' ? 'Difference (d)' : 'Ratio (r)';
+    stepLabel.textContent = type === 'arithmetic' ? 'Difference (b)' : 'Ratio (r)';
 
-    // Adjust Step Input limits dynamically based on type
+    // Dynamic Step limits based on sequence type
     if (type === 'geometric') {
       stepInput.min = "-3";
       stepInput.max = "3";
@@ -304,20 +310,20 @@ function initLab() {
       stepInput.step = "1";
     }
 
-    // Calculate Sequence
+    // Generate Sequence Data
     let seq = [];
     let current = a;
-    let maxVal = Math.abs(a); // For visual bar scaling
+    let un = 0;
+    let sn = 0;
 
     for (let i = 0; i < n; i++) {
-      // Prevent massive geometric explosion breaking the browser
+      // Prevent browser explosion on huge geometric progression
       if (Math.abs(current) > 1000000) {
         seq.push("...");
         break;
       }
 
       seq.push(current);
-      if (Math.abs(current) > maxVal) maxVal = Math.abs(current);
 
       if (type === 'arithmetic') {
         current += step;
@@ -326,45 +332,65 @@ function initLab() {
       }
     }
 
-    // Render Text Sequence
+    // Format output sequence string
     outputText.innerHTML = seq
       .map(num => (num === "..." ? "..." : Math.round(num * 100) / 100))
       .join('<span class="arrow">→</span>');
 
-    // Render Visual Bars
-    outputVisual.innerHTML = '';
-    seq.forEach(num => {
-      if (num === "...") return;
+    // =====================================
+    // FORMULA BREAKDOWN LOGIC
+    // =====================================
+    if (type === 'arithmetic') {
+      // ARITHMETIC U_n = a + (n-1)b
+      un = a + (n - 1) * step;
+      unFormula.innerHTML = `
+        U<sub>n</sub> = a + (n - 1)b <br> 
+        U<sub>${n}</sub> = ${a} + (${n} - 1) × ${step} <br>
+        U<sub>${n}</sub> = ${a} + (${n - 1}) × ${step}
+      `;
+      unResult.textContent = un;
 
-      const barWrap = document.createElement('div');
-      barWrap.className = 'lab-bar-wrap';
+      // ARITHMETIC S_n = n/2 (2a + (n-1)b)
+      sn = (n / 2) * (2 * a + (n - 1) * step);
+      snFormula.innerHTML = `
+        S<sub>n</sub> = <sup>n</sup>&frasl;<sub>2</sub> [2a + (n - 1)b] <br> 
+        S<sub>${n}</sub> = <sup>${n}</sup>&frasl;<sub>2</sub> [2(${a}) + (${n} - 1) × ${step}]
+      `;
+      snResult.textContent = sn;
+    } 
+    else {
+      // GEOMETRIC U_n = a * r^(n-1)
+      un = a * Math.pow(step, n - 1);
+      unFormula.innerHTML = `
+        U<sub>n</sub> = a × r<sup>(n - 1)</sup> <br> 
+        U<sub>${n}</sub> = ${a} × ${step}<sup>(${n} - 1)</sup> <br>
+        U<sub>${n}</sub> = ${a} × ${step}<sup>${n - 1}</sup>
+      `;
+      unResult.textContent = Math.round(un * 1000) / 1000;
 
-      const bar = document.createElement('div');
-      bar.className = 'lab-bar';
-      
-      // Calculate height percentage (cap at 100%)
-      let heightPct = maxVal === 0 ? 0 : (Math.abs(num) / maxVal) * 100;
-      heightPct = Math.max(Math.min(heightPct, 100), 2); // Minimum 2% height for visibility
-
-      bar.style.height = `${heightPct}%`;
-
-      // Colors based on value and type
-      if (num < 0) {
-        bar.style.background = '#ef4444'; // Red for negative
-      } else if (type === 'geometric') {
-        bar.style.background = '#e59a2e'; // Orange/Yellow for geometric
+      // GEOMETRIC S_n
+      if (step === 1) {
+        // Special case: r = 1
+        sn = n * a;
+        snFormula.innerHTML = `
+          S<sub>n</sub> = n × a <br> 
+          S<sub>${n}</sub> = ${n} × ${a}
+        `;
       } else {
-        bar.style.background = '#2563eb'; // Blue for arithmetic
+        // Standard case: a(r^n - 1) / (r - 1)
+        sn = (a * (Math.pow(step, n) - 1)) / (step - 1);
+        snFormula.innerHTML = `
+          S<sub>n</sub> = <sup>a(r<sup>n</sup> - 1)</sup> &frasl; <sub>(r - 1)</sub> <br> 
+          S<sub>${n}</sub> = <sup>${a}(${step}<sup>${n}</sup> - 1)</sup> &frasl; <sub>(${step} - 1)</sub>
+        `;
       }
-
-      barWrap.appendChild(bar);
-      outputVisual.appendChild(barWrap);
-    });
+      snResult.textContent = Math.round(sn * 1000) / 1000;
+    }
   }
 
-  // Event Listeners for inputs
+  // Event Listeners for range slider changes
   typeSelect.addEventListener('change', () => {
-    // Reset step value appropriately when switching types
+    // Reset defaults when switching types to avoid extreme ranges
     if (typeSelect.value === 'geometric') stepInput.value = 2;
     else stepInput.value = 3;
     updateLab();
@@ -374,7 +400,7 @@ function initLab() {
   stepInput.addEventListener('input', updateLab);
   nInput.addEventListener('input', updateLab);
 
-  // Initial render
+  // Run calculation immediately on load
   updateLab();
 }
 
