@@ -248,14 +248,9 @@ if (resetButton) {
 
 function updateTopbar() {
   const scoreElement = document.getElementById('stat-score');
-  const badgeElement = document.getElementById('stat-badges');
 
   if (scoreElement) {
     scoreElement.textContent = progress.totalScore();
-  }
-
-  if (badgeElement) {
-    badgeElement.textContent = progress.getBadges().length;
   }
 }
 
