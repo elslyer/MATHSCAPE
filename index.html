@@ -18,10 +18,6 @@
 
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- ==========================================
-       TAMBAHAN CSS UNTUK VISUAL & INTERAKTIVITAS
-       (Sudah Dioptimalkan untuk Background Putih)
-  =========================================== -->
   <style>
     /* Styling Ikon SVG agar sejajar dengan teks */
     .icon-svg {
@@ -144,7 +140,6 @@
       line-height: 1.5;
     }
 
-    /* Status ketika diklik (aktif) */
     .feature-item.active {
       background: #eff6ff; 
       border-color: #3b82f6; 
@@ -265,7 +260,7 @@
     }
 
     /* ==========================================
-       CSS MODAL GUIDE (AGAR BISA MELAYANG & DITUTUP)
+       CSS MODAL GUIDE
     ========================================== */
     .guide-modal {
       display: none;
@@ -331,7 +326,7 @@
     ========================================== */
     .hiboy-link {
       position: absolute;
-      right: -280px; /* Posisi di sebelah kanan */
+      right: -280px;
       top: 50%;
       transform: translateY(-50%);
       background: transparent;
@@ -341,18 +336,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: champFloat 3.5s ease-in-out infinite reverse; /* Animasi melayang berlawanan dengan Champ */
+      animation: champFloat 3.5s ease-in-out infinite reverse; 
     }
 
     .hiboy-icon {
-      width: 150px; /* Ukuran icon Hiboy */
+      width: 150px;
       height: auto;
       object-fit: contain;
       transition: transform 0.25s ease;
     }
 
     .hiboy-link:hover .hiboy-icon {
-      transform: scale(1.08); /* Efek membesar pada gambar, bukan kontainer, agar tidak tabrakan dengan keyframes */
+      transform: scale(1.08); 
     }
 
     /* ==========================================
@@ -383,14 +378,119 @@
     }
 
     @keyframes knowmeAppear {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ==========================================
+       MATHSCAPE LAB CSS
+    ========================================== */
+    .lab-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    @media (max-width: 768px) {
+      .lab-container { grid-template-columns: 1fr; }
+    }
+    .lab-controls {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .lab-control-group {
+      margin-bottom: 24px;
+    }
+    .lab-control-group label {
+      display: flex;
+      justify-content: space-between;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1e293b;
+      text-transform: uppercase;
+    }
+    .lab-control-group input[type=range] {
+      width: 100%;
+      cursor: pointer;
+      accent-color: #2563eb;
+    }
+    .lab-control-group select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #0f172a;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      outline: none;
+    }
+    .lab-control-group select:focus {
+      border-color: #2563eb;
+    }
+    .lab-display {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+    }
+    .lab-output-text {
+      background: #f8fafc;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #2563eb;
+      text-align: center;
+      margin-bottom: 24px;
+      word-wrap: break-word;
+      line-height: 1.6;
+    }
+    .lab-output-text span.arrow {
+      color: #94a3b8;
+      font-size: 1rem;
+      margin: 0 4px;
+    }
+    .lab-output-visual {
+      flex: 1;
+      min-height: 300px;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      padding: 20px 16px 0;
+      background: #ffffff;
+      border: 2px dashed #cbd5e1;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    .lab-bar-wrap {
+      flex: 1;
+      min-width: 25px;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+    }
+    .lab-bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.4s ease, background 0.4s ease;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+    }
+    .lab-bar:hover {
+      filter: brightness(1.1);
     }
   </style>
 </head>
@@ -404,7 +504,6 @@
 
     <!-- TOP NAVIGATION -->
     <header class="topbar">
-
       <div class="brand" data-nav="landing">
         <span class="brand-icon">✦</span>
         <span class="brand-name">MATHSCAPE</span>
@@ -437,7 +536,6 @@
           <img src="assets/Wolfram.png" alt="WolframAlpha" class="wolfram-icon" />
         </a>
 
-        <!-- SCORE -->
         <div class="stat" title="Total score">
           <span class="stat-icon" style="font-size: 1.1rem;">⭐</span>
           <span id="stat-score">0</span>
@@ -454,64 +552,32 @@
         </button>
 
       </div>
-
     </header>
-
 
     <main id="main-content">
 
       <!-- =========================
            LANDING SCREEN
       ========================== -->
-
       <section class="screen active" id="screen-landing">
         <div class="landing-hero">
           
-          <!-- GAMBAR CHAMP (KIRI) -->
-          <img
-            src="./assets/Champ.png"
-            alt="Mathscape Champion"
-            class="champ-image"
-          />
-
-          <!-- TOMBOL HIBOY (KANAN) -->
-          <button
-            class="hiboy-link"
-            id="btn-knowme"
-            type="button"
-          >
-            <img
-              src="./assets/Hiboy.png"
-              alt="About the Developer"
-              class="hiboy-icon"
-            />
+          <img src="./assets/Champ.png" alt="Mathscape Champion" class="champ-image"/>
+          <button class="hiboy-link" id="btn-knowme" type="button">
+            <img src="./assets/Hiboy.png" alt="About the Developer" class="hiboy-icon" />
           </button>
 
           <div class="math-symbols">
-            <span>∑</span>
-            <span>∞</span>
-            <span>π</span>
-            <span>√</span>
+            <span>∑</span><span>∞</span><span>π</span><span>√</span>
           </div>
 
-          <p class="hero-kicker">
-            ✦ AN INTERACTIVE LEARNING JOURNEY ✦
-          </p>
-
-          <h1>
-            Welcome to
-            <span>MATHSCAPE</span>
-          </h1>
+          <p class="hero-kicker">✦ AN INTERACTIVE LEARNING JOURNEY ✦</p>
+          <h1>Welcome to <span>MATHSCAPE</span></h1>
 
           <p class="tagline">
-            A world once governed by perfect mathematical patterns
-            has begun to lose its balance.
-            <br /><br />
-            Sequences are disappearing. Formulas are fading.
-            Mathematical pathways have been broken.
-            <br /><br />
-            Only a true explorer can uncover the hidden patterns
-            and restore order to <strong>Mathscape</strong>.
+            A world once governed by perfect mathematical patterns has begun to lose its balance.<br /><br />
+            Sequences are disappearing. Formulas are fading. Mathematical pathways have been broken.<br /><br />
+            Only a true explorer can uncover the hidden patterns and restore order to <strong>Mathscape</strong>.
           </p>
 
           <div class="interactive-features">
@@ -563,34 +629,19 @@
               </label>
               
               <div class="input-container">
-                <input
-                  type="text"
-                  id="player-name"
-                  placeholder="e.g. Pythagoras..."
-                  maxlength="40"
-                  autocomplete="name"
-                />
+                <input type="text" id="player-name" placeholder="e.g. Pythagoras..." maxlength="40" autocomplete="name" />
                 <span class="input-icon-inside">
                   <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                 </span>
               </div>
               
-              <small class="input-hint">
-                *This name will be printed on your final Mathscape Certificate.
-              </small>
+              <small class="input-hint">*This name will be printed on your final Mathscape Certificate.</small>
             </div>
 
-            <button class="btn btn-primary btn-large" id="btn-start">
-              START JOURNEY ✦
-            </button>
+            <button class="btn btn-primary btn-large" id="btn-start">START JOURNEY ✦</button>
           </div>
 
-          <p class="hero-note">
-            ✦ Learn through exploration •
-            ✦ Solve mathematical challenges •
-            ✦ Your progress is saved automatically
-          </p>
-
+          <p class="hero-note">✦ Learn through exploration • ✦ Solve mathematical challenges • ✦ Your progress is saved automatically</p>
         </div>
       </section>
 
@@ -604,8 +655,7 @@
         </h2>
         <p class="section-sub">
           The world of Mathscape is divided into mathematical realms.
-          Complete each stage to unlock the next destination
-          and restore the lost patterns of the world.
+          Complete each stage to unlock the next destination and restore the lost patterns of the world.
         </p>
         <div class="level-grid" id="level-grid"></div>
         <div class="badge-shelf" id="badge-shelf"></div>
@@ -654,6 +704,64 @@
         <div class="level-body" id="level-5-body"></div>
       </section>
 
+      <!-- =========================
+           MATHSCAPE LAB (VIRTUAL LABORATORY)
+      ========================== -->
+      <section class="screen level-screen" id="screen-lab">
+        <div class="level-header">
+          <button class="btn btn-ghost back-btn" data-nav="map">← World Map</button>
+          <h2>🧪 Mathscape Lab</h2>
+        </div>
+        <div class="level-body" id="lab-body">
+          
+          <div class="card" style="border-top: 4px solid #2563eb; margin-bottom: 20px;">
+            <h1 style="margin:0 0 10px 0; font-size:1.8rem; color:#1e293b;">Interactive Pattern Visualizer</h1>
+            <p style="margin:0; color:#64748b; font-size:1.05rem;">
+              Manipulate variables and observe how arithmetic and geometric sequences behave in real-time.
+            </p>
+          </div>
+
+          <div class="lab-container">
+            <!-- LAB CONTROLS -->
+            <div class="lab-controls">
+              <div class="lab-control-group">
+                <label>Sequence Type</label>
+                <select id="lab-type">
+                  <option value="arithmetic">Arithmetic (+)</option>
+                  <option value="geometric">Geometric (×)</option>
+                </select>
+              </div>
+              
+              <div class="lab-control-group">
+                <label><span>First Term (a)</span> <span id="lab-a-val" style="color:#2563eb;">2</span></label>
+                <input type="range" id="lab-a" min="-10" max="10" value="2" step="1">
+              </div>
+
+              <div class="lab-control-group">
+                <label><span id="lab-step-label">Difference (d)</span> <span id="lab-step-val" style="color:#2563eb;">3</span></label>
+                <input type="range" id="lab-step" min="-5" max="5" value="3" step="0.5">
+              </div>
+
+              <div class="lab-control-group">
+                <label><span>Number of Terms (n)</span> <span id="lab-n-val" style="color:#2563eb;">10</span></label>
+                <input type="range" id="lab-n" min="3" max="20" value="10" step="1">
+              </div>
+            </div>
+
+            <!-- LAB DISPLAY -->
+            <div class="lab-display">
+              <div class="lab-output-text" id="lab-output-text">
+                <!-- JS Populated -->
+              </div>
+              <div class="lab-output-visual" id="lab-output-visual">
+                <!-- JS Populated Bars -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
     </main>
 
     <!-- FOOTER -->
@@ -671,9 +779,7 @@
     <img src="assets/Guide.png" alt="Mathscape Player Guide" class="guide-image" />
   </div>
 
-  <!-- ==========================================
-       ABOUT DEVELOPER MODAL (KNOWME)
-  ========================================== -->
+  <!-- ABOUT DEVELOPER MODAL (KNOWME) -->
   <div class="knowme-modal" id="knowme-modal">
     <img src="./assets/Knowme.png" alt="About the Developer" class="knowme-image" />
   </div>
