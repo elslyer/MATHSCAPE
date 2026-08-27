@@ -296,10 +296,22 @@
     }
 
     /* ==========================================
-       MATHSCAPE CHAMP CHARACTER
+       MATHSCAPE CHAMP & TWOSIX CHARACTER
     ========================================== */
     .landing-hero {
       position: relative;
+    }
+
+    .twosix-image {
+      position: absolute;
+      left: -250px;
+      top: 10%;
+      transform: translateY(-50%);
+      width: 180px;
+      height: auto;
+      object-fit: contain;
+      pointer-events: none;
+      animation: champFloat 3.2s ease-in-out infinite reverse;
     }
 
     .champ-image {
@@ -385,6 +397,25 @@
     @keyframes knowmeAppear {
       from { opacity: 0; transform: scale(0.9); }
       to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ==========================================
+       MATHQ CHARACTER (MAP SCREEN)
+    ========================================== */
+    #screen-map {
+      position: relative;
+    }
+
+    .mathq-image {
+      position: absolute;
+      left: -250px;
+      top: 45%;
+      transform: translateY(-50%);
+      width: 230px;
+      height: auto;
+      object-fit: contain;
+      pointer-events: none;
+      animation: champFloat 3.4s ease-in-out infinite;
     }
 
     /* ==========================================
@@ -581,7 +612,21 @@
       <section class="screen active" id="screen-landing">
         <div class="landing-hero">
           
-          <img src="./assets/Champ.png" alt="Mathscape Champion" class="champ-image"/>
+          <!-- GAMBAR TWOSIX (KIRI ATAS CHAMP) -->
+          <img
+            src="./assets/Twosix.png"
+            alt="Twosix Character"
+            class="twosix-image"
+          />
+
+          <!-- GAMBAR CHAMP (KIRI) -->
+          <img 
+            src="./assets/Champ.png" 
+            alt="Mathscape Champion" 
+            class="champ-image"
+          />
+
+          <!-- TOMBOL HIBOY (KANAN) -->
           <button class="hiboy-link" id="btn-knowme" type="button">
             <img src="./assets/Hiboy.png" alt="About the Developer" class="hiboy-icon" />
           </button>
@@ -668,6 +713,14 @@
            MATHSCAPE WORLD MAP
       ========================== -->
       <section class="screen" id="screen-map">
+        
+        <!-- GAMBAR MATHQ (KIRI) -->
+        <img
+          src="./assets/Mathq.png"
+          alt="Mathscape Character"
+          class="mathq-image"
+        />
+
         <h2 class="section-title">
           <svg class="icon-svg" viewBox="0 0 24 24" style="width:28px; height:28px; margin-right:8px;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
           Explore Mathscape
