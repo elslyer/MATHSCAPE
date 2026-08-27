@@ -294,6 +294,38 @@
       object-fit: contain;
       cursor: default;
     }
+
+    /* ==========================================
+       MATHSCAPE CHAMP CHARACTER
+    ========================================== */
+
+    .landing-hero {
+      position: relative;
+    }
+
+    .champ-image {
+      position: absolute;
+      left: -280px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 240px;
+      height: auto;
+      object-fit: contain;
+      pointer-events: none;
+      animation: champFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes champFloat {
+      0%,
+      100% {
+        transform: translateY(-50%);
+      }
+      50% {
+        transform: translateY(
+          calc(-50% - 12px)
+        );
+      }
+    }
   </style>
 </head>
 
@@ -374,6 +406,14 @@
 
       <section class="screen active" id="screen-landing">
         <div class="landing-hero">
+          
+          <!-- GAMBAR CHAMP -->
+          <img
+            src="./assets/Champ.png"
+            alt="Mathscape Champion"
+            class="champ-image"
+          />
+
           <div class="math-symbols">
             <span>∑</span>
             <span>∞</span>
