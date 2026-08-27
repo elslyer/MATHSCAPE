@@ -412,15 +412,25 @@ function renderBadges() {
   if (!badgeShelf) return;
 
   const badges = progress.getBadges();
+  let badgesHTML = '';
 
   if (badges.length === 0) {
-    badgeShelf.innerHTML = `<div class="badge-empty">Your achievements will appear here.</div>`;
-    return;
+    badgesHTML = `
+      <div class="badge-empty">
+        <span style="font-size:1.5rem; display:block; margin-bottom:6px;">🏆</span>
+        Your achievements will appear here. Complete stages with high scores to earn badges!
+      </div>
+    `;
+  } else {
+    const visibleBadges = badges.filter(badge => badge.name !== 'Formula Finder');
+    badgesHTML = visibleBadges.map(badge => `<span class="badge-chip">${badge.icon || '🏅'} ${badge.name}</span>`).join('');
   }
 
-  const visibleBadges = badges.filter(badge => badge.name !== 'Formula Finder');
-  const badgesHTML = visibleBadges.map(badge => `<span class="badge-chip">${badge.icon || '🏅'} ${badge.name}</span>`).join('');
-  const certificateHTML = `<button class="btn btn-primary" id="btn-download-certificate">DOWNLOAD CERTIFICATE</button>`;
+  const certificateHTML = `
+    <button class="btn btn-primary" id="btn-download-certificate" style="width: 100%; margin-top: 14px;">
+      DOWNLOAD CERTIFICATE
+    </button>
+  `;
 
   badgeShelf.innerHTML = badgesHTML + certificateHTML;
 
