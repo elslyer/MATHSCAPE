@@ -16,7 +16,7 @@ export function mount(container, api) {
     mission1Done: false,
     mission2Done: false,
     mission3Done: false,
-    mission4_1Done: false, // Dibagi 2 karena ada 2 pertanyaan di misi 4
+    mission4_1Done: false,
     mission4_2Done: false, 
     score: 0
   };
@@ -624,7 +624,9 @@ export function mount(container, api) {
   // ==========================================
   // COMPLETE LEVEL (Trigger Transition)
   // ==========================================
-  container.querySelector('#complete-level').addEventListener('click', () => {
+  container.querySelector('#complete-level').addEventListener('click', (e) => {
+    // FIX EXPLOIT SCORING
+    e.target.disabled = true;
     
     // Kalkulasi Skor (Total 100)
     let score = 0;
@@ -645,8 +647,6 @@ export function mount(container, api) {
       }
     }
 
-    // api.complete memicu "Results Screen" di main.js 
-    // yang sudah otomatis menyediakan tombol "Continue to Series Master ->"
     api.complete(score, {
       heading: 'Formula Engine Restored',
       detail: `You completed the Formula Vault and restored the rules for finding the nth term of arithmetic and geometric sequences.`,
