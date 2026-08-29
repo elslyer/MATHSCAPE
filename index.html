@@ -51,9 +51,9 @@
     }
 
     /* ==========================================
-       STYLING GUIDE, MODULE & WOLFRAM LINK (TOP BAR)
+       STYLING GUIDE, MODULE, SOUND & WOLFRAM LINK
     ========================================== */
-    .guide-link, .module-link, .wolfram-link {
+    .guide-link, .module-link, .wolfram-link, .sound-toggle-btn {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -65,7 +65,7 @@
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
     
-    .guide-link:hover, .module-link:hover, .wolfram-link:hover {
+    .guide-link:hover, .module-link:hover, .wolfram-link:hover, .sound-toggle-btn:hover {
       transform: scale(1.1);
       opacity: 0.8;
     }
@@ -75,6 +75,17 @@
       width: auto;
       border-radius: 4px;
       object-fit: contain;
+    }
+
+    /* Tombol Sound Switch Khusus */
+    .sound-toggle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      color: #1e293b;
+      font-size: 1.4rem;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
     }
 
     /* ==========================================
@@ -584,7 +595,7 @@
 </head>
 
 <body>
-<!-- AUDIO BACKGROUND MUSIC (DIPERBAIKI) -->
+<!-- AUDIO BACKGROUND MUSIC -->
 <audio id="background-music" preload="auto" loop>
   <source src="./assets/Backsound.mp3" type="audio/mpeg" />
 </audio>
@@ -601,6 +612,11 @@
         <!-- PANDUAN MATHSCAPE -->
         <button class="guide-link" id="btn-guide" title="Mathscape Guide">
           <img src="./assets/QMark.png" alt="Mathscape Guide" class="guide-icon" />
+        </button>
+
+        <!-- SOUND TOGGLE SWITCH -->
+        <button class="sound-toggle-btn" id="btn-sound-toggle" title="Toggle Sound">
+          🔊
         </button>
 
         <!-- LEARNING MODULE -->
@@ -623,6 +639,7 @@
           <img src="assets/Wolfram.png" alt="WolframAlpha" class="wolfram-icon" />
         </a>
 
+        <!-- SCORE -->
         <div class="stat" title="Total score">
           <span class="stat-icon" style="font-size: 1.1rem;">⭐</span>
           <span id="stat-score">0</span>
