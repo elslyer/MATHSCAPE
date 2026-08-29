@@ -120,10 +120,11 @@ document
   });
 
 // ==========================================
-// START JOURNEY
+// START JOURNEY & BACKGROUND AUDIO CONTROL
 // ==========================================
 const startButton = document.getElementById('btn-start');
 const playerNameInput = document.getElementById('player-name');
+const backgroundMusic = document.getElementById('background-music');
 
 if (startButton) {
   startButton.addEventListener('click', () => {
@@ -137,7 +138,6 @@ if (startButton) {
 
     localStorage.setItem('mathscape-player-name', playerName);
 
-    const backgroundMusic = document.getElementById('background-music');
     if (backgroundMusic) {
       backgroundMusic.volume = 0.5;
       backgroundMusic.play().catch(error => {
@@ -146,6 +146,24 @@ if (startButton) {
     }
 
     navTo('map');
+  });
+}
+
+// ==========================================
+// SOUND TOGGLE BUTTON (ON / OFF)
+// ==========================================
+const soundToggleBtn = document.getElementById('btn-sound-toggle');
+if (soundToggleBtn && backgroundMusic) {
+  soundToggleBtn.addEventListener('click', () => {
+    if (backgroundMusic.paused) {
+      backgroundMusic.play();
+      soundToggleBtn.textContent = '🔊';
+      soundToggleBtn.title = 'Mute Sound';
+    } else {
+      backgroundMusic.pause();
+      soundToggleBtn.textContent = '🔇';
+      soundToggleBtn.title = 'Play Sound';
+    }
   });
 }
 
@@ -503,7 +521,6 @@ function showResults(num, score, meta) {
       </div>
       <div class="results-score">${Math.round(score)}<span>/100</span></div>
       <div class="results-actions">
-        <!-- PERBAIKAN: Menggunakan class bukan ID agar tidak bentrok antar stage -->
         <button class="btn btn-ghost btn-replay-stage">↺ Replay Stage</button>
         ${!isFinal && nextStage 
           ? `<button class="btn btn-primary btn-next-stage">Continue to ${nextStage.title} →</button>` 
@@ -513,14 +530,20 @@ function showResults(num, score, meta) {
     </div>
   `;
 
-  // PERBAIKAN: Menggunakan body.querySelector agar hanya mencari tombol di stage yang sedang aktif
-  body.querySelector('.btn-replay-stage')?.addEventListener('click', () => replay(num));
-  body.querySelector('.btn-next-stage')?.addEventListener('click', () => openLevel(num + 1));
-  body.querySelector('.btn-finish-journey')?.addEventListener('click', () => {
+  const btnReplay = body.querySelector('.btn-replay-stage');
+  if (btnReplay) btnReplay.addEventListener('click', () => replay(num));
+
+  const btnNext = body.querySelector('.btn-next-stage');
+  if (btnNext) btnNext.addEventListener('click', () => openLevel(num + 1));
+
+  const btnFinish = body.querySelector('.btn-finish-journey');
+  if (btnFinish) btnFinish.addEventListener('click', () => {
     navTo('map');
     showToast('Congratulations! You have completed MATHSCAPE! 🎉');
   });
-  body.querySelector('.btn-goto-map')?.addEventListener('click', () => navTo('map'));
+
+  const btnGotoMap = body.querySelector('.btn-goto-map');
+  if (btnGotoMap) btnGotoMap.addEventListener('click', () => navTo('map'));
 }
 
 // ==========================================
