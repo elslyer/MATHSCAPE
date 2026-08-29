@@ -5,10 +5,22 @@
 
 export function mount(container, api) {
   let currentMission = 0;
-  
-  // Sistem Skoring Additive (Mulai dari 0, bertambah jika benar)
-  // Fix celah skor tidak berubah / eksploitasi skor.
   let finalScore = 0;
+
+  // ==========================================================
+  // AUDIO ASSETS
+  // ==========================================================
+  const sfx = {
+    click: new Audio('assets/click.mp3'),
+    correct: new Audio('assets/correct.mp3'),
+    wrong: new Audio('assets/wrong.mp3')
+  };
+
+  // Fungsi helper untuk memutar suara tanpa tumpang tindih yang mengganggu
+  const playSound = (audio) => {
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log("Audio play blocked by browser"));
+  };
 
   const state = {
     mission1Done: false,
@@ -214,49 +226,38 @@ export function mount(container, api) {
     </style>
 
     <div class="mathscape-stage">
-
-      <!-- =====================================
-           STAGE HERO
-      ====================================== -->
+      <!-- STAGE HERO -->
       <section class="stage-hero">
         <h1>PATTERN FINDER</h1>
         <p class="stage-subtitle">The patterns of Mathscape are beginning to disappear.</p>
-
         <div class="story-card" style="text-align: left;">
           <p>Deep within Mathscape, numbers once followed perfect and predictable rules.</p>
           <p>But something has disturbed the Pattern Core. Sequences are breaking apart, and mathematical order is slowly fading away.</p>
           <p>Your mission is to explore the hidden patterns, uncover their rules, and restore the first piece of mathematical order.</p>
         </div>
-
         <div class="stage-illustration">
           <img src="./assets/Bunga-Angka.png" alt="Mathematical Pattern" class="stage-illustration-image">
         </div>
-
         <button class="btn btn-primary btn-large" id="begin-stage">
           BEGIN THE QUEST →
         </button>
       </section>
 
-      <!-- =====================================
-           LEARNING SECTION
-      ====================================== -->
+      <!-- LEARNING SECTION -->
       <section class="mission-section" id="learning-section" hidden>
         <div class="mission-header">
           <span class="mission-number">DISCOVER</span>
           <h2>Before the Investigation</h2>
         </div>
-
         <p style="text-align: center;">
           Every mathematical sequence follows a rule.<br>
           Some grow by adding the same value, while others grow by multiplying by the same factor.
         </p>
-
         <div class="learning-video">
           <div class="video-wrapper">
             <iframe src="https://www.youtube.com/embed/Tj89FA-d0f8" title="Mathematical Sequences Learning Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
           </div>
         </div>
-
         <div style="text-align: center;">
           <button class="btn btn-primary btn-large" id="start-mission-1">
             START MISSION 01 →
@@ -264,15 +265,12 @@ export function mount(container, api) {
         </div>
       </section>
 
-      <!-- =====================================
-           MISSION 1
-      ====================================== -->
+      <!-- MISSION 1 -->
       <section class="mission-section" id="mission-1" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 01</span>
           <h2>The Stadium Mystery</h2>
         </div>
-
         <div class="story-card">
           <p class="mission-story">
             A newly built stadium follows a mysterious seating pattern.<br><br>
@@ -280,12 +278,9 @@ export function mount(container, api) {
             Your task is to uncover the hidden rule.
           </p>
         </div>
-
         <div class="stadium-pattern">
           <img src="assets/Sofa-Angka.png" alt="Arithmetic Sequence Stadium" class="stadium-pattern-image">
         </div>
-
-        <!-- Question 1 -->
         <div class="challenge-card">
           <h3>🔍 FIND THE RULE</h3>
           <p>What changes from one row to the next?</p>
@@ -297,8 +292,6 @@ export function mount(container, api) {
           </div>
           <div class="mission-feedback" id="stadium-feedback" style="display:none;"></div>
         </div>
-
-        <!-- Question 2 -->
         <div class="challenge-card" id="stadium-question-2" hidden>
           <h3>🎯 COMPLETE THE PATTERN</h3>
           <div class="sequence-display">12 → 16 → 20 → 24 → ?</div>
@@ -312,45 +305,28 @@ export function mount(container, api) {
         </div>
       </section>
 
-
-      <!-- =====================================
-           MISSION 2
-      ====================================== -->
+      <!-- MISSION 2 -->
       <section class="mission-section" id="mission-2" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 02</span>
           <h2>Sequence Scanner</h2>
         </div>
-
         <div class="story-card">
-          <p>
-            The Pattern Scanner can identify different mathematical sequences.<br>
-            Analyze each sequence and determine its type.
-          </p>
+          <p>The Pattern Scanner can identify different mathematical sequences.<br>Analyze each sequence and determine its type.</p>
         </div>
-
         <div id="sequence-scanner"></div>
       </section>
 
-
-      <!-- =====================================
-           MISSION 3
-      ====================================== -->
+      <!-- MISSION 3 -->
       <section class="mission-section" id="mission-3" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 03</span>
           <h2>Pattern Laboratory</h2>
         </div>
-
         <div class="story-card">
-          <p>
-            Enter the Pattern Laboratory.<br>
-            Your task is to identify the hidden mathematical rule behind each sequence.
-          </p>
+          <p>Enter the Pattern Laboratory.<br>Your task is to identify the hidden mathematical rule behind each sequence.</p>
         </div>
-
         <div class="pattern-lab">
-          <!-- Question 1 -->
           <div class="lab-question challenge-card">
             <h3>🔬 EXPERIMENT A</h3>
             <div class="sequence-display">5 → 10 → 15 → 20 → ?</div>
@@ -359,8 +335,6 @@ export function mount(container, api) {
             <button class="btn btn-primary" style="width:100%;" id="check-lab-1">CHECK ANSWER</button>
             <div class="mission-feedback" id="lab-feedback-1" style="display:none;"></div>
           </div>
-
-          <!-- Question 2 -->
           <div class="lab-question challenge-card" id="lab-question-2" hidden>
             <h3>🔬 EXPERIMENT B</h3>
             <div class="sequence-display">2 → 6 → 18 → 54 → ?</div>
@@ -372,43 +346,21 @@ export function mount(container, api) {
         </div>
       </section>
 
-
-      <!-- =====================================
-           MISSION 4
-      ====================================== -->
+      <!-- MISSION 4 -->
       <section class="mission-section" id="mission-4" hidden>
         <div class="mission-header">
           <span class="mission-number">MISSION 04</span>
           <h2>Flora's Growth</h2>
         </div>
-
         <div class="story-card flora-story">
-          <p>
-            🌱 Rara has been observing her plant, Flora.<br>
-            Each week, she records the number of new leaves.
-          </p>
+          <p>🌱 Rara has been observing her plant, Flora.<br>Each week, she records the number of new leaves.</p>
         </div>
-
         <div class="flora-data">
-          <div>
-            <span>WEEK 1</span>
-            <strong>3 LEAVES</strong>
-          </div>
-          <div>
-            <span>WEEK 2</span>
-            <strong>7 LEAVES</strong>
-          </div>
-          <div>
-            <span>WEEK 3</span>
-            <strong>11 LEAVES</strong>
-          </div>
-          <div>
-            <span>WEEK 4</span>
-            <strong>15 LEAVES</strong>
-          </div>
+          <div><span>WEEK 1</span><strong>3 LEAVES</strong></div>
+          <div><span>WEEK 2</span><strong>7 LEAVES</strong></div>
+          <div><span>WEEK 3</span><strong>11 LEAVES</strong></div>
+          <div><span>WEEK 4</span><strong>15 LEAVES</strong></div>
         </div>
-
-        <!-- Question 1 -->
         <div class="challenge-card">
           <h3>🌿 ANALYZE THE GROWTH</h3>
           <p>What type of sequence does Flora's growth follow?</p>
@@ -419,8 +371,6 @@ export function mount(container, api) {
           </div>
           <div class="mission-feedback" id="flora-feedback" style="display:none;"></div>
         </div>
-
-        <!-- Question 2 -->
         <div class="challenge-card" id="flora-question-2" hidden>
           <h3>🔍 FIND THE DIFFERENCE</h3>
           <p>What is the common difference in Flora's leaves?</p>
@@ -431,21 +381,23 @@ export function mount(container, api) {
           </div>
           <div class="mission-feedback" id="flora-difference-feedback" style="display:none;"></div>
         </div>
-
-        <!-- Score Display -->
         <div id="final-score-display" style="text-align:center; margin: 40px 0; display:none;"></div>
-
         <button class="btn btn-primary btn-large" id="complete-stage" hidden>
           RESTORE THE PATTERN CORE 🏆
         </button>
       </section>
-
     </div>
   `;
 
   // ==========================================================
-  // ELEMENTS
+  // GLOBAL CLICK SOUND HANDLER
   // ==========================================================
+  container.addEventListener('click', (e) => {
+    if (e.target.closest('button') || e.target.closest('.quiz-opt')) {
+      playSound(sfx.click);
+    }
+  });
+
   const beginStage = container.querySelector('#begin-stage');
   const learningSection = container.querySelector('#learning-section');
   const mission1 = container.querySelector('#mission-1');
@@ -453,27 +405,18 @@ export function mount(container, api) {
   const mission3 = container.querySelector('#mission-3');
   const mission4 = container.querySelector('#mission-4');
 
-  // ==========================================================
-  // START STAGE
-  // ==========================================================
   beginStage.addEventListener('click', () => {
     learningSection.hidden = false;
     learningSection.scrollIntoView({ behavior: 'smooth' });
   });
 
-  // ==========================================================
-  // START MISSION 1
-  // ==========================================================
   container.querySelector('#start-mission-1').addEventListener('click', () => {
     mission1.hidden = false;
     mission1.scrollIntoView({ behavior: 'smooth' });
   });
 
-  // ==========================================================
   // MISSION 1 — STADIUM RULE
-  // ==========================================================
   const stadiumRuleButtons = container.querySelectorAll('#stadium-rule-options .quiz-opt');
-
   stadiumRuleButtons.forEach(button => {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#stadium-feedback');
@@ -481,18 +424,19 @@ export function mount(container, api) {
       feedback.style.display = 'block';
 
       if (button.dataset.answer === '4') {
+        playSound(sfx.correct);
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>🎉 CLUE DISCOVERED!</strong><p>Each row increases consistently by 4 seats.</p>`;
-        finalScore += 15; // Point addition
+        finalScore += 15;
       } else {
+        playSound(sfx.wrong);
         button.classList.add('wrong');
         container.querySelector('[data-answer="4"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
         feedback.innerHTML = `<strong>❌ NOT QUITE.</strong><p>Compare two consecutive rows (e.g., 16 − 12 = 4). The rule is +4.</p>`;
       }
       
-      // Auto-Progress ke Pertanyaan 2
       setTimeout(() => {
         const nextQ = container.querySelector('#stadium-question-2');
         nextQ.hidden = false;
@@ -501,11 +445,8 @@ export function mount(container, api) {
     });
   });
 
-  // ==========================================================
   // MISSION 1 — NEXT TERM
-  // ==========================================================
   const stadiumNextButtons = container.querySelectorAll('#stadium-next-options .quiz-opt');
-
   stadiumNextButtons.forEach(button => {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#stadium-next-feedback');
@@ -513,11 +454,13 @@ export function mount(container, api) {
       feedback.style.display = 'block';
 
       if (button.dataset.answer === '28') {
+        playSound(sfx.correct);
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>✅ PATTERN RESTORED!</strong><p>The sequence continues: 12, 16, 20, 24, 28.</p>`;
-        finalScore += 15; // Point addition
+        finalScore += 15;
       } else {
+        playSound(sfx.wrong);
         button.classList.add('wrong');
         container.querySelector('#stadium-next-options [data-answer="28"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
@@ -525,8 +468,6 @@ export function mount(container, api) {
       }
 
       state.mission1Done = true;
-      
-      // Auto-Progress ke Misi 2
       setTimeout(() => {
         mission2.hidden = false;
         mission2.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -535,9 +476,7 @@ export function mount(container, api) {
     });
   });
 
-  // ==========================================================
-  // MISSION 2 — SEQUENCE SCANNER (Berurutan)
-  // ==========================================================
+  // MISSION 2 — SEQUENCE SCANNER
   function renderSequenceScanner() {
     const scanner = container.querySelector('#sequence-scanner');
     if(scanner.innerHTML !== "") return; 
@@ -548,13 +487,10 @@ export function mount(container, api) {
       { sequence: '5, 10, 15, 20, ...', answer: 'arithmetic' }
     ];
 
-    // Bangun HTML untuk 3 pertanyaan scanner
     questions.forEach((question, index) => {
       const card = document.createElement('div');
       card.className = 'challenge-card';
       card.id = `scanner-q${index}`;
-      
-      // Sembunyikan card kedua dan ketiga pada awalnya
       if (index > 0) card.hidden = true; 
 
       card.innerHTML = `
@@ -570,31 +506,28 @@ export function mount(container, api) {
         <div class="mission-feedback" id="feedback-q${index}" style="display:none;"></div>
       `;
       scanner.appendChild(card);
-    });
 
-    // Tambahkan Event Listener dengan Auto-Progress
-    questions.forEach((question, index) => {
-      const buttons = scanner.querySelectorAll(`.q${index}`);
-      
+      const buttons = card.querySelectorAll(`.q${index}`);
       buttons.forEach(button => {
         button.addEventListener('click', () => {
           buttons.forEach(btn => { btn.disabled = true; });
-          const feedback = scanner.querySelector(`#feedback-q${index}`);
+          const feedback = card.querySelector(`#feedback-q${index}`);
           feedback.style.display = 'block';
 
           if (button.dataset.answer === question.answer) {
+            playSound(sfx.correct);
             button.classList.add('correct');
             feedback.className = 'mission-feedback success';
             feedback.innerHTML = '<strong>✅ Correct!</strong> Pattern identified successfully.';
-            finalScore += 10; // Point addition
+            finalScore += 10;
           } else {
+            playSound(sfx.wrong);
             button.classList.add('wrong');
-            scanner.querySelector(`#scanner-q${index} [data-answer="${question.answer}"]`).classList.add('correct');
+            card.querySelector(`[data-answer="${question.answer}"]`).classList.add('correct');
             feedback.className = 'mission-feedback error';
             feedback.innerHTML = `<strong>❌ Incorrect.</strong> The correct pattern is <strong>${question.answer.toUpperCase()}</strong>.`;
           }
 
-          // Pindah ke soal scanner berikutnya, atau lanjut ke Misi 3
           setTimeout(() => {
             if (index < questions.length - 1) {
               const nextCard = scanner.querySelector(`#scanner-q${index + 1}`);
@@ -611,33 +544,30 @@ export function mount(container, api) {
     });
   }
 
-  // ==========================================================
-  // MISSION 3 — LAB QUESTION 1
-  // ==========================================================
+  // MISSION 3 — LAB QUESTIONS
   container.querySelector('#check-lab-1').addEventListener('click', (e) => {
     const input = container.querySelector('#lab-answer-1');
     const answer = Number(input.value);
     const feedback = container.querySelector('#lab-feedback-1');
-
     if (input.value === "") return;
-
     input.disabled = true;
     e.target.disabled = true;
     feedback.style.display = 'block';
 
     if (answer === 5) {
+      playSound(sfx.correct);
       input.classList.add('correct-autofill');
       feedback.className = 'mission-feedback success';
       feedback.innerHTML = `<strong>✅ EXPERIMENT SUCCESSFUL!</strong><p>The common difference is +5.</p>`;
-      finalScore += 10; // Point addition
+      finalScore += 10;
     } else {
+      playSound(sfx.wrong);
       input.value = 5;
       input.classList.add('wrong-autofill');
       feedback.className = 'mission-feedback error';
       feedback.innerHTML = `<strong>❌ TRY AGAIN.</strong><p>Compare two consecutive terms (e.g., 10 − 5). The difference is 5.</p>`;
     }
     
-    // Auto-Progress ke Pertanyaan 2
     setTimeout(() => {
       const q2 = container.querySelector('#lab-question-2');
       q2.hidden = false;
@@ -645,26 +575,23 @@ export function mount(container, api) {
     }, 2500);
   });
 
-  // ==========================================================
-  // MISSION 3 — LAB QUESTION 2
-  // ==========================================================
   container.querySelector('#check-lab-2').addEventListener('click', (e) => {
     const input = container.querySelector('#lab-answer-2');
     const answer = Number(input.value);
     const feedback = container.querySelector('#lab-feedback-2');
-    
     if (input.value === "") return;
-
     input.disabled = true;
     e.target.disabled = true;
     feedback.style.display = 'block';
 
     if (answer === 3) {
+      playSound(sfx.correct);
       input.classList.add('correct-autofill');
       feedback.className = 'mission-feedback success';
       feedback.innerHTML = `<strong>✅ EXPERIMENT COMPLETE!</strong><p>The common ratio is 3.</p>`;
-      finalScore += 10; // Point addition
+      finalScore += 10;
     } else {
+      playSound(sfx.wrong);
       input.value = 3;
       input.classList.add('wrong-autofill');
       feedback.className = 'mission-feedback error';
@@ -672,19 +599,14 @@ export function mount(container, api) {
     }
     
     state.mission3Done = true;
-    
-    // Auto-Progress ke Misi 4
     setTimeout(() => {
       mission4.hidden = false;
       mission4.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 2500);
   });
 
-  // ==========================================================
-  // MISSION 4 — FLORA QUESTION 1
-  // ==========================================================
+  // MISSION 4 — FLORA QUESTIONS
   const floraTypeButtons = container.querySelectorAll('#flora-type-options .quiz-opt');
-
   floraTypeButtons.forEach(button => {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#flora-feedback');
@@ -692,18 +614,19 @@ export function mount(container, api) {
       feedback.style.display = 'block';
 
       if (button.dataset.answer === 'arithmetic') {
+        playSound(sfx.correct);
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>✅ CORRECT!</strong><p>Flora's leaves increase by the same amount each week.</p>`;
-        finalScore += 10; // Point addition
+        finalScore += 10;
       } else {
+        playSound(sfx.wrong);
         button.classList.add('wrong');
         container.querySelector('#flora-type-options [data-answer="arithmetic"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
         feedback.innerHTML = `<strong>❌ NOT QUITE.</strong><p>Notice how it increases by addition, not multiplication. It is Arithmetic.</p>`;
       }
       
-      // Auto-Progress ke Pertanyaan 2
       setTimeout(() => {
         const q2 = container.querySelector('#flora-question-2');
         q2.hidden = false;
@@ -712,11 +635,7 @@ export function mount(container, api) {
     });
   });
 
-  // ==========================================================
-  // MISSION 4 — FLORA QUESTION 2 (FINAL)
-  // ==========================================================
   const floraDifferenceButtons = container.querySelectorAll('#flora-difference-options .quiz-opt');
-
   floraDifferenceButtons.forEach(button => {
     button.addEventListener('click', () => {
       const feedback = container.querySelector('#flora-difference-feedback');
@@ -724,11 +643,13 @@ export function mount(container, api) {
       feedback.style.display = 'block';
 
       if (button.dataset.answer === '4') {
+        playSound(sfx.correct);
         button.classList.add('correct');
         feedback.className = 'mission-feedback success';
         feedback.innerHTML = `<strong>🎉 PATTERN SOLVED!</strong><p>The number of leaves increases by 4 each week.</p>`;
-        finalScore += 10; // Point addition
+        finalScore += 10;
       } else {
+        playSound(sfx.wrong);
         button.classList.add('wrong');
         container.querySelector('#flora-difference-options [data-answer="4"]').classList.add('correct');
         feedback.className = 'mission-feedback error';
@@ -736,45 +657,32 @@ export function mount(container, api) {
       }
 
       state.mission4Done = true;
-      
-      // Tampilkan Final Score otomatis
       setTimeout(() => {
         showFinalScore();
       }, 2500);
     });
   });
 
-  // ==========================================================
-  // SHOW FINAL SCORE & COMPLETE STAGE
-  // ==========================================================
   function showFinalScore() {
     const scoreDisplay = container.querySelector('#final-score-display');
     const completeBtn = container.querySelector('#complete-stage');
-    
     scoreDisplay.style.display = 'block';
     const gradeColor = finalScore >= 80 ? '#15803d' : (finalScore >= 50 ? '#e59a2e' : '#b91c1c');
-    
     scoreDisplay.innerHTML = `
       <div style="font-size: 1rem; color: #64748b; margin-bottom: 8px; font-weight:bold;">FINAL INVESTIGATION SCORE</div>
       <div style="font-size: 3rem; font-weight: bold; color: ${gradeColor};">${finalScore} / 100</div>
     `;
-
     completeBtn.hidden = false;
     completeBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   container.querySelector('#complete-stage').addEventListener('click', (e) => {
-    // FIX EXPLOIT: Nonaktifkan tombol segera setelah ditekan 1x agar skor tidak berganda 
     e.target.disabled = true;
-
     let badge = null;
     if (finalScore >= 80) {
       const added = api.badge('pattern-finder', 'Pattern Finder', '🔍');
-      if (added) {
-        badge = { name: 'Pattern Finder', icon: '🔍' };
-      }
+      if (added) badge = { name: 'Pattern Finder', icon: '🔍' };
     }
-
     api.complete(finalScore, {
       heading: 'PATTERN CORE RESTORED!',
       detail: `You have uncovered the hidden rules behind arithmetic and geometric sequences. You achieved a score of ${finalScore}.`,
